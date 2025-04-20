@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#03324A">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:padding="24dp"
+        android:elevation="4dp"
+        android:layout_margin="32dp">
+
+        <Spinner
+            android:id="@+id/spinner_tipo_usuario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" />
+
+
+        <EditText
+            android:id="@+id/editText_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/login"
+            android:layout_marginBottom="16dp"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/editText_senha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/senha"
+            android:inputType="textPassword"
+            android:layout_marginBottom="24dp" />
+
+        <Button
+            android:id="@+id/button_entrar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/entrar"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#004A8D"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp" />
+    </LinearLayout>
+</FrameLayout>
