@@ -5,4 +5,7 @@
     <string name="login">Login</string>
     <string name="senha">Senha</string>
     <string name="entrar">Entrar</string>
+    <string name="ol_nome_do_usuario">Olá, NOME DO USUARIO</string>
+    <string name="ol_nome_do_usuario1">Olá, NOME DO USUARIO</string>
+    <string name="ol_nome_do_usuario2">Olá, NOME DO USUARIO</string>
 </resources>

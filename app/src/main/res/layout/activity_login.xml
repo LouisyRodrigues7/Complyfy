@@ -8,12 +8,27 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="600dp"
         android:layout_gravity="center"
         android:orientation="vertical"
         android:background="@android:color/white"
-        android:padding="24dp"
-        android:elevation="4dp"
-        android:layout_margin="32dp">
+        android:paddingStart="36dp"
+        android:paddingEnd="36dp"
+        android:paddingTop="55dp"
+        android:paddingBottom="48dp"
+        android:elevation="8dp"
+        android:layout_margin="40dp">
+
+
+
+    <ImageView
+            android:id="@+id/image_logo"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/logo"
+            android:layout_gravity="center"
+            android:layout_marginBottom="24dp"
+            android:contentDescription="@string/app_name" />
 
         <Spinner
             android:id="@+id/spinner_tipo_usuario"
