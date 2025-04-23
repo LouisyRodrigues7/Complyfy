@@ -6,15 +6,29 @@
     android:background="@android:color/white"
     android:padding="0dp">
 
-    <TextView
-        android:id="@+id/textViewSaudacao"
+    <LinearLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:orientation="vertical"
         android:background="#03324A"
-        android:padding="54dp"
-        android:text="@string/ol_nome_do_usuario1"
-        android:textColor="@android:color/white"
-        android:textSize="19sp" />
+        >
+
+        <TextView
+            android:id="@+id/textViewSaudacao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="48dp"
+            android:paddingBottom="16dp"
+            android:paddingStart="32dp"
+            android:paddingEnd="32dp"
+            android:text="@string/ol_nome_do_usuario1"
+            android:textColor="@android:color/white"
+            android:textSize="19sp"
+            android:gravity="start" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,6 +43,6 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="100dp"
         android:background="#03324A" />
 </LinearLayout>
