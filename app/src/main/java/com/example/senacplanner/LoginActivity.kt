@@ -1,6 +1,7 @@
 package com.example.senacplanner
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.activity.enableEdgeToEdge
@@ -40,13 +41,24 @@ class LoginActivity : AppCompatActivity() {
             val login = editTextLogin.text.toString()
             val senha = editTextSenha.text.toString()
 
-            // Exemplo simples: mostrar um Toast
-            Toast.makeText(
-                this,
-                "Login: $login\nSenha: $senha\nTipo: $tipoSelecionado",
-                Toast.LENGTH_SHORT
-            ).show()
+            when (tipoSelecionado) {
+                "Coordenador" -> {
+                    val intent = Intent(this, CoordenadorActivity::class.java)
+                    intent.putExtra("NOME_USUARIO", login)
+                    startActivity(intent)
+                }
+                "Apoio" -> {
+                    val intent = Intent(this, ApoioActivity::class.java)
+                    intent.putExtra("NOME_USUARIO", login)
+                    startActivity(intent)
+                }
+                "Gestor" -> {
+                    val intent = Intent(this, GestorActivity::class.java)
+                    intent.putExtra("NOME_USUARIO", login)
+                    startActivity(intent)
+                }
+            }
+        } // Aqui vai a chave de fechamento para o setOnClickListener
 
-        }
-    }
+    } // Chave de fechamento para o método onCreate
 }
