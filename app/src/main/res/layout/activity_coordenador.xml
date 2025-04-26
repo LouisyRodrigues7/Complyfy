@@ -20,7 +20,7 @@
                 android:id="@+id/header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#03324A"
+                android:background="#1C2A39"
                 android:orientation="vertical"
                 android:paddingTop="20dp">
 
@@ -40,6 +40,7 @@
 
             <!-- MINHAS ATIVIDADES -->
             <LinearLayout
+                android:id="@+id/layoutPilares"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -70,11 +71,13 @@
             </LinearLayout>
 
             <!-- PILARES -->
+
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:id="@+id/layoutPilaresGrandes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -97,6 +100,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="#03324A"
+        android:background="#1C2A39"
         android:layout_gravity="bottom" />
 </FrameLayout>

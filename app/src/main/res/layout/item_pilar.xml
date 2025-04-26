@@ -15,9 +15,9 @@
 
         <LinearLayout
             android:layout_width="193dp"
-            android:layout_height="61dp"
+            android:layout_height="70dp"
             android:layout_gravity="center_horizontal"
-            android:background="#03324A"
+            android:background="#1C2A39"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingStart="16dp"
@@ -27,7 +27,7 @@
                 android:id="@+id/numeroPilar"
                 android:layout_width="37dp"
                 android:layout_height="36dp"
-                android:background="#FFA500"
+                android:background="#BB7535"
                 android:gravity="center"
                 android:text="@string/_5_"
                 android:textColor="#FFF"

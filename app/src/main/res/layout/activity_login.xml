@@ -3,7 +3,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#03324A">
+    android:background="#1C2A39">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:text="@string/entrar"
             android:textColor="@android:color/white"
-            android:backgroundTint="#004A8D"
+            android:backgroundTint="#363636"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp" />
     </LinearLayout>

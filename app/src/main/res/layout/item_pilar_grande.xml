@@ -8,25 +8,25 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
+        android:layout_height="match_parent"
+        android:background="#162E47"
         android:gravity="center_vertical"
-        android:background="#03324A">
+        android:orientation="horizontal"
+        android:padding="16dp">
 
         <!-- Número em quadrado laranja -->
         <TextView
             android:id="@+id/numeroPilarGrande"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="#FFA500"
+            android:layout_width="37dp"
+            android:layout_height="37dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="16dp"
+            android:background="#BB7535"
             android:gravity="center"
             android:text="@string/__1"
             android:textColor="#FFFFFF"
-            android:textStyle="bold"
             android:textSize="16sp"
-            android:layout_marginEnd="16dp"
-            android:layout_gravity="center_vertical" />
+            android:textStyle="bold" />
 
         <!-- Nome do Pilar -->
         <TextView
