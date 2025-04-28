@@ -42,7 +42,7 @@ class LoginActivity : AppCompatActivity() {
 
         // Ação do botão Entrar
         botaoEntrar.setOnClickListener {
-            val tipoSelecionado = spinner.selectedItem.toString().lowercase() // deixei minúsculo porque no banco é em minúsculo
+            val tipoSelecionado = spinner.selectedItem.toString().lowercase()
             val login = editTextLogin.text.toString()
             val senha = editTextSenha.text.toString()
 
@@ -82,6 +82,6 @@ class LoginActivity : AppCompatActivity() {
                 cursor.close()
                 db.close()
             }
-        } // Fechamento do setOnClickListener
-    } // Fechamento do onCreate
-} // Fechamento da classe
+        }
+    }
+}

@@ -32,7 +32,7 @@ class CoordenadorActivity : AppCompatActivity() {
             "Transparência"
         )
 
-        // Atualizando "Minhas Atividades" (pequenos)
+        // "Minhas Atividades" (pequenos)
         val gridLayout = findViewById<GridLayout>(R.id.gridMinhasAtividades)
         for (i in 0 until gridLayout.childCount) {
             val cardView = gridLayout.getChildAt(i) as CardView
@@ -47,7 +47,7 @@ class CoordenadorActivity : AppCompatActivity() {
             }
         }
 
-        // Atualizando "Pilares" (grandes)
+        //  "Pilares" (grandes)
         val layoutPilaresGrandes = findViewById<LinearLayout>(R.id.layoutPilaresGrandes)
         var numeroPilarGrande = 1 // Contador para garantir numeração sequencial
         val totalPilaresGrandes = nomesPilaresGrandes.size // Define o total de pilares que teremos

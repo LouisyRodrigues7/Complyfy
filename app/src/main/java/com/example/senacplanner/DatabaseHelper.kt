@@ -9,7 +9,7 @@ import java.io.IOException
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     companion object {
-        private const val DB_NAME = "banco_teste1.db"  // Nome exato do seu arquivo .db
+        private const val DB_NAME = "banco_teste1.db"
         private const val DB_VERSION = 1
     }
 
@@ -23,7 +23,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     private fun createDatabase() {
         val dbFile = context.getDatabasePath(DB_NAME)
         if (!dbFile.exists()) {
-            this.readableDatabase.close() // Cria o arquivo vazio
+            this.readableDatabase.close()
 
             try {
                 copyDatabase()
@@ -50,11 +50,11 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
-        // Não precisa criar nada aqui porque já estamos copiando um banco pronto.
+
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        // Deixe vazio por enquanto, até precisar atualizar versão do banco.
+
     }
 
     fun openDatabase() {
