@@ -51,33 +51,35 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 val db = databaseHelper.readableDatabase
 
-                // Consulta no banco
+                // Consulta no banco buscando por EMAIL agora, e não mais por NOME
                 val cursor: Cursor = db.rawQuery(
-                    "SELECT * FROM usuarios WHERE nome = ? AND tipo = ?",
+                    "SELECT * FROM usuarios WHERE email = ? AND tipo = ?",
                     arrayOf(login, tipoSelecionado)
                 )
 
                 if (cursor.moveToFirst()) {
-                    // Se achou o usuário
+                    // Pegamos o NOME para enviar para próxima tela (mesmo logando pelo email)
+                    val nomeUsuario = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+
                     when (tipoSelecionado) {
                         "coordenador" -> {
                             val intent = Intent(this, CoordenadorActivity::class.java)
-                            intent.putExtra("NOME_USUARIO", login)
+                            intent.putExtra("NOME_USUARIO", nomeUsuario)
                             startActivity(intent)
                         }
                         "apoio" -> {
                             val intent = Intent(this, ApoioActivity::class.java)
-                            intent.putExtra("NOME_USUARIO", login)
+                            intent.putExtra("NOME_USUARIO", nomeUsuario)
                             startActivity(intent)
                         }
                         "gestor" -> {
                             val intent = Intent(this, GestorActivity::class.java)
-                            intent.putExtra("NOME_USUARIO", login)
+                            intent.putExtra("NOME_USUARIO", nomeUsuario)
                             startActivity(intent)
                         }
                     }
                 } else {
-                    Toast.makeText(this, "Usuário ou tipo incorretos", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "E-mail ou tipo incorretos", Toast.LENGTH_SHORT).show()
                 }
                 cursor.close()
                 db.close()

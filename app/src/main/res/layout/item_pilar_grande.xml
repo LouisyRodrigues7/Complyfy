@@ -25,7 +25,7 @@
             android:gravity="center"
             android:text="@string/__1"
             android:textColor="#FFFFFF"
-            android:textSize="16sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <!-- Nome do Pilar -->

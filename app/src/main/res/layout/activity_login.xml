@@ -19,9 +19,7 @@
         android:elevation="8dp"
         android:layout_margin="40dp">
 
-
-
-    <ImageView
+        <ImageView
             android:id="@+id/image_logo"
             android:layout_width="150dp"
             android:layout_height="150dp"
@@ -36,14 +34,14 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp" />
 
-
+        <!-- inputType para e-mail -->
         <EditText
             android:id="@+id/editText_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/login"
-            android:layout_marginBottom="16dp"
-            android:inputType="text" />
+            android:hint="Digite seu e-mail"
+        android:layout_marginBottom="16dp"
+        android:inputType="textEmailAddress" />
 
         <EditText
             android:id="@+id/editText_senha"
