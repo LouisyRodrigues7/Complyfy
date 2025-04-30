@@ -5,30 +5,39 @@
     <string name="login">Login</string>
     <string name="senha">Senha</string>
     <string name="entrar">Entrar</string>
+
     <string name="ol_nome_do_usuario">Olá, NOME DO USUARIO</string>
     <string name="ol_nome_do_usuario1">Olá, NOME DO USUARIO</string>
     <string name="ol_nome_do_usuario2">Olá, NOME DO USUARIO</string>
+    <string name="ol_nome_do_usu_rio">Olá, nome do usuário</string>
+
+    <string name="status_concluido">Concluído</string>
+
     <string name="pilares">Pilares</string>
     <string name="_1_npilar">1\nPilar</string>
-    <string name="avalia_o_de_riscos">Avaliação de riscos</string>
     <string name="_2_npilar">2\nPilar</string>
-    <string name="c_digo_de_conduta_e_tica_e_pol_ticas_de_compliance">Código de Conduta e Ética e Políticas de Compliance</string>
     <string name="_3_npilar">3\nPilar</string>
-    <string name="controles_internos">Controles internos</string>
     <string name="_4_npilar">4\nPilar</string>
-    <string name="investiga_es_internas">Investigações Internas</string>
-    <string name="_1">1</string>
-    <string name="pilar">Pilar</string>
+
+    <string name="avalia_o_de_riscos">Avaliação de riscos</string>
     <string name="avalia_o_de_riscoss">Avaliação de riscos</string>
-    <string name="ol_nome_do_usu_rio">Olá, nome do usuário</string>
-    <string name="minhas_atividades_voc_possui_5_atividades_pendentes">Minhas atividades (🔴 você possui 5 atividades pendentes)</string>
-    <string name="pilares_">Pilares</string>
+    <string name="c_digo_de_conduta_e_tica_e_pol_ticas_de_compliance">Código de Conduta e Ética e Políticas de Compliance</string>
+    <string name="controles_internos">Controles internos</string>
+    <string name="investiga_es_internas">Investigações Internas</string>
+
+    <string name="pilar">Pilar</string>
     <string name="pilar_">Pilar</string>
     <string name="pilar_grande">Pilar Grande</string>
-    <string name="_5">5</string>
-    <string name="__1">1</string>
-    <string name="_5_">5</string>
     <string name="pilarr">Pilar</string>
+
+    <string name="_1">1</string>
+    <string name="__1">1</string>
+    <string name="_5">5</string>
+    <string name="_5_">5</string>
+
+    <string name="minhas_atividades_voc_possui_5_atividades_pendentes">Minhas atividades (🔴 você possui 5 atividades pendentes)</string>
     <string name="minhas_atividades">minhas_atividades</string>
     <string name="minhasatividades">Minhas Atividades</string>
+
+    <string name="pilares_">Pilares</string>
 </resources>
