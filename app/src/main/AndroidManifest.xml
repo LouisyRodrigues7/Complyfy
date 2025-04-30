@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.senacplanner">
 
     <application
         android:allowBackup="true"
@@ -12,20 +13,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TelaLogin"
         tools:targetApi="31">
-        <activity
-            android:name=".novopilar.novo_pilar"
-            android:exported="false" />
+
         <!-- Tela principal (Login) -->
-        <activity android:name=".novo_pilar">
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        </activity>
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity> <!-- Telas por tipo de usuário -->
+        <!-- Outras telas -->
+        <activity
+            android:name=".novopilar.NovoPilarActivity"
+            android:exported="true" />
         <activity
             android:name=".CoordenadorActivity"
             android:exported="false" />
@@ -35,6 +37,10 @@
         <activity
             android:name=".ApoioActivity"
             android:exported="false" />
+        <activity
+            android:name=".Pilares.ListaAtividades"
+            android:exported="false" />
+
     </application>
 
 </manifest>

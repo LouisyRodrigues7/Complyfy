@@ -1,11 +1,13 @@
 package com.example.senacplanner
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.GridLayout
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import com.example.senacplanner.Pilares.ListaAtividades
 
 class CoordenadorActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,12 +47,21 @@ class CoordenadorActivity : AppCompatActivity() {
             } else {
                 texto.text = "Pilar ${i + 1}"
             }
+
+            // Clique no Pilar 1
+            if (i == 0) {
+                cardView.setOnClickListener {
+                    val intent = Intent(this, ListaAtividades::class.java)
+                    intent.putExtra("PILAR_ID", 1) // opcional: passa o ID do pilar
+                    startActivity(intent)
+                }
+            }
         }
 
-        //  "Pilares" (grandes)
+        // "Pilares" (grandes)
         val layoutPilaresGrandes = findViewById<LinearLayout>(R.id.layoutPilaresGrandes)
-        var numeroPilarGrande = 1 // Contador para garantir numeração sequencial
-        val totalPilaresGrandes = nomesPilaresGrandes.size // Define o total de pilares que teremos
+        var numeroPilarGrande = 1
+        val totalPilaresGrandes = nomesPilaresGrandes.size
 
         for (i in 0 until layoutPilaresGrandes.childCount) {
             val view = layoutPilaresGrandes.getChildAt(i)
@@ -58,17 +69,14 @@ class CoordenadorActivity : AppCompatActivity() {
                 val numeroGrande = view.findViewById<TextView>(R.id.numeroPilarGrande)
                 val textoGrande = view.findViewById<TextView>(R.id.textoPilarGrande)
 
-                numeroGrande.text = numeroPilarGrande.toString() // Garantindo a numeração correta
-
-                // Preenchendo os nomes dos pilares grandes (os de baixo)
+                numeroGrande.text = numeroPilarGrande.toString()
                 if (numeroPilarGrande <= nomesPilaresGrandes.size) {
-                    textoGrande.text = nomesPilaresGrandes[numeroPilarGrande - 1] // Nome do Pilar Específico
+                    textoGrande.text = nomesPilaresGrandes[numeroPilarGrande - 1]
                 } else {
-                    // Se não houver mais nomes na lista, coloca um nome genérico
                     textoGrande.text = "Pilar Grande $numeroPilarGrande"
                 }
 
-                numeroPilarGrande++ // Incrementa o contador para o próximo número
+                numeroPilarGrande++
             }
         }
     }
