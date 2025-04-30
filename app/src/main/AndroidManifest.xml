@@ -12,20 +12,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TelaLogin"
         tools:targetApi="31">
+
+        <!-- Tela principal: NovoPilarActivity -->
         <activity
-            android:name=".novopilar.novo_pilar"
-            android:exported="false" />
-        <!-- Tela principal (Login) -->
-        <activity android:name=".novo_pilar">
+            android:name=".novopilar.NovoPilarActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        </activity>
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity> <!-- Telas por tipo de usuário -->
+        <!-- Telas por tipo de usuário -->
         <activity
             android:name=".CoordenadorActivity"
             android:exported="false" />
