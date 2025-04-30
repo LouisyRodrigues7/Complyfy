@@ -18,7 +18,7 @@ class NovoPilarActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.novo_pilar) // Troque "seu_arquivo_xml" pelo nome do seu XML
+        setContentView(R.layout.novo_pilar) //
 
         // Pegando os elementos da tela
         btnNovaAcao = findViewById(R.id.btnNovaAcao)
@@ -30,12 +30,12 @@ class NovoPilarActivity : AppCompatActivity() {
 
         // Exemplo: ação ao clicar no botão "Nova Ação"
         btnNovaAcao.setOnClickListener {
-            // Aqui você pode abrir um diálogo para criar uma nova ação, por exemplo
+
         }
 
         // Exemplo: ação ao clicar no botão "Concluído"
         btnConcluido.setOnClickListener {
-            // Aqui você pode marcar a ação como concluída
+
             tvStatus.setText(R.string.status_concluido)
             tvStatus.setTextColor(getColor(R.color.teal_200)) // muda a cor para dar destaque
         }
