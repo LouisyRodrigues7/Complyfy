@@ -3,30 +3,32 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1C2A39">
+    android:background="#03324A">
 
     <LinearLayout
-        android:layout_width="358dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="40dp"
-        android:background="@android:color/white"
-        android:elevation="8dp"
         android:minHeight="600dp"
+        android:layout_gravity="center"
         android:orientation="vertical"
+        android:background="@android:color/white"
         android:paddingStart="36dp"
-        android:paddingTop="55dp"
         android:paddingEnd="36dp"
-        android:paddingBottom="48dp">
+        android:paddingTop="55dp"
+        android:paddingBottom="48dp"
+        android:elevation="8dp"
+        android:layout_margin="40dp">
 
-        <ImageView
+
+
+    <ImageView
             android:id="@+id/image_logo"
             android:layout_width="150dp"
             android:layout_height="150dp"
+            android:src="@drawable/logo"
             android:layout_gravity="center"
             android:layout_marginBottom="24dp"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/logo" />
+            android:contentDescription="@string/app_name" />
 
         <Spinner
             android:id="@+id/spinner_tipo_usuario"
@@ -34,31 +36,31 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp" />
 
-        <!-- inputType para e-mail -->
+
         <EditText
             android:id="@+id/editText_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/login"
             android:layout_marginBottom="16dp"
-            android:hint="Digite seu e-mail"
-            android:inputType="textEmailAddress" />
+            android:inputType="text" />
 
         <EditText
             android:id="@+id/editText_senha"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
             android:hint="@string/senha"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:layout_marginBottom="24dp" />
 
         <Button
             android:id="@+id/button_entrar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:backgroundTint="#363636"
             android:text="@string/entrar"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:backgroundTint="#004A8D"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp" />
     </LinearLayout>
 </FrameLayout>

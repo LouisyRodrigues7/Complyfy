@@ -13,10 +13,11 @@
         android:theme="@style/Theme.TelaLogin"
         tools:targetApi="31">
 
-        <!-- Tela principal: NovoPilarActivity -->
+        <!-- Tela principal (Login) -->
         <activity
-            android:name=".novopilar.NovoPilarActivity"
-            android:exported="true">
+            android:name=".LoginActivity"
+            android:exported="true"
+            tools:ignore="MissingClass">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -33,6 +34,7 @@
         <activity
             android:name=".ApoioActivity"
             android:exported="false" />
+
     </application>
 
 </manifest>
