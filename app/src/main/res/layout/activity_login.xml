@@ -7,7 +7,7 @@
 
     <LinearLayout
         android:layout_width="358dp"
-        android:layout_height="wrap_content"
+        android:layout_height="586dp"
         android:layout_gravity="center"
         android:layout_margin="40dp"
         android:background="@android:color/white"
@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:backgroundTint="#363636"
+            android:backgroundTint="#27AE60"
             android:text="@string/entrar"
             android:textColor="@android:color/white" />
     </LinearLayout>
