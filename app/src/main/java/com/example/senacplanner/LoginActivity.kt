@@ -33,8 +33,8 @@ class LoginActivity : AppCompatActivity() {
 
         // Opções do Spinner
         val opcoes = listOf("Coordenador", "Apoio", "Gestor")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, opcoes)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        val adapter = ArrayAdapter(this, R.layout.spinner_item, opcoes)
+        adapter.setDropDownViewResource(R.layout.spinner_item)
         spinner.adapter = adapter
 
         // Inicializar o DatabaseHelper
