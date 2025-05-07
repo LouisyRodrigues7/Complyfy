@@ -3,10 +3,12 @@
     android:id="@+id/spinner_item_text"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="12dp"
+    android:minHeight="40dp"
+    android:paddingVertical="8dp"
+    android:paddingHorizontal="12dp"
     android:textColor="@android:color/white"
-    android:background="#1F3B4D"
     android:textSize="16sp"
     android:drawableEnd="@drawable/ic_arrow_drop_down_blue"
-    android:drawableTint="#2196F3"
+    android:drawableTint="@android:color/white"
     android:drawablePadding="8dp" />
+
