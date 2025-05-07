@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="headerLayout" type="id" />
+    <item name="btnAddPilar" type="id" />
+    <item name="caixaCriarPilar" type="id" />
+    <item name="tabLayout" type="id" />
+</resources>
