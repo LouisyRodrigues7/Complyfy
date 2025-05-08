@@ -9,6 +9,7 @@ import com.example.senacplanner.fragmentpilares.TodosPilaresFragment
 import com.example.senacplanner.fragmentpilares.ViewPagerAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import android.widget.ImageView
 
 class ApoioActivity : AppCompatActivity() {
 
@@ -16,7 +17,6 @@ class ApoioActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_apoio)
 
-        // Nome do usuário de apoio
         val nomeUsuario = intent.getStringExtra("NOME_USUARIO") ?: "Usuário de Apoio"
 
         val toolbar = findViewById<Toolbar>(R.id.toolbarApoio)
@@ -26,15 +26,19 @@ class ApoioActivity : AppCompatActivity() {
         val tabLayout = findViewById<TabLayout>(R.id.tabLayoutApoio)
         val viewPager = findViewById<ViewPager2>(R.id.viewPagerApoio)
 
-        // Configurar os fragments específicos para o Apoio
         val adapter = ViewPagerAdapter(this)
         adapter.addFragment(MeusPilaresApoioFragment(), "Meus Pilares")
         adapter.addFragment(TodosPilaresFragment(), "Todos os Pilares")
         viewPager.adapter = adapter
 
-        // Integrar TabLayout com ViewPager
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = adapter.getPageTitle(position)
         }.attach()
+
+        val btnHome = findViewById<ImageView>(R.id.btnHome)
+        btnHome.setOnClickListener {
+            viewPager.setCurrentItem(0, true) // Volta para "Meus Pilares"
+        }
+
     }
 }

@@ -23,34 +23,41 @@ class CoordenadorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_coordenador)
 
-        // Recuperar o nome do coordenador passado no Intent
+        // Recuperar nome do coordenador
         val nomeCoordenador = intent.getStringExtra("NOME_USUARIO") ?: "Coordenador"
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        toolbar.title = "Olá, $nomeCoordenador"  // Atualizando o título da Toolbar com o nome do coordenador
+        toolbar.title = "Olá, $nomeCoordenador"
         setSupportActionBar(toolbar)
 
         val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
         val viewPager = findViewById<ViewPager2>(R.id.viewPager)
 
-        // Adicionar fragments ao ViewPager
         val adapter = ViewPagerAdapter(this)
         adapter.addFragment(MeusPilaresFragment(), "Meus Pilares")
         adapter.addFragment(TodosPilaresFragment(), "Todos os Pilares")
         viewPager.adapter = adapter
 
-        // Configurar o TabLayout com o ViewPager
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = adapter.getPageTitle(position)
         }.attach()
 
-        // Configurar o botão para adicionar um pilar
         val btnAddPilar = findViewById<ImageView>(R.id.btnAddPilar)
         caixaCriarPilar = findViewById(R.id.caixaCriarPilar)
 
         btnAddPilar.setOnClickListener {
             toggleCaixaCriarPilar()
         }
+
+        val btnHome = findViewById<ImageView>(R.id.btnHome)
+        btnHome.setOnClickListener {
+            viewPager.setCurrentItem(0, true) // Volta para "Meus Pilares"
+        }
+    }
+
+    private fun toggleCaixaCriarPilar() {
+        caixaCriarPilar.visibility =
+            if (caixaCriarPilar.visibility == View.GONE) View.VISIBLE else View.GONE
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -59,10 +66,5 @@ class CoordenadorActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun toggleCaixaCriarPilar() {
-        caixaCriarPilar.visibility =
-            if (caixaCriarPilar.visibility == View.GONE) View.VISIBLE else View.GONE
     }
 }
