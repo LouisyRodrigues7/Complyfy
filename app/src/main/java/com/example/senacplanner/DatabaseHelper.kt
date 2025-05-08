@@ -49,12 +49,13 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         inputStream.close()
     }
 
+    // O método onCreate foi alterado para não recriar a tabela, já que o banco de dados já está copiado
     override fun onCreate(db: SQLiteDatabase?) {
-
+        // Não é necessário recriar a tabela, já que ela já existe no arquivo copiado
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-
+        // Realizar upgrade no banco, mas agora sem a coluna 'senha'
     }
 
     fun openDatabase() {
