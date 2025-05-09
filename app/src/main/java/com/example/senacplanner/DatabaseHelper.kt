@@ -3,13 +3,14 @@ package com.example.senacplanner
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.example.senacplanner.Pilares.Type.PilarType
 import java.io.FileOutputStream
 import java.io.IOException
 
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     companion object {
-        private const val DB_NAME = "banco_teste1.db"
+        private const val DB_NAME = "banco_teste2.db"
         private const val DB_VERSION = 1
     }
 
@@ -72,5 +73,50 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
             openDatabase()
         }
         return myDatabase!!
+    }
+
+    fun getAllPilares(): List<PilarType> {
+        val pilares = mutableListOf<PilarType>()
+        val db = getDatabase()
+        val cursor = db.rawQuery("SELECT id, numero, nome, descricao FROM Pilar", null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                    val numero = cursor.getInt(cursor.getColumnIndexOrThrow("numero"))
+                val nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+                val descricao = cursor.getString(cursor.getColumnIndexOrThrow("descricao"))
+                pilares.add(PilarType(id, numero, nome, descricao))
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        return pilares
+    }
+
+
+    fun getPilaresByUsuarioId(usuarioId: Int): List<PilarType> {
+        val pilares = mutableListOf<PilarType>()
+        val db = getDatabase()
+        val query = """
+        SELECT p.id, p.numero, p.nome, p.descricao
+        FROM Pilar p
+        JOIN UsuarioPilar up ON p.id = up.pilar_id
+        WHERE up.usuario_id = ?
+    """
+        val cursor = db.rawQuery(query, arrayOf(usuarioId.toString()))
+
+        if (cursor.moveToFirst()) {
+            do {
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val numero = cursor.getInt(cursor.getColumnIndexOrThrow("numero"))
+                val nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+                val descricao = cursor.getString(cursor.getColumnIndexOrThrow("descricao"))
+                pilares.add(PilarType(id, numero, nome, descricao))
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        return pilares
     }
 }
