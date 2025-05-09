@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Botão "+" para Adicionar com.example.senacplanner.Pilar -->
+    <item
+        android:id="@+id/action_add_pilar"
+        android:icon="@drawable/plus_circle"
+        android:title="Adicionar Pilar"
+        app:showAsAction="always" />
+</menu>

@@ -1,4 +1,4 @@
-
+  
 # 📱 Complyfy – Projeto Android (Faculdade)
 
 Este repositório é dedicado ao desenvolvimento do **Complyfy**, um aplicativo Android feito para um projeto da faculdade. Nosso objetivo com este README é manter o projeto organizado e evitar conflitos entre os membros do grupo.
