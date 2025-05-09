@@ -33,7 +33,7 @@ class MeusPilaresFragment : Fragment() {
 
         pilaresDoUsuario.forEachIndexed { index, pilar ->
             val item = inflater.inflate(R.layout.item_pilar_grande, layout, false)
-            item.findViewById<TextView>(R.id.numeroPilarGrande).text = "${index + 1}"
+            item.findViewById<TextView>(R.id.numeroPilarGrande).text = pilar.numero.toString()
             val textoPilar = item.findViewById<TextView>(R.id.textoPilarGrande)
             textoPilar.text = pilar.nome
 

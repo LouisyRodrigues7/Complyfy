@@ -36,7 +36,7 @@ class TodosPilaresFragment : Fragment() {
 
         pilares.forEachIndexed { index, pilar ->
             val item = inflater.inflate(R.layout.item_pilar_grande, layout, false)
-            item.findViewById<TextView>(R.id.numeroPilarGrande).text = "${index + 1}"
+            item.findViewById<TextView>(R.id.numeroPilarGrande).text = pilar.numero.toString()
             item.findViewById<TextView>(R.id.textoPilarGrande).text = pilar.nome
 
             if (pilar.nome == "Avaliação de Riscos") {
