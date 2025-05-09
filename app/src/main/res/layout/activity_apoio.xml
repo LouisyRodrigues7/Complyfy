@@ -1,101 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1C2A39"
-    android:fitsSystemWindows="true">
+    android:background="@android:color/white"
+    android:padding="0dp">
 
-    <!-- AppBar com Toolbar -->
-    <com.google.android.material.appbar.AppBarLayout
+
+    <LinearLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbarApoio"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="#1C2A39"
-            app:title="Tela de Apoio"
-            app:titleTextColor="@android:color/white" />
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <!-- Conteúdo abaixo da Toolbar -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:paddingTop="20dp"
         android:orientation="vertical"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:background="#FFFFFF">
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayoutApoio"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#BB7535"
-            app:tabIndicatorColor="@android:color/white"
-            app:tabTextColor="@android:color/white"
-            app:tabSelectedTextColor="@android:color/white" />
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPagerApoio"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-    </LinearLayout>
-
-    <!-- Rodapé com botões -->
-    <LinearLayout
-        android:id="@+id/rodape_com_botoes"
-        android:layout_width="match_parent"
-        android:layout_height="81dp"
-        android:layout_gravity="bottom"
-        android:orientation="horizontal"
         android:background="#1C2A39"
-        android:padding="8dp"
-        android:gravity="center">
+        >
 
-        <ImageView
-            android:id="@+id/btnGraficos"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/textViewSaudacao"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/graficos"
-            android:contentDescription="Gráficos"
-            android:layout_gravity="center"
-            android:padding="8dp" />
+            android:paddingTop="48dp"
+        android:paddingBottom="16dp"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:text="@string/ol_nome_do_usuario1"
+        android:textColor="@android:color/white"
+        android:textSize="19sp"
+        android:gravity="start" />
 
-        <ImageView
-            android:id="@+id/btnHome"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/home"
-            android:contentDescription="Home"
-            android:layout_gravity="center"
-            android:padding="8dp" />
-
-        <ImageView
-            android:id="@+id/btnAcoes"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/acoes"
-            android:contentDescription="Ações"
-            android:layout_gravity="center"
-            android:padding="8dp" />
-
-        <ImageView
-            android:id="@+id/btnNotificacoes"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/notificacao"
-            android:contentDescription="Notificações"
-            android:layout_gravity="center"
-            android:padding="8dp" />
     </LinearLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="5"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="#1C2A39" />
+</LinearLayout>

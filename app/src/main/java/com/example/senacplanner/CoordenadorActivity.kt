@@ -1,70 +1,75 @@
 package com.example.senacplanner
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
+import android.widget.GridLayout
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import androidx.viewpager2.widget.ViewPager2
-import com.example.senacplanner.fragmentpilares.MeusPilaresFragment
-import com.example.senacplanner.fragmentpilares.TodosPilaresFragment
-import com.example.senacplanner.fragmentpilares.ViewPagerAdapter
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
+import androidx.cardview.widget.CardView
 
 class CoordenadorActivity : AppCompatActivity() {
-
-    private lateinit var caixaCriarPilar: TextView
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_coordenador)
 
-        // Recuperar nome do coordenador
-        val nomeCoordenador = intent.getStringExtra("NOME_USUARIO") ?: "Coordenador"
+        // Personalizando a saudação
+        val nomeUsuario = intent.getStringExtra("NOME_USUARIO") ?: "Usuário"
+        val saudacao = findViewById<TextView>(R.id.textViewSaudacao)
+        saudacao.text = "Olá, $nomeUsuario"
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        toolbar.title = "Olá, $nomeCoordenador"
-        setSupportActionBar(toolbar)
+        // Listas separadas
+        val nomesPilaresPequenos = listOf(
+            "Avaliação de riscos",
+            "Controles internos",
+            "Código de conduta e ética"
+        )
 
-        val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
-        val viewPager = findViewById<ViewPager2>(R.id.viewPager)
+        val nomesPilaresGrandes = listOf(
+            "Avaliação de riscos",
+            "Controles internos",
+            "Código de conduta e ética",
+            "Gestão de Riscos",
+            "Transparência"
+        )
 
-        val adapter = ViewPagerAdapter(this)
-        adapter.addFragment(MeusPilaresFragment(), "Meus Pilares")
-        adapter.addFragment(TodosPilaresFragment(), "Todos os Pilares")
-        viewPager.adapter = adapter
+        // "Minhas Atividades" (pequenos)
+        val gridLayout = findViewById<GridLayout>(R.id.gridMinhasAtividades)
+        for (i in 0 until gridLayout.childCount) {
+            val cardView = gridLayout.getChildAt(i) as CardView
+            val numero = cardView.findViewById<TextView>(R.id.numeroPilar)
+            val texto = cardView.findViewById<TextView>(R.id.textoPilar)
 
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = adapter.getPageTitle(position)
-        }.attach()
-
-        val btnAddPilar = findViewById<ImageView>(R.id.btnAddPilar)
-        caixaCriarPilar = findViewById(R.id.caixaCriarPilar)
-
-        btnAddPilar.setOnClickListener {
-            toggleCaixaCriarPilar()
+            numero.text = (i + 1).toString()
+            if (i < nomesPilaresPequenos.size) {
+                texto.text = nomesPilaresPequenos[i]
+            } else {
+                texto.text = "Pilar ${i + 1}"
+            }
         }
 
-        val btnHome = findViewById<ImageView>(R.id.btnHome)
-        btnHome.setOnClickListener {
-            viewPager.setCurrentItem(0, true) // Volta para "Meus Pilares"
+        //  "Pilares" (grandes)
+        val layoutPilaresGrandes = findViewById<LinearLayout>(R.id.layoutPilaresGrandes)
+        var numeroPilarGrande = 1 // Contador para garantir numeração sequencial
+        val totalPilaresGrandes = nomesPilaresGrandes.size // Define o total de pilares que teremos
+
+        for (i in 0 until layoutPilaresGrandes.childCount) {
+            val view = layoutPilaresGrandes.getChildAt(i)
+            if (view is CardView) {
+                val numeroGrande = view.findViewById<TextView>(R.id.numeroPilarGrande)
+                val textoGrande = view.findViewById<TextView>(R.id.textoPilarGrande)
+
+                numeroGrande.text = numeroPilarGrande.toString() // Garantindo a numeração correta
+
+                // Preenchendo os nomes dos pilares grandes (os de baixo)
+                if (numeroPilarGrande <= nomesPilaresGrandes.size) {
+                    textoGrande.text = nomesPilaresGrandes[numeroPilarGrande - 1] // Nome do Pilar Específico
+                } else {
+                    // Se não houver mais nomes na lista, coloca um nome genérico
+                    textoGrande.text = "Pilar Grande $numeroPilarGrande"
+                }
+
+                numeroPilarGrande++ // Incrementa o contador para o próximo número
+            }
         }
-    }
-
-    private fun toggleCaixaCriarPilar() {
-        caixaCriarPilar.visibility =
-            if (caixaCriarPilar.visibility == View.GONE) View.VISIBLE else View.GONE
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return super.onOptionsItemSelected(item)
     }
 }

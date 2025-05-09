@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.database.Cursor
 import android.os.Bundle
-import android.util.Log
 import android.widget.*
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -16,6 +16,7 @@ class LoginActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_login)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -24,35 +25,40 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
+        // Referências
         val spinner = findViewById<Spinner>(R.id.spinner_tipo_usuario)
         val editTextLogin = findViewById<EditText>(R.id.editText_login)
+        val editTextSenha = findViewById<EditText>(R.id.editText_senha)
         val botaoEntrar = findViewById<Button>(R.id.button_entrar)
 
+        // Opções do Spinner
         val opcoes = listOf("Coordenador", "Apoio", "Gestor")
-        val adapter = ArrayAdapter(this, R.layout.spinner_item, opcoes)
-        adapter.setDropDownViewResource(R.layout.spinner_item)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, opcoes)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
 
+        // Inicializar o DatabaseHelper
         databaseHelper = DatabaseHelper(this)
 
+        // Ação do botão Entrar
         botaoEntrar.setOnClickListener {
             val tipoSelecionado = spinner.selectedItem.toString().lowercase()
-            val login = editTextLogin.text.toString().trim()
+            val login = editTextLogin.text.toString()
+            val senha = editTextSenha.text.toString()
 
-            if (login.isEmpty()) {
+            if (login.isEmpty() || senha.isEmpty()) {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
             } else {
                 val db = databaseHelper.readableDatabase
 
-                // Alteração: Remover a senha da consulta
+                // Consulta no banco buscando por EMAIL agora, e não mais por NOME
                 val cursor: Cursor = db.rawQuery(
                     "SELECT * FROM usuarios WHERE email = ? AND tipo = ?",
                     arrayOf(login, tipoSelecionado)
                 )
 
-                Log.d("LOGIN_DEBUG", "Tentando login com: $login | Tipo: $tipoSelecionado")
-
                 if (cursor.moveToFirst()) {
+                    // Pegamos o NOME para enviar para próxima tela (mesmo logando pelo email)
                     val nomeUsuario = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
 
                     when (tipoSelecionado) {
@@ -73,17 +79,11 @@ class LoginActivity : AppCompatActivity() {
                         }
                     }
                 } else {
-                    Toast.makeText(
-                        this,
-                        "Usuário não encontrado. Verifique o e-mail e tipo.",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Toast.makeText(this, "E-mail ou tipo incorretos", Toast.LENGTH_SHORT).show()
                 }
-
                 cursor.close()
                 db.close()
             }
         }
     }
 }
-
