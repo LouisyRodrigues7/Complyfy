@@ -16,7 +16,7 @@
 
         <!-- Tela principal (Login) -->
         <activity
-            android:name=".CoordenadorActivity"
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,7 +29,7 @@
             android:name=".novopilar.NovoPilarActivity"
             android:exported="true" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".CoordenadorActivity"
             android:exported="false" />
         <activity
             android:name=".GestorActivity"
