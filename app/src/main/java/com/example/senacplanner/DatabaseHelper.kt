@@ -83,7 +83,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         if (cursor.moveToFirst()) {
             do {
                 val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
-                val numero = cursor.getInt(cursor.getColumnIndexOrThrow("numero"))
+                    val numero = cursor.getInt(cursor.getColumnIndexOrThrow("numero"))
                 val nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
                 val descricao = cursor.getString(cursor.getColumnIndexOrThrow("descricao"))
                 pilares.add(PilarType(id, numero, nome, descricao))
