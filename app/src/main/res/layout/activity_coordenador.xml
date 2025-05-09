@@ -1,124 +1,106 @@
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1C2A39"
-    android:fitsSystemWindows="true">
+    android:background="@android:color/white">
 
-    <!-- AppBar com Toolbar -->
-    <com.google.android.material.appbar.AppBarLayout
+    <!-- Contêiner para o conteúdo principal -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
+        android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="#1C2A39"
-            app:titleTextColor="@android:color/white">
-
-            <!-- Botão "+" no Toolbar -->
-            <ImageView
-                android:id="@+id/btnAddPilar"
-                android:layout_width="34dp"
-                android:layout_height="34dp"
-                android:src="@drawable/plus_circle"
-                android:contentDescription="Adicionar Pilar"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginEnd="16dp"/>
-        </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <!-- Layout principal abaixo da Toolbar -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:background="#FFFFFF">
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#BB7535"
-            app:tabIndicatorColor="@android:color/white"
-            app:tabTextColor="@android:color/white"
-            app:tabSelectedTextColor="@android:color/white" />
+            android:padding="0dp">
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPager"
+            <!-- HEADER -->
+            <LinearLayout
+                android:id="@+id/header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#1C2A39"
+                android:orientation="vertical"
+                android:paddingTop="20dp">
+
+                <TextView
+                    android:id="@+id/textViewSaudacao"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:paddingStart="32dp"
+                    android:paddingTop="48dp"
+                    android:paddingEnd="32dp"
+                    android:paddingBottom="16dp"
+                    android:text="@string/ol_nome_do_usu_rio"
+                    android:textColor="@android:color/white"
+                    android:textSize="19sp" />
+            </LinearLayout>
+
+            <!-- MINHAS ATIVIDADES -->
+            <LinearLayout
+                android:id="@+id/layoutPilares"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/minhasatividades"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="12dp"/>
+
+                <GridLayout
+                    android:id="@+id/gridMinhasAtividades"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="2"
+                    android:rowOrderPreserved="false"
+                    android:useDefaultMargins="false"
+                    android:alignmentMode="alignMargins">
+
+                    <include layout="@layout/item_pilar" />
+                    <include layout="@layout/item_pilar" />
+                    <include layout="@layout/item_pilar" />
+                </GridLayout>
+            </LinearLayout>
+
+
+            <!-- PILARES -->
+
+            <LinearLayout
+                android:id="@+id/layoutPilaresGrandes"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    <!-- Caixa de texto flutuante sobre o Toolbar -->
-    <TextView
-        android:id="@+id/caixaCriarPilar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|end"
-        android:layout_marginTop="56dp"
-        android:layout_marginEnd="16dp"
-        android:padding="8dp"
-        android:text="Criar novo pilar"
-        android:textColor="#FFFFFF"
-        android:background="@drawable/rounded_box"
-        android:visibility="gone" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pilares_"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="12dp"/>
 
-    <!-- Rodapé com botões -->
+                <include layout="@layout/item_pilar_grande" />
+                <include layout="@layout/item_pilar_grande" />
+                <include layout="@layout/item_pilar_grande" />
+                <include layout="@layout/item_pilar_grande" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- RODAPÉ FIXO -->
     <LinearLayout
-        android:id="@+id/rodape_com_botoes"
         android:layout_width="match_parent"
-        android:layout_height="81dp"
-        android:layout_gravity="bottom"
-        android:orientation="horizontal"
+        android:layout_height="100dp"
         android:background="#1C2A39"
-        android:padding="8dp"
-        android:gravity="center">
-
-        <ImageView
-            android:id="@+id/btnGraficos"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/graficos"
-            android:contentDescription="Gráficos"
-            android:layout_gravity="center"
-            android:padding="8dp" />
-
-        <ImageView
-            android:id="@+id/btnHome"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/home"
-            android:contentDescription="Home"
-            android:layout_gravity="center"
-            android:padding="8dp" />
-
-        <ImageView
-            android:id="@+id/btnAcoes"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/acoes"
-            android:contentDescription="Ações"
-            android:layout_gravity="center"
-            android:padding="8dp" />
-
-        <ImageView
-            android:id="@+id/btnNotificacoes"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/notificacao"
-            android:contentDescription="Notificações"
-            android:layout_gravity="center"
-            android:padding="8dp" />
-    </LinearLayout>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        android:layout_gravity="bottom" />
+</FrameLayout>

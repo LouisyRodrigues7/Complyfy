@@ -28,7 +28,7 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <!-- Nome do com.example.senacplanner.Pilar -->
+        <!-- Nome do Pilar -->
         <TextView
             android:id="@+id/textoPilarGrande"
             android:layout_width="wrap_content"

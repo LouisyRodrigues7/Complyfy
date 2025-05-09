@@ -7,7 +7,7 @@
 
     <LinearLayout
         android:layout_width="358dp"
-        android:layout_height="586dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="40dp"
         android:background="@android:color/white"
@@ -31,34 +31,25 @@
         <Spinner
             android:id="@+id/spinner_tipo_usuario"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/spinner_background"
-            android:popupBackground="@drawable/spinner_dropdown_background" />
-
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" />
 
         <!-- inputType para e-mail -->
         <EditText
             android:id="@+id/editText_login"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:hint="Digite seu e-mail"
-            android:inputType="textEmailAddress"
-            android:background="@drawable/edittext_focused"
-            android:paddingVertical="8dp"
-            android:paddingHorizontal="12dp" />
+            android:inputType="textEmailAddress" />
 
         <EditText
             android:id="@+id/editText_senha"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
             android:hint="@string/senha"
-            android:inputType="textPassword"
-            android:background="@drawable/edittext_focused"
-            android:paddingVertical="8dp"
-            android:paddingHorizontal="12dp" />
+            android:inputType="textPassword" />
 
         <Button
             android:id="@+id/button_entrar"
@@ -66,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:backgroundTint="#27AE60"
+            android:backgroundTint="#363636"
             android:text="@string/entrar"
             android:textColor="@android:color/white" />
     </LinearLayout>

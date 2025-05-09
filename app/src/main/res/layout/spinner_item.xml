@@ -11,4 +11,3 @@
     android:drawableEnd="@drawable/ic_arrow_drop_down_blue"
     android:drawableTint="@android:color/white"
     android:drawablePadding="8dp" />
-
