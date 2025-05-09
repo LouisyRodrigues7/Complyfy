@@ -36,7 +36,7 @@ class LoginActivity : AppCompatActivity() {
         databaseHelper = DatabaseHelper(this)
 
         botaoEntrar.setOnClickListener {
-            val tipoSelecionado = spinner.selectedItem.toString().lowercase()
+            val tipoSelecionado = spinner.selectedItem.toString();
             val login = editTextLogin.text.toString().trim()
 
             if (login.isEmpty()) {
@@ -46,7 +46,7 @@ class LoginActivity : AppCompatActivity() {
 
                 // Alteração: Remover a senha da consulta
                 val cursor: Cursor = db.rawQuery(
-                    "SELECT * FROM usuarios WHERE email = ? AND tipo = ?",
+                    "SELECT * FROM Usuario WHERE email = ? AND tipo = ?",
                     arrayOf(login, tipoSelecionado)
                 )
 
@@ -54,21 +54,24 @@ class LoginActivity : AppCompatActivity() {
 
                 if (cursor.moveToFirst()) {
                     val nomeUsuario = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
-
+                    val idUsuario = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
                     when (tipoSelecionado) {
-                        "coordenador" -> {
+                        "Coordenador" -> {
                             val intent = Intent(this, CoordenadorActivity::class.java)
                             intent.putExtra("NOME_USUARIO", nomeUsuario)
+                            intent.putExtra("ID_USUARIO", idUsuario)
                             startActivity(intent)
                         }
-                        "apoio" -> {
+                        "Apoio" -> {
                             val intent = Intent(this, ApoioActivity::class.java)
                             intent.putExtra("NOME_USUARIO", nomeUsuario)
+                            intent.putExtra("ID_USUARIO", idUsuario)
                             startActivity(intent)
                         }
-                        "gestor" -> {
+                        "Gestor" -> {
                             val intent = Intent(this, GestorActivity::class.java)
                             intent.putExtra("NOME_USUARIO", nomeUsuario)
+                            intent.putExtra("ID_USUARIO", idUsuario)
                             startActivity(intent)
                         }
                     }
