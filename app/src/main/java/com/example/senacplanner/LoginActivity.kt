@@ -42,9 +42,15 @@ class LoginActivity : AppCompatActivity() {
 
         // Ação do botão Entrar
         botaoEntrar.setOnClickListener {
-            val tipoSelecionado = spinner.selectedItem.toString().lowercase()
-            val login = editTextLogin.text.toString()
-            val senha = editTextSenha.text.toString()
+
+          
+        
+            val tipoSelecionado = spinner.selectedItem.toString();
+            val login = editTextLogin.text.toString().trim()
+
+          
+
+            
 
             if (login.isEmpty() || senha.isEmpty()) {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
@@ -53,28 +59,31 @@ class LoginActivity : AppCompatActivity() {
 
                 // Consulta no banco buscando por EMAIL agora, e não mais por NOME
                 val cursor: Cursor = db.rawQuery(
-                    "SELECT * FROM usuarios WHERE email = ? AND tipo = ?",
+                    "SELECT * FROM Usuario WHERE email = ? AND tipo = ?",
                     arrayOf(login, tipoSelecionado)
                 )
 
                 if (cursor.moveToFirst()) {
                     // Pegamos o NOME para enviar para próxima tela (mesmo logando pelo email)
                     val nomeUsuario = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
-
+                    val idUsuario = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
                     when (tipoSelecionado) {
-                        "coordenador" -> {
+                        "Coordenador" -> {
                             val intent = Intent(this, CoordenadorActivity::class.java)
                             intent.putExtra("NOME_USUARIO", nomeUsuario)
+                            intent.putExtra("ID_USUARIO", idUsuario)
                             startActivity(intent)
                         }
-                        "apoio" -> {
+                        "Apoio" -> {
                             val intent = Intent(this, ApoioActivity::class.java)
                             intent.putExtra("NOME_USUARIO", nomeUsuario)
+                            intent.putExtra("ID_USUARIO", idUsuario)
                             startActivity(intent)
                         }
-                        "gestor" -> {
+                        "Gestor" -> {
                             val intent = Intent(this, GestorActivity::class.java)
                             intent.putExtra("NOME_USUARIO", nomeUsuario)
+                            intent.putExtra("ID_USUARIO", idUsuario)
                             startActivity(intent)
                         }
                     }
