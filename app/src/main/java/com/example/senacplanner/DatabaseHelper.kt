@@ -1,16 +1,18 @@
 package com.example.senacplanner
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.example.senacplanner.Pilares.Type.PilarType
+import com.example.senacplanner.Pilares.Type.Usuario
 import java.io.FileOutputStream
 import java.io.IOException
 
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     companion object {
-        private const val DB_NAME = "banco_teste2.db"
+        private const val DB_NAME = "banco_teste10.db"
         private const val DB_VERSION = 1
     }
 
@@ -83,7 +85,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         if (cursor.moveToFirst()) {
             do {
                 val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
-                    val numero = cursor.getInt(cursor.getColumnIndexOrThrow("numero"))
+                val numero = cursor.getInt(cursor.getColumnIndexOrThrow("numero"))
                 val nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
                 val descricao = cursor.getString(cursor.getColumnIndexOrThrow("descricao"))
                 pilares.add(PilarType(id, numero, nome, descricao))
@@ -119,4 +121,67 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         cursor.close()
         return pilares
     }
+
+    fun listarResponsaveis(): List<Usuario> {
+        val lista = mutableListOf<Usuario>()
+        val db = this.readableDatabase
+        val cursor = db.rawQuery(
+            "SELECT * FROM Usuario WHERE tipo = 'Coordenador' OR tipo = 'Apoio'", null
+        )
+
+        if (cursor.moveToFirst()) {
+            do {
+                val usuario = Usuario(
+                    id = cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                    nome = cursor.getString(cursor.getColumnIndexOrThrow("nome")),
+                    tipo = cursor.getString(cursor.getColumnIndexOrThrow("tipo"))
+                )
+                lista.add(usuario)
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+        return lista
+    }
+
+    fun cadastrarPilar(
+        numero: Int,
+        nome: String,
+        descricao: String ? = null,
+        dataInicio: String,
+        dataConclusao: String,
+        criadoPorId: Int
+    ): Boolean {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("numero", numero)
+            put("nome", nome)
+            if (descricao != null) {
+                put("descricao", descricao)
+            } else {
+                putNull("descricao")
+            }
+            put("data_inicio", dataInicio)
+            put("data_conclusao", dataConclusao)
+            put("criado_por", criadoPorId)
+        }
+
+        val resultado = db.insert("Pilar", null, values)
+        db.close()
+        return resultado != -1L
+    }
+
+    fun obterProximoNumeroPilar(): Int {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT MAX(numero) as max_numero FROM Pilar", null)
+        var proximo = 1
+        if (cursor.moveToFirst()) {
+            proximo = cursor.getInt(cursor.getColumnIndexOrThrow("max_numero")) + 1
+        }
+        cursor.close()
+        db.close()
+        return proximo
+    }
+
 }

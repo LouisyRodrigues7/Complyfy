@@ -71,7 +71,7 @@
             <EditText
                 android:id="@+id/editTextDataInicio"
                 android:hint="Data de Início"
-                android:focusable="false"
+                android:focusable="true"
                 android:background="@drawable/edittext_background"
                 android:padding="12dp"
                 android:layout_marginBottom="16dp"
@@ -81,7 +81,7 @@
             <EditText
                 android:id="@+id/editTextDataConclusao"
                 android:hint="Data de Conclusão"
-                android:focusable="false"
+                android:focusable="true"
                 android:background="@drawable/edittext_background"
                 android:padding="12dp"
                 android:layout_marginBottom="16dp"

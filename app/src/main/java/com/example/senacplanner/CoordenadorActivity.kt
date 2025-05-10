@@ -1,5 +1,6 @@
 package com.example.senacplanner
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -12,11 +13,11 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.senacplanner.fragmentpilares.MeusPilaresFragment
 import com.example.senacplanner.fragmentpilares.TodosPilaresFragment
 import com.example.senacplanner.fragmentpilares.ViewPagerAdapter
+import com.example.senacplanner.novopilar.NovoPilarActivity
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class CoordenadorActivity : AppCompatActivity() {
-
     private lateinit var caixaCriarPilar: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,6 +26,9 @@ class CoordenadorActivity : AppCompatActivity() {
 
         // Recuperar nome do coordenador
         val nomeCoordenador = intent.getStringExtra("NOME_USUARIO") ?: "Coordenador"
+        //val sharedPref = getSharedPreferences("usuario_pref", MODE_PRIVATE)
+        //val nome = sharedPref.getString("nome_usuario", "Usuário")
+        //val id = sharedPref.getInt("id_usuario", -1)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.title = "Olá, $nomeCoordenador"
@@ -49,12 +53,21 @@ class CoordenadorActivity : AppCompatActivity() {
             toggleCaixaCriarPilar()
         }
 
+        caixaCriarPilar.setOnClickListener {
+            val intent = Intent(this, NovoPilarActivity::class.java)
+            startActivity(intent)
+        }
+
         val btnHome = findViewById<ImageView>(R.id.btnHome)
         btnHome.setOnClickListener {
             viewPager.setCurrentItem(0, true) // Volta para "Meus Pilares"
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        caixaCriarPilar.visibility = View.GONE
+    }
     private fun toggleCaixaCriarPilar() {
         caixaCriarPilar.visibility =
             if (caixaCriarPilar.visibility == View.GONE) View.VISIBLE else View.GONE
@@ -67,4 +80,5 @@ class CoordenadorActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return super.onOptionsItemSelected(item)
     }
+
 }

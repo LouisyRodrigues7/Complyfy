@@ -7,35 +7,52 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.senacplanner.DatabaseHelper
+import com.example.senacplanner.LoginActivity
 import com.example.senacplanner.Pilares.ListaAtividades
 import com.example.senacplanner.R
 
 class TodosPilaresFragment : Fragment() {
+
     private lateinit var databaseHelper: DatabaseHelper
-    // Lista simulada de todos os pilares do banco de dados
-    /*private val todosPilares = listOf(
-        "Avaliação de riscos",
-        "Código de conduta e ética e Políticas de Compliance",
-        "Controles internos",
-        "Investigações Internas",
-        "Transparência"
-    )*/
+    private lateinit var layout: LinearLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_lista_pilares, container, false)
-        val layout = view.findViewById<LinearLayout>(R.id.layoutListaPilares)
+        layout = view.findViewById(R.id.layoutListaPilares)
 
-        databaseHelper = DatabaseHelper(requireContext());
+        val idUsuario = requireActivity().intent.getIntExtra("ID_USUARIO", -1)
 
+        if (idUsuario == -1) {
+            Toast.makeText(requireContext(), "Sessão expirada. Faça login novamente.", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(requireContext(), LoginActivity::class.java))
+            requireActivity().finish()
+            return view
+        }
+
+        databaseHelper = DatabaseHelper(requireContext())
+
+        carregarPilares()
+
+        return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        carregarPilares()
+    }
+
+    private fun carregarPilares() {
+        layout.removeAllViews()
         val pilares = databaseHelper.getAllPilares()
 
-        pilares.forEachIndexed { index, pilar ->
-            val item = inflater.inflate(R.layout.item_pilar_grande, layout, false)
+        pilares.forEach { pilar ->
+            val item = layoutInflater.inflate(R.layout.item_pilar_grande, layout, false)
             item.findViewById<TextView>(R.id.numeroPilarGrande).text = pilar.numero.toString()
             item.findViewById<TextView>(R.id.textoPilarGrande).text = pilar.nome
 
@@ -48,7 +65,6 @@ class TodosPilaresFragment : Fragment() {
 
             layout.addView(item)
         }
-
-        return view
     }
 }
+
