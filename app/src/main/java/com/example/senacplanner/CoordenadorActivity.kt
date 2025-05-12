@@ -19,6 +19,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 class CoordenadorActivity : AppCompatActivity() {
     private lateinit var caixaCriarPilar: TextView
+    private lateinit var caixaEditarPilar: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,16 +47,23 @@ class CoordenadorActivity : AppCompatActivity() {
             tab.text = adapter.getPageTitle(position)
         }.attach()
 
+        // Botão e ações para "Criar Pilar"
         val btnAddPilar = findViewById<ImageView>(R.id.btnAddPilar)
         caixaCriarPilar = findViewById(R.id.caixaCriarPilar)
+        caixaEditarPilar = findViewById(R.id.caixaEditarPilar) //
 
         btnAddPilar.setOnClickListener {
             toggleCaixaCriarPilar()
+            toggleCaixaEditarPilar()
         }
 
         caixaCriarPilar.setOnClickListener {
             val intent = Intent(this, NovoPilarActivity::class.java)
             startActivity(intent)
+        }
+
+        caixaEditarPilar.setOnClickListener {
+
         }
 
         val btnHome = findViewById<ImageView>(R.id.btnHome)
@@ -67,10 +75,17 @@ class CoordenadorActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         caixaCriarPilar.visibility = View.GONE
+        caixaEditarPilar.visibility = View.GONE
     }
+
     private fun toggleCaixaCriarPilar() {
         caixaCriarPilar.visibility =
             if (caixaCriarPilar.visibility == View.GONE) View.VISIBLE else View.GONE
+    }
+
+    private fun toggleCaixaEditarPilar() {
+        caixaEditarPilar.visibility =
+            if (caixaEditarPilar.visibility == View.GONE) View.VISIBLE else View.GONE
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -80,5 +95,4 @@ class CoordenadorActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return super.onOptionsItemSelected(item)
     }
-
 }
