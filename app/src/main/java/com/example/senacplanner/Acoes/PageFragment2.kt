@@ -1,4 +1,4 @@
-package com.example.senacplanner.Pilares
+package com.example.senacplanner.Acoes
 
 import android.os.Bundle
 import android.view.LayoutInflater

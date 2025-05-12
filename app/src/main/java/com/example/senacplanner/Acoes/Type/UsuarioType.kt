@@ -1,4 +1,4 @@
-package com.example.senacplanner.Pilares.Type
+package com.example.senacplanner.Acoes.Type
 
 data class Usuario(
     val id: Int,

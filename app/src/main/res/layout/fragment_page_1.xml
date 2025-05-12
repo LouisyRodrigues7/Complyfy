@@ -23,7 +23,7 @@
             android:padding="16dp">
 
             <TextView
-                android:id="@+id/atividadePrincipal"
+                android:id="@+id/acaoPrincipal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Dispensa de licitação para contratação da empresa de consultoria"
@@ -43,7 +43,7 @@
                 android:gravity="center_vertical">
 
                 <CheckBox
-                    android:id="@+id/checkboxHomologacao"
+                    android:id="@+id/checkboxAtividade"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:theme="@style/CheckBoxThemeNoTint"
@@ -51,7 +51,7 @@
                     android:button="@drawable/rounded_checkbox"/>
 
                 <TextView
-                    android:id="@+id/textHomologacao"
+                    android:id="@+id/textAtividade"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Homologação da dispensa de licitação"

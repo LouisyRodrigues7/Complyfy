@@ -38,7 +38,7 @@
             android:name=".ApoioActivity"
             android:exported="false" />
         <activity
-            android:name=".Pilares.ListaAtividades"
+            android:name=".Acoes.ListaAtividades"
             android:exported="false" />
 
 

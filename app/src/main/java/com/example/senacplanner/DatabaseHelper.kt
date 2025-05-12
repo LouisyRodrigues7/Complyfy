@@ -4,15 +4,18 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.example.senacplanner.Pilares.Type.PilarType
-import com.example.senacplanner.Pilares.Type.Usuario
+import com.example.senacplanner.Acoes.Type.Acao
+import com.example.senacplanner.Acoes.Type.AcaoComAtividades
+import com.example.senacplanner.Acoes.Type.Atividade
+import com.example.senacplanner.Acoes.Type.PilarType
+import com.example.senacplanner.Acoes.Type.Usuario
 import java.io.FileOutputStream
 import java.io.IOException
 
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     companion object {
-        private const val DB_NAME = "banco_teste10.db"
+        private const val DB_NAME = "banco_teste14.db"
         private const val DB_VERSION = 1
     }
 
@@ -184,4 +187,57 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return proximo
     }
 
+    fun buscarAcoesEAtividadesPorPilar(pilarId: Int): List<AcaoComAtividades> {
+        val lista = mutableListOf<AcaoComAtividades>()
+        val db = this.readableDatabase
+
+        val queryAcao = "SELECT * FROM Acao WHERE pilar_id = ?"
+        val cursorAcao = db.rawQuery(queryAcao, arrayOf(pilarId.toString()))
+
+        while (cursorAcao.moveToNext()) {
+            val acaoId = cursorAcao.getInt(cursorAcao.getColumnIndexOrThrow("id"))
+            val nomeAcao = cursorAcao.getString(cursorAcao.getColumnIndexOrThrow("nome"))
+
+            val queryAtividades = "SELECT * FROM Atividade WHERE acao_id = ?"
+            val cursorAtividades = db.rawQuery(queryAtividades, arrayOf(acaoId.toString()))
+
+            val atividades = mutableListOf<Atividade>()
+            while (cursorAtividades.moveToNext()) {
+                val idAtividade = cursorAtividades.getInt(cursorAtividades.getColumnIndexOrThrow("id"))
+                val nomeAtividade = cursorAtividades.getString(cursorAtividades.getColumnIndexOrThrow("nome"))
+                atividades.add(Atividade(idAtividade, nome = nomeAtividade))
+            }
+            cursorAtividades.close()
+
+            lista.add(AcaoComAtividades(Acao(id = acaoId, nome = nomeAcao), atividades))
+        }
+
+        cursorAcao.close()
+        db.close()
+        return lista
+    }
+
+    fun buscarResponsavelPorAtividade(atividadeId: Int): Usuario? {
+        val db = readableDatabase
+        val cursor = db.rawQuery("""
+        SELECT u.id, u.nome, u.tipo 
+        FROM Usuario u
+        INNER JOIN Atividade a ON u.id = a.responsavel_id
+        WHERE a.id = ?
+    """.trimIndent(), arrayOf(atividadeId.toString()))
+
+        return if (cursor.moveToFirst()) {
+            Usuario(
+                id = cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                nome = cursor.getString(cursor.getColumnIndexOrThrow("nome")),
+                tipo = cursor.getString(cursor.getColumnIndexOrThrow("tipo")),
+            ).also { cursor.close(); db.close() }
+        } else {
+            null.also { cursor.close(); db.close() }
+        }
+    }
+
 }
+
+
+

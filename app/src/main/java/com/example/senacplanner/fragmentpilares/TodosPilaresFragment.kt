@@ -11,7 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.senacplanner.DatabaseHelper
 import com.example.senacplanner.LoginActivity
-import com.example.senacplanner.Pilares.ListaAtividades
+import com.example.senacplanner.Acoes.ListaAtividades
 import com.example.senacplanner.R
 
 class TodosPilaresFragment : Fragment() {
@@ -56,12 +56,13 @@ class TodosPilaresFragment : Fragment() {
             item.findViewById<TextView>(R.id.numeroPilarGrande).text = pilar.numero.toString()
             item.findViewById<TextView>(R.id.textoPilarGrande).text = pilar.nome
 
-            if (pilar.nome == "Avaliação de Riscos") {
                 item.setOnClickListener {
                     val intent = Intent(requireContext(), ListaAtividades::class.java)
+                    intent.putExtra("PILAR_ID", pilar.id)
+                    intent.putExtra("PILAR_NUMERO", pilar.numero)
+                    intent.putExtra("PILAR_NOME", pilar.nome)
                     startActivity(intent)
                 }
-            }
 
             layout.addView(item)
         }
