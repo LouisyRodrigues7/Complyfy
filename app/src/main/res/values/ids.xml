@@ -9,4 +9,5 @@
     <item name="btnHome" type="id" />
     <item name="btnAcoes" type="id" />
     <item name="btnNotificacoes" type="id" />
+    <item name="caixaEditarPilar" type="id" />
 </resources>
