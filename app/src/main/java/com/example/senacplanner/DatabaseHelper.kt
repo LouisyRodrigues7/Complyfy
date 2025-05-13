@@ -155,7 +155,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         dataInicio: String,
         dataConclusao: String,
         criadoPorId: Int
-    ): Boolean {
+    ): Long {
         val db = this.writableDatabase
         val values = ContentValues().apply {
             put("numero", numero)
@@ -171,6 +171,17 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         }
 
         val resultado = db.insert("Pilar", null, values)
+        db.close()
+        return resultado;
+    }
+
+    fun vincularUsuarioAoPilar(usuarioId: Int, pilarId: Long): Boolean {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("usuario_id", usuarioId)
+            put("pilar_id", pilarId)
+        }
+        val resultado = db.insert("UsuarioPilar", null, values)
         db.close()
         return resultado != -1L
     }
