@@ -8,9 +8,11 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.senacplanner.DatabaseHelper
 import com.example.senacplanner.Pilares.Type.Usuario
 import com.example.senacplanner.R
+import com.example.senacplanner.DatabaseHelper
+import android.content.Intent
+import com.example.senacplanner.Pilares.CriarAtividadeActivity
 
 class NovoPilarActivity : AppCompatActivity() {
 
@@ -47,6 +49,10 @@ class NovoPilarActivity : AppCompatActivity() {
             val dataConclusao = editTextDataConclusao.text.toString()
             val usuarioSelecionado = spinnerResponsavel.selectedItem as Usuario
             val criadoPorId = usuarioSelecionado.id
+            val intent = Intent(this, CriarAtividadeActivity::class.java)
+            intent.putExtra("criadoPorId", criadoPorId)
+            startActivity(intent)
+
 
             if (nome.isBlank() || dataInicio.isBlank() || dataConclusao.isBlank()) {
                 Toast.makeText(this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show()

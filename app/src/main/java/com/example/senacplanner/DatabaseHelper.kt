@@ -8,6 +8,8 @@ import com.example.senacplanner.Pilares.Type.PilarType
 import com.example.senacplanner.Pilares.Type.Usuario
 import java.io.FileOutputStream
 import java.io.IOException
+import android.util.Log
+
 
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
@@ -184,4 +186,82 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return proximo
     }
 
+    fun salvarAtividade(titulo: String, descricao: String, acaoId: Int, criadoPorId: Int): Boolean {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("nome", titulo)  // Corrigido de "titulo" para "nome"
+            put("descricao", descricao)
+            put("acao_id", acaoId)  // Certifique-se de passar o valor correto para 'acao_id'
+            put("data_inicio", "2025-05-10") // Exemplo, defina um valor adequado
+            put("criado_por", criadoPorId)  // Certifique-se de passar o valor correto para 'criado_por'
+            put("status", "Em andamento")  // Defina o status de acordo com a lógica do seu app
+        }
+
+        val resultado = db.insert("Atividade", null, values)
+
+        if (resultado == -1L) {
+            // Log do erro para o Logcat
+            Log.e("DatabaseError", "Erro ao salvar atividade. Código de erro: $resultado")
+            db.close()
+            return false
+        }
+
+        db.close()
+        return true
+    }
+
+    fun getAcoes(): List<String> {
+        val acoes = mutableListOf<String>()
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT nome FROM Acao", null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val nomeAcao = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+                acoes.add(nomeAcao)
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+        return acoes
+    }
+
+    fun getAcaoIdByNome(nome: String): Int {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT id FROM Acao WHERE nome = ?", arrayOf(nome))
+
+        var id = -1
+        if (cursor.moveToFirst()) {
+            id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+        }
+
+        cursor.close()
+        db.close()
+        return id
+    }
+
+    fun listarTabelas(): List<String> {
+        val tabelas = mutableListOf<String>()
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val nomeTabela = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                tabelas.add(nomeTabela)
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+        return tabelas
+    }
+
+
+
+
 }
+
+
+

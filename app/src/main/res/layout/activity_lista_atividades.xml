@@ -7,9 +7,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context="com.example.senacplanner.Pilares.ListaAtividades">
+    tools:context="com.example.senacplanner.Pilares.ListaAtividadesActivity">
 
-    <androidx.appcompat.widget.Toolbar
+
+<androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,7 +27,7 @@
         android:id="@+id/atividadesTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Atividades"
+        android:text="Ações"
         android:textColor="#132136"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -41,7 +42,44 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/rodape_com_botoes"
         app:layout_constraintHeight_percent="0.82"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="1.0"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <!-- res/layout/item_atividade.xml -->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/textTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/textDescricao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"/>
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/btnAdicionarAtividade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="Adicionar Atividade"
+        app:layout_constraintBottom_toBottomOf="@+id/rodape_com_botoes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" /> <!-- Ajustando a posição para o rodapé -->
+
+
 
     <!-- Rodapé com botões -->
     <LinearLayout

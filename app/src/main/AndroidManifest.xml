@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.senacplanner">
@@ -37,11 +36,19 @@
         <activity
             android:name=".ApoioActivity"
             android:exported="false" />
+
+        <!-- Lista de Atividades -->
         <activity
-            android:name=".Pilares.ListaAtividades"
-            android:exported="false" />
+            android:name=".Pilares.ListaAtividadesActivity"
+            android:exported="true" />
+
+        <!-- Criar Atividade -->
+        <activity
+            android:name=".Pilares.CriarAtividadeActivity"
+            android:exported="true" />
 
 
     </application>
 
 </manifest>
+

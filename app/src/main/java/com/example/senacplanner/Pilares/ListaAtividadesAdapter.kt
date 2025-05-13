@@ -4,6 +4,13 @@ package com.example.senacplanner.Pilares
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.example.senacplanner.R
+
 
 class ListaAtividadesAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
 
@@ -18,3 +25,5 @@ class ListaAtividadesAdapter(activity: FragmentActivity) : FragmentStateAdapter(
         }
     }
 }
+
+

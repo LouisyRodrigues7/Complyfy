@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import com.example.senacplanner.DatabaseHelper
-import com.example.senacplanner.Pilares.ListaAtividades
+import com.example.senacplanner.Pilares.ListaAtividadesActivity
 import com.example.senacplanner.R
+import com.example.senacplanner.DatabaseHelper
 
 class MeusPilaresFragment : Fragment() {
     private lateinit var databaseHelper: DatabaseHelper
@@ -39,7 +39,7 @@ class MeusPilaresFragment : Fragment() {
 
             if (pilar.nome == "Avaliação de Riscos") {
                 item.setOnClickListener {
-                    val intent = Intent(requireContext(), ListaAtividades::class.java)
+                    val intent = Intent(requireContext(), ListaAtividadesActivity::class.java)
                     startActivity(intent)
                 }
             }
