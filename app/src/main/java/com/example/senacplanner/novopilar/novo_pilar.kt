@@ -127,7 +127,8 @@ class NovoPilarActivity : AppCompatActivity() {
         )
 
         // Exibe uma mensagem com base no resultado da operação
-        if (sucesso) {
+        if (sucesso != -1L) {
+            databaseHelper.vincularUsuarioAoPilar(usuarioSelecionado.id, sucesso)
             Toast.makeText(this, "Pilar cadastrado com sucesso!", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, "Erro ao cadastrar pilar.", Toast.LENGTH_SHORT).show()
