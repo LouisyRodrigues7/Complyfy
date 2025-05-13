@@ -97,6 +97,7 @@ class NovoPilarActivity : AppCompatActivity() {
         btnConfirmar.setOnClickListener {
             cadastrarPilar()
             alertDialog.dismiss()
+            finish()
         }
 
         alertDialog.show()
@@ -120,8 +121,8 @@ class NovoPilarActivity : AppCompatActivity() {
             numero,
             nome,
             null,
-            dataInicio,
-            dataConclusao,
+            converterParaFormatoBanco(dataInicio),
+            converterParaFormatoBanco(dataConclusao),
             usuarioSelecionado.id
         )
 
@@ -133,5 +134,16 @@ class NovoPilarActivity : AppCompatActivity() {
         }
 
         Toast.makeText(this, "Responsável: ${usuarioSelecionado.nome}", Toast.LENGTH_SHORT).show()
+    }
+
+    fun converterParaFormatoBanco(dataBR: String): String {
+        return try {
+            val formatoBR = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val formatoBanco = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val data = formatoBR.parse(dataBR)
+            if (data != null) formatoBanco.format(data) else ""
+        } catch (e: Exception) {
+            ""
+        }
     }
 }

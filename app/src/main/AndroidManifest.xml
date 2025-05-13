@@ -13,18 +13,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TelaLogin"
         tools:targetApi="31">
-
+        <activity
+            android:name=".editarpilar.EditarActivity"
+            android:exported="false" />
         <!-- Tela principal (Login) -->
         <activity
             android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- Outras telas -->
+        </activity> <!-- Outras telas -->
         <activity
             android:name=".novopilar.NovoPilarActivity"
             android:exported="true" />
@@ -40,7 +41,6 @@
         <activity
             android:name=".Acoes.ListaAtividades"
             android:exported="false" />
-
 
     </application>
 

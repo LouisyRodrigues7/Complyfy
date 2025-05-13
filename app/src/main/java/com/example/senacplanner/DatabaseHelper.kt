@@ -15,7 +15,7 @@ import java.io.IOException
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     companion object {
-        private const val DB_NAME = "banco_teste14.db"
+        private const val DB_NAME = "banco_teste15.db"
         private const val DB_VERSION = 1
     }
 
@@ -235,6 +235,38 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         } else {
             null.also { cursor.close(); db.close() }
         }
+    }
+
+    fun getDatasPilarById(id: Int): Triple<String, String, String>? {
+        val db = getDatabase()
+        val cursor = db.rawQuery("SELECT nome, data_inicio, data_conclusao FROM Pilar WHERE id = ?", arrayOf(id.toString()))
+
+        var resultado: Triple<String, String, String>? = null
+        if (cursor.moveToFirst()) {
+            val nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+            val dataInicio = cursor.getString(cursor.getColumnIndexOrThrow("data_inicio"))
+            val dataConclusao = cursor.getString(cursor.getColumnIndexOrThrow("data_conclusao"))
+            resultado = Triple(nome, dataInicio, dataConclusao)
+        }
+
+        cursor.close()
+        return resultado
+    }
+
+    fun atualizarPilar(id: Int, novoNome: String, novaDataInicio: String, novaDataConclusao: String) {
+        val db = getDatabase()
+        val values = ContentValues().apply {
+            put("nome", novoNome)
+            put("data_inicio", novaDataInicio)
+            put("data_conclusao", novaDataConclusao)
+        }
+        db.update("Pilar", values, "id = ?", arrayOf(id.toString()))
+    }
+
+    fun excluirPilar(id: Int): Boolean {
+        val db = writableDatabase
+        val rowsDeleted = db.delete("Pilar", "id = ?", arrayOf(id.toString()))
+        return rowsDeleted > 0
     }
 
 }

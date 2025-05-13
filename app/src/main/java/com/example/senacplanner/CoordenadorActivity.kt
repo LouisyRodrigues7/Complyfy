@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.viewpager2.widget.ViewPager2
+import com.example.senacplanner.editarpilar.EditarActivity
 import com.example.senacplanner.fragmentpilares.MeusPilaresFragment
 import com.example.senacplanner.fragmentpilares.TodosPilaresFragment
 import com.example.senacplanner.fragmentpilares.ViewPagerAdapter
@@ -63,7 +64,8 @@ class CoordenadorActivity : AppCompatActivity() {
         }
 
         caixaEditarPilar.setOnClickListener {
-
+            val intent = Intent(this, EditarActivity::class.java)
+            startActivity(intent)
         }
 
         val btnHome = findViewById<ImageView>(R.id.btnHome)

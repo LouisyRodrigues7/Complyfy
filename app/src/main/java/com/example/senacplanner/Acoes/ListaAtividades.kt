@@ -28,6 +28,9 @@ class ListaAtividades : AppCompatActivity() {
 
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         toolbar.title = "Pilar $pilarNumero - $pilarNome"
+        toolbar.setNavigationOnClickListener {
+            finish()
+        }
     }
 }
 
