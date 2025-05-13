@@ -14,40 +14,46 @@ import com.example.senacplanner.R
 
 class MeusPilaresFragment : Fragment() {
     private lateinit var databaseHelper: DatabaseHelper
-    /*private val pilaresUsuario = listOf(
-        "Avaliação de riscos",
-        "Controles internos",
-        "Código de conduta e ética e Políticas de Compliance"
-    )*/
+    private lateinit var layout: LinearLayout
+    private var idUsuario: Int = -1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_lista_pilares, container, false)
-        val layout = view.findViewById<LinearLayout>(R.id.layoutListaPilares)
+        layout = view.findViewById<LinearLayout>(R.id.layoutListaPilares)
 
         databaseHelper = DatabaseHelper(requireContext());
-        val idUsuario = requireActivity().intent.getIntExtra("ID_USUARIO", -1)
-        val pilaresDoUsuario = databaseHelper.getPilaresByUsuarioId(idUsuario);
+        idUsuario = requireActivity().intent.getIntExtra("ID_USUARIO", -1)
+        carregarPilaresDoUsuario(inflater)
+        return view
+    }
 
-        pilaresDoUsuario.forEachIndexed { index, pilar ->
+    override fun onResume() {
+        super.onResume()
+        carregarPilaresDoUsuario(layoutInflater)
+    }
+
+    private fun carregarPilaresDoUsuario(inflater: LayoutInflater) {
+        layout.removeAllViews()
+
+        val pilaresDoUsuario = databaseHelper.getPilaresByUsuarioId(idUsuario)
+        pilaresDoUsuario.forEach { pilar ->
             val item = inflater.inflate(R.layout.item_pilar_grande, layout, false)
             item.findViewById<TextView>(R.id.numeroPilarGrande).text = pilar.numero.toString()
-            val textoPilar = item.findViewById<TextView>(R.id.textoPilarGrande)
-            textoPilar.text = pilar.nome
+            item.findViewById<TextView>(R.id.textoPilarGrande).text = pilar.nome
 
-                item.setOnClickListener {
-                    val intent = Intent(requireContext(), ListaAtividades::class.java)
-                    intent.putExtra("PILAR_ID", pilar.id)
-                    intent.putExtra("PILAR_NUMERO", pilar.numero)
-                    intent.putExtra("PILAR_NOME", pilar.nome)
-                    startActivity(intent)
-                }
+            item.setOnClickListener {
+                val intent = Intent(requireContext(), ListaAtividades::class.java)
+                intent.putExtra("PILAR_ID", pilar.id)
+                intent.putExtra("PILAR_NUMERO", pilar.numero)
+                intent.putExtra("PILAR_NOME", pilar.nome)
+                startActivity(intent)
+            }
 
             layout.addView(item)
         }
-
-        return view
     }
+
 }
