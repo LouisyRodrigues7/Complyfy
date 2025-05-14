@@ -31,6 +31,7 @@ class CoordenadorActivity : AppCompatActivity() {
         //val sharedPref = getSharedPreferences("usuario_pref", MODE_PRIVATE)
         //val nome = sharedPref.getString("nome_usuario", "Usuário")
         //val id = sharedPref.getInt("id_usuario", -1)
+        val idUsuario = intent.getIntExtra("ID_USUARIO", -1)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.title = "Olá, $nomeCoordenador"
@@ -51,7 +52,7 @@ class CoordenadorActivity : AppCompatActivity() {
         // Botão e ações para "Criar Pilar"
         val btnAddPilar = findViewById<ImageView>(R.id.btnAddPilar)
         caixaCriarPilar = findViewById(R.id.caixaCriarPilar)
-        caixaEditarPilar = findViewById(R.id.caixaEditarPilar) //
+        caixaEditarPilar = findViewById(R.id.caixaEditarPilar)
 
         btnAddPilar.setOnClickListener {
             toggleCaixaCriarPilar()
@@ -71,6 +72,14 @@ class CoordenadorActivity : AppCompatActivity() {
         val btnHome = findViewById<ImageView>(R.id.btnHome)
         btnHome.setOnClickListener {
             viewPager.setCurrentItem(0, true) // Volta para "Meus Pilares"
+        }
+
+        // 🔔 Ação para botão de notificações
+        val btnNotificacoes = findViewById<ImageView>(R.id.btnNotificacoes)
+        btnNotificacoes.setOnClickListener {
+            val intent = Intent(this, NotificacoesActivity::class.java)
+            intent.putExtra("ID_USUARIO", idUsuario)
+            startActivity(intent)
         }
     }
 
