@@ -15,7 +15,7 @@ import java.io.IOException
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     companion object {
-        private const val DB_NAME = "banco_teste15.db"
+        private const val DB_NAME = "banco_teste17.db"
         private const val DB_VERSION = 1
     }
 
