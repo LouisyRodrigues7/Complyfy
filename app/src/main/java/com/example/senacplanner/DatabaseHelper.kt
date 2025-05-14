@@ -15,7 +15,7 @@ import java.io.IOException
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     companion object {
-        private const val DB_NAME = "banco_teste15.db"
+        private const val DB_NAME = "banco_teste17.db"
         private const val DB_VERSION = 1
     }
 
@@ -54,7 +54,6 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         outputStream.close()
         inputStream.close()
     }
-
     // O método onCreate foi alterado para não recriar a tabela, já que o banco de dados já está copiado
     override fun onCreate(db: SQLiteDatabase?) {
         // Não é necessário recriar a tabela, já que ela já existe no arquivo copiado
@@ -99,16 +98,15 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return pilares
     }
 
-
     fun getPilaresByUsuarioId(usuarioId: Int): List<PilarType> {
         val pilares = mutableListOf<PilarType>()
         val db = getDatabase()
         val query = """
-        SELECT p.id, p.numero, p.nome, p.descricao
-        FROM Pilar p
-        JOIN UsuarioPilar up ON p.id = up.pilar_id
-        WHERE up.usuario_id = ?
-    """
+            SELECT p.id, p.numero, p.nome, p.descricao
+            FROM Pilar p
+            JOIN UsuarioPilar up ON p.id = up.pilar_id
+            WHERE up.usuario_id = ?
+        """
         val cursor = db.rawQuery(query, arrayOf(usuarioId.toString()))
 
         if (cursor.moveToFirst()) {
@@ -151,7 +149,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     fun cadastrarPilar(
         numero: Int,
         nome: String,
-        descricao: String ? = null,
+        descricao: String? = null,
         dataInicio: String,
         dataConclusao: String,
         criadoPorId: Int
@@ -172,18 +170,42 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
 
         val resultado = db.insert("Pilar", null, values)
         db.close()
-        return resultado;
+        return resultado
     }
 
     fun vincularUsuarioAoPilar(usuarioId: Int, pilarId: Long): Boolean {
-        val db = this.writableDatabase
+        val db = writableDatabase
         val values = ContentValues().apply {
             put("usuario_id", usuarioId)
             put("pilar_id", pilarId)
         }
         val resultado = db.insert("UsuarioPilar", null, values)
+
+        if (resultado != -1L) {
+            val cursor = db.rawQuery("SELECT nome FROM Pilar WHERE id = ?", arrayOf(pilarId.toString()))
+            if (cursor.moveToFirst()) {
+                val nomePilar = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+                val mensagem = "Você foi designado ao Pilar: $nomePilar"
+                criarNotificacaoParaUsuario(usuarioId, mensagem)
+            }
+            cursor.close()
+        }
+
         db.close()
         return resultado != -1L
+    }
+
+    fun criarNotificacaoParaUsuario(usuarioId: Int, mensagem: String, atividadeId: Int? = null) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("usuario_id", usuarioId)
+            put("mensagem", mensagem)
+            put("data", System.currentTimeMillis().toString())
+            put("lida", 0)
+            if (atividadeId != null) put("atividade_id", atividadeId)
+        }
+        db.insert("Notificacao", null, values)
+        db.close()
     }
 
     fun obterProximoNumeroPilar(): Int {
@@ -231,11 +253,11 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     fun buscarResponsavelPorAtividade(atividadeId: Int): Usuario? {
         val db = readableDatabase
         val cursor = db.rawQuery("""
-        SELECT u.id, u.nome, u.tipo 
-        FROM Usuario u
-        INNER JOIN Atividade a ON u.id = a.responsavel_id
-        WHERE a.id = ?
-    """.trimIndent(), arrayOf(atividadeId.toString()))
+            SELECT u.id, u.nome, u.tipo 
+            FROM Usuario u
+            INNER JOIN Atividade a ON u.id = a.responsavel_id
+            WHERE a.id = ?
+        """.trimIndent(), arrayOf(atividadeId.toString()))
 
         return if (cursor.moveToFirst()) {
             Usuario(
@@ -279,8 +301,4 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         val rowsDeleted = db.delete("Pilar", "id = ?", arrayOf(id.toString()))
         return rowsDeleted > 0
     }
-
 }
-
-
-

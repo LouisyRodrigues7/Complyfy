@@ -26,14 +26,13 @@ class CoordenadorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_coordenador)
 
-        // Recuperar nome do coordenador
-        val nomeCoordenador = intent.getStringExtra("NOME_USUARIO") ?: "Coordenador"
-        //val sharedPref = getSharedPreferences("usuario_pref", MODE_PRIVATE)
-        //val nome = sharedPref.getString("nome_usuario", "Usuário")
-        //val id = sharedPref.getInt("id_usuario", -1)
+        // Recuperar nome do usuário
+        val nomeUsuario = intent.getStringExtra("NOME_USUARIO")
+        val idUsuario = intent.getIntExtra("ID_USUARIO", -1)
+        val tipoUsuario = intent.getStringExtra("TIPO_USUARIO")
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        toolbar.title = "Olá, $nomeCoordenador"
+        toolbar.title = "Olá, $nomeUsuario"
         setSupportActionBar(toolbar)
 
         val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
@@ -48,10 +47,13 @@ class CoordenadorActivity : AppCompatActivity() {
             tab.text = adapter.getPageTitle(position)
         }.attach()
 
-        // Botão e ações para "Criar Pilar"
         val btnAddPilar = findViewById<ImageView>(R.id.btnAddPilar)
         caixaCriarPilar = findViewById(R.id.caixaCriarPilar)
-        caixaEditarPilar = findViewById(R.id.caixaEditarPilar) //
+        caixaEditarPilar = findViewById(R.id.caixaEditarPilar)
+
+        if (tipoUsuario == "Apoio") {
+            btnAddPilar.visibility = View.GONE
+        }
 
         btnAddPilar.setOnClickListener {
             toggleCaixaCriarPilar()
@@ -71,6 +73,14 @@ class CoordenadorActivity : AppCompatActivity() {
         val btnHome = findViewById<ImageView>(R.id.btnHome)
         btnHome.setOnClickListener {
             viewPager.setCurrentItem(0, true) // Volta para "Meus Pilares"
+        }
+
+        // 🔔 Ação para botão de notificações
+        val btnNotificacoes = findViewById<ImageView>(R.id.btnNotificacoes)
+        btnNotificacoes.setOnClickListener {
+            val intent = Intent(this, NotificacoesActivity::class.java)
+            intent.putExtra("ID_USUARIO", idUsuario)
+            startActivity(intent)
         }
     }
 

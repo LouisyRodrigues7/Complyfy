@@ -56,16 +56,11 @@ class LoginActivity : AppCompatActivity() {
                     val nomeUsuario = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
                     val idUsuario = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
                     when (tipoSelecionado) {
-                        "Coordenador" -> {
+                        "Coordenador", "Apoio" -> {
                             val intent = Intent(this, CoordenadorActivity::class.java)
                             intent.putExtra("NOME_USUARIO", nomeUsuario)
                             intent.putExtra("ID_USUARIO", idUsuario)
-                            startActivity(intent)
-                        }
-                        "Apoio" -> {
-                            val intent = Intent(this, ApoioActivity::class.java)
-                            intent.putExtra("NOME_USUARIO", nomeUsuario)
-                            intent.putExtra("ID_USUARIO", idUsuario)
+                            intent.putExtra("TIPO_USUARIO", tipoSelecionado)
                             startActivity(intent)
                         }
                         "Gestor" -> {

@@ -42,6 +42,8 @@
             android:name=".Acoes.ListaAtividades"
             android:exported="false" />
 
+        <activity android:name=".NotificacoesActivity" />
+
     </application>
 
 </manifest>
