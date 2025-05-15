@@ -110,7 +110,6 @@ class NovoPilarActivity : AppCompatActivity() {
         val dataConclusao = editTextDataConclusao.text.toString()
         val usuarioSelecionado = spinnerResponsavel.selectedItem as? Usuario
 
-        // Verifica se os campos obrigatórios foram preenchidos
         if (nome.isBlank() || dataInicio.isBlank() || dataConclusao.isBlank() || usuarioSelecionado == null) {
             Toast.makeText(this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show()
             return
@@ -121,12 +120,11 @@ class NovoPilarActivity : AppCompatActivity() {
             numero,
             nome,
             null,
-            converterParaFormatoBanco(dataInicio),
-            converterParaFormatoBanco(dataConclusao),
+            converterParaMillis(dataInicio),
+            converterParaMillis(dataConclusao),
             usuarioSelecionado.id
         )
 
-        // Exibe uma mensagem com base no resultado da operação
         if (sucesso != -1L) {
             databaseHelper.vincularUsuarioAoPilar(usuarioSelecionado.id, sucesso)
             Toast.makeText(this, "Pilar cadastrado com sucesso!", Toast.LENGTH_SHORT).show()
@@ -137,12 +135,12 @@ class NovoPilarActivity : AppCompatActivity() {
         Toast.makeText(this, "Responsável: ${usuarioSelecionado.nome}", Toast.LENGTH_SHORT).show()
     }
 
-    fun converterParaFormatoBanco(dataBR: String): String {
+    // ✅ NOVA CONVERSÃO PARA FORMATAR COMO MILLIS
+    private fun converterParaMillis(dataBR: String): String {
         return try {
-            val formatoBR = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-            val formatoBanco = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val data = formatoBR.parse(dataBR)
-            if (data != null) formatoBanco.format(data) else ""
+            val formato = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val data = formato.parse(dataBR)
+            data?.time?.toString() ?: ""
         } catch (e: Exception) {
             ""
         }

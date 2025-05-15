@@ -9,9 +9,9 @@
         <item name="android:padding">12dp</item>
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:textSize">16sp</item>
-        <style name="CheckBoxThemeNoTint"></style>
     </style>
 
+    <style name="CheckBoxThemeNoTint" parent="Theme.AppCompat.Light">
 
-
+    </style>
 </resources>

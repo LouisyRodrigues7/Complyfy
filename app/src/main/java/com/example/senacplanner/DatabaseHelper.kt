@@ -270,6 +270,79 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         }
     }
 
+    fun verificarNotificacoesDePilaresProximos() {
+        val db = getDatabase()
+        val diasAlvo = listOf(7, 3)
+        val milisPorDia = 24 * 60 * 60 * 1000L
+        val agora = System.currentTimeMillis()
+
+        for (dias in diasAlvo) {
+            val alvoMillis = agora + dias * milisPorDia
+
+            val cursorPilares = db.rawQuery(
+                """
+            SELECT id, nome, data_conclusao FROM Pilar
+            WHERE data_conclusao IS NOT NULL
+            """, null
+            )
+
+            while (cursorPilares.moveToNext()) {
+                val pilarId = cursorPilares.getInt(cursorPilares.getColumnIndexOrThrow("id"))
+                val nomePilar = cursorPilares.getString(cursorPilares.getColumnIndexOrThrow("nome"))
+                val dataConclusaoStr = cursorPilares.getString(cursorPilares.getColumnIndexOrThrow("data_conclusao"))
+                val dataConclusaoMillis = dataConclusaoStr.toLongOrNull() ?: continue
+
+
+                val diferenca = kotlin.math.abs(dataConclusaoMillis - alvoMillis)
+                if (diferenca <= 12 * 60 * 60 * 1000) {
+                    notificarUsuariosDoPilarProximo(pilarId, nomePilar, dias)
+                }
+            }
+
+            cursorPilares.close()
+        }
+    }
+
+    private fun notificarUsuariosDoPilarProximo(pilarId: Int, nomePilar: String, diasRestantes: Int) {
+        val db = getDatabase()
+
+        val cursor = db.rawQuery(
+            "SELECT usuario_id FROM UsuarioPilar WHERE pilar_id = ?",
+            arrayOf(pilarId.toString())
+        )
+
+        val mensagem = "Fique atento! O pilar \"$nomePilar\" precisa ser concluído em $diasRestantes dias."
+        val dataAtual = System.currentTimeMillis().toString()
+
+        while (cursor.moveToNext()) {
+            val usuarioId = cursor.getInt(cursor.getColumnIndexOrThrow("usuario_id"))
+
+            // Verifica se notificação já existe para evitar duplicatas
+            val cursorCheck = db.rawQuery(
+                """
+            SELECT id FROM Notificacao 
+            WHERE usuario_id = ? AND mensagem = ? AND ABS(CAST(data AS INTEGER) - ?) < 86400000
+            """.trimIndent(),
+                arrayOf(usuarioId.toString(), mensagem, dataAtual)
+            )
+
+            if (!cursorCheck.moveToFirst()) {
+                val values = ContentValues().apply {
+                    put("usuario_id", usuarioId)
+                    put("mensagem", mensagem)
+                    put("data", dataAtual)
+                    put("lida", 0)
+                }
+                db.insert("Notificacao", null, values)
+            }
+
+            cursorCheck.close()
+        }
+
+        cursor.close()
+    }
+
+
     fun getDatasPilarById(id: Int): Triple<String, String, String>? {
         val db = getDatabase()
         val cursor = db.rawQuery("SELECT nome, data_inicio, data_conclusao FROM Pilar WHERE id = ?", arrayOf(id.toString()))
