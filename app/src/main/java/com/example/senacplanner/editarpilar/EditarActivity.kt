@@ -9,20 +9,14 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
-import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.example.senacplanner.Acoes.Type.PilarType
 import com.example.senacplanner.DatabaseHelper
 import com.example.senacplanner.R
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 class EditarActivity : AppCompatActivity() {
@@ -116,7 +110,6 @@ class EditarActivity : AppCompatActivity() {
         val spinner = findViewById<Spinner>(R.id.spinnerPilar)
         spinner.adapter = adapter
 
-
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 val pilarSelecionado = pilares[position]
@@ -160,13 +153,22 @@ class EditarActivity : AppCompatActivity() {
         }
     }
 
+    // Correção aqui: trata timestamp e datas ISO
     fun formatarDataParaBR(dataISO: String): String {
-        val formatoEntrada = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val formatoSaida = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        val data = formatoEntrada.parse(dataISO)
-        return formatoSaida.format(data!!)
+        return try {
+            val timestamp = dataISO.toLongOrNull()
+            val data: Date? = if (timestamp != null) {
+                Date(timestamp)
+            } else {
+                val formatoEntrada = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                formatoEntrada.parse(dataISO)
+            }
+            val formatoSaida = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            if (data != null) formatoSaida.format(data) else ""
+        } catch (e: Exception) {
+            ""
+        }
     }
-
 
     fun converterParaFormatoBanco(dataBR: String): String {
         return try {
@@ -178,6 +180,4 @@ class EditarActivity : AppCompatActivity() {
             ""
         }
     }
-
 }
-
