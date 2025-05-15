@@ -12,9 +12,9 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <!-- Estilo removido do interior do outro -->
+
     <style name="CheckBoxThemeNoTint">
-        <!-- Adicione propriedades aqui, se necessário -->
+
     </style>
 
 </resources>
