@@ -90,22 +90,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Escolha o responsável"
-                android:textColor="#1C2A39"
-                android:textSize="16sp"
-                android:layout_marginBottom="8dp" />
-
-            <Spinner
-                android:id="@+id/spinnerResponsavel"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginBottom="24dp"
-                android:background="@drawable/edittext_background"
-                android:padding="8dp" />
-
             <Button
                 android:id="@+id/btnCriarPilar"
                 android:layout_width="match_parent"

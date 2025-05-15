@@ -18,10 +18,16 @@ class ListaAtividades : AppCompatActivity() {
         val pilarId = intent.getIntExtra("PILAR_ID", -1)
         val pilarNumero = intent.getIntExtra("PILAR_NUMERO", -1)
         val pilarNome = intent.getStringExtra("PILAR_NOME")
+        val idUsuario = intent.getIntExtra("ID_USUARIO", -1)
         if (pilarId == -1) return
 
         databaseHelper = DatabaseHelper(this)
-        val acoes = databaseHelper.buscarAcoesEAtividadesPorPilar(pilarId)
+
+        val acoes = if (idUsuario != -1) {
+            databaseHelper.buscarAcoesEAtividadesDoUsuarioPorPilar(pilarId, idUsuario)
+        } else {
+            databaseHelper.buscarAcoesEAtividadesPorPilar(pilarId)
+        }
 
         viewPager = findViewById(R.id.viewPager)
         viewPager.adapter = AcoesPagerAdapter(this, acoes)

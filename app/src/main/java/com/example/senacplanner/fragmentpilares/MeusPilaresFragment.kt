@@ -38,7 +38,7 @@ class MeusPilaresFragment : Fragment() {
     private fun carregarPilaresDoUsuario(inflater: LayoutInflater) {
         layout.removeAllViews()
 
-        val pilaresDoUsuario = databaseHelper.getPilaresByUsuarioId(idUsuario)
+        val pilaresDoUsuario = databaseHelper.getPilaresComAtividadesDoUsuario(idUsuario)
         pilaresDoUsuario.forEach { pilar ->
             val item = inflater.inflate(R.layout.item_pilar_grande, layout, false)
             item.findViewById<TextView>(R.id.numeroPilarGrande).text = pilar.numero.toString()
@@ -49,11 +49,14 @@ class MeusPilaresFragment : Fragment() {
                 intent.putExtra("PILAR_ID", pilar.id)
                 intent.putExtra("PILAR_NUMERO", pilar.numero)
                 intent.putExtra("PILAR_NOME", pilar.nome)
+                intent.putExtra("ID_USUARIO", idUsuario)
                 startActivity(intent)
             }
 
             layout.addView(item)
         }
     }
+
+
 
 }

@@ -18,7 +18,6 @@ class NovoPilarActivity : AppCompatActivity() {
     private lateinit var editTextNome: EditText
     private lateinit var editTextDataInicio: EditText
     private lateinit var editTextDataConclusao: EditText
-    private lateinit var spinnerResponsavel: Spinner
     private lateinit var btnCriarPilar: Button
 
     private val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) // 🔹 formato brasileiro
@@ -31,17 +30,11 @@ class NovoPilarActivity : AppCompatActivity() {
         editTextNome = findViewById(R.id.editTextNome)
         editTextDataInicio = findViewById(R.id.editTextDataInicio)
         editTextDataConclusao = findViewById(R.id.editTextDataConclusao)
-        spinnerResponsavel = findViewById(R.id.spinnerResponsavel)
         btnCriarPilar = findViewById(R.id.btnCriarPilar)
 
         // Inicializa o banco de dados
         databaseHelper = DatabaseHelper(this)
 
-        // Carrega a lista de responsáveis e configura o spinner
-        val responsaveis = databaseHelper.listarResponsaveis()
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, responsaveis)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerResponsavel.adapter = adapter
 
         // Configura o botão para mostrar o diálogo de confirmação
         btnCriarPilar.setOnClickListener {
@@ -108,9 +101,9 @@ class NovoPilarActivity : AppCompatActivity() {
         val nome = editTextNome.text.toString()
         val dataInicio = editTextDataInicio.text.toString()
         val dataConclusao = editTextDataConclusao.text.toString()
-        val usuarioSelecionado = spinnerResponsavel.selectedItem as? Usuario
+        val idUsuario = intent.getIntExtra("ID_USUARIO", -1)
 
-        if (nome.isBlank() || dataInicio.isBlank() || dataConclusao.isBlank() || usuarioSelecionado == null) {
+        if (nome.isBlank() || dataInicio.isBlank() || dataConclusao.isBlank()) {
             Toast.makeText(this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show()
             return
         }
@@ -122,17 +115,15 @@ class NovoPilarActivity : AppCompatActivity() {
             null,
             converterParaMillis(dataInicio),
             converterParaMillis(dataConclusao),
-            usuarioSelecionado.id
+            idUsuario
         )
 
         if (sucesso != -1L) {
-            databaseHelper.vincularUsuarioAoPilar(usuarioSelecionado.id, sucesso)
             Toast.makeText(this, "Pilar cadastrado com sucesso!", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, "Erro ao cadastrar pilar.", Toast.LENGTH_SHORT).show()
         }
 
-        Toast.makeText(this, "Responsável: ${usuarioSelecionado.nome}", Toast.LENGTH_SHORT).show()
     }
 
     // ✅ NOVA CONVERSÃO PARA FORMATAR COMO MILLIS
