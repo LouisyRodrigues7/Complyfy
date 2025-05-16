@@ -56,13 +56,13 @@ class TodosPilaresFragment : Fragment() {
             item.findViewById<TextView>(R.id.numeroPilarGrande).text = pilar.numero.toString()
             item.findViewById<TextView>(R.id.textoPilarGrande).text = pilar.nome
 
-                item.setOnClickListener {
-                    val intent = Intent(requireContext(), ListaAtividades::class.java)
-                    intent.putExtra("PILAR_ID", pilar.id)
-                    intent.putExtra("PILAR_NUMERO", pilar.numero)
-                    intent.putExtra("PILAR_NOME", pilar.nome)
-                    startActivity(intent)
-                }
+            item.setOnClickListener {
+                val intent = Intent(requireContext(), ListaAtividades::class.java)
+                intent.putExtra("PILAR_ID", pilar.id)
+                intent.putExtra("PILAR_NUMERO", pilar.numero)
+                intent.putExtra("PILAR_NOME", pilar.nome)
+                startActivity(intent)
+            }
 
             layout.addView(item)
         }
