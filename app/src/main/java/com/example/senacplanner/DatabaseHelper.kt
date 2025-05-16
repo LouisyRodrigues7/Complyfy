@@ -270,6 +270,79 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         }
     }
 
+    fun verificarNotificacoesDePilaresProximos() {
+        val db = getDatabase()
+        val diasAlvo = listOf(7, 3)
+        val milisPorDia = 24 * 60 * 60 * 1000L
+        val agora = System.currentTimeMillis()
+
+        for (dias in diasAlvo) {
+            val alvoMillis = agora + dias * milisPorDia
+
+            val cursorPilares = db.rawQuery(
+                """
+            SELECT id, nome, data_conclusao FROM Pilar
+            WHERE data_conclusao IS NOT NULL
+            """, null
+            )
+
+            while (cursorPilares.moveToNext()) {
+                val pilarId = cursorPilares.getInt(cursorPilares.getColumnIndexOrThrow("id"))
+                val nomePilar = cursorPilares.getString(cursorPilares.getColumnIndexOrThrow("nome"))
+                val dataConclusaoStr = cursorPilares.getString(cursorPilares.getColumnIndexOrThrow("data_conclusao"))
+                val dataConclusaoMillis = dataConclusaoStr.toLongOrNull() ?: continue
+
+
+                val diferenca = kotlin.math.abs(dataConclusaoMillis - alvoMillis)
+                if (diferenca <= 12 * 60 * 60 * 1000) {
+                    notificarUsuariosDoPilarProximo(pilarId, nomePilar, dias)
+                }
+            }
+
+            cursorPilares.close()
+        }
+    }
+
+    private fun notificarUsuariosDoPilarProximo(pilarId: Int, nomePilar: String, diasRestantes: Int) {
+        val db = getDatabase()
+
+        val cursor = db.rawQuery(
+            "SELECT usuario_id FROM UsuarioPilar WHERE pilar_id = ?",
+            arrayOf(pilarId.toString())
+        )
+
+        val mensagem = "Fique atento! O pilar \"$nomePilar\" precisa ser concluído em $diasRestantes dias."
+        val dataAtual = System.currentTimeMillis().toString()
+
+        while (cursor.moveToNext()) {
+            val usuarioId = cursor.getInt(cursor.getColumnIndexOrThrow("usuario_id"))
+
+            // Verifica se notificação já existe para evitar duplicatas
+            val cursorCheck = db.rawQuery(
+                """
+            SELECT id FROM Notificacao 
+            WHERE usuario_id = ? AND mensagem = ? AND ABS(CAST(data AS INTEGER) - ?) < 86400000
+            """.trimIndent(),
+                arrayOf(usuarioId.toString(), mensagem, dataAtual)
+            )
+
+            if (!cursorCheck.moveToFirst()) {
+                val values = ContentValues().apply {
+                    put("usuario_id", usuarioId)
+                    put("mensagem", mensagem)
+                    put("data", dataAtual)
+                    put("lida", 0)
+                }
+                db.insert("Notificacao", null, values)
+            }
+
+            cursorCheck.close()
+        }
+
+        cursor.close()
+    }
+
+
     fun getDatasPilarById(id: Int): Triple<String, String, String>? {
         val db = getDatabase()
         val cursor = db.rawQuery("SELECT nome, data_inicio, data_conclusao FROM Pilar WHERE id = ?", arrayOf(id.toString()))
@@ -301,4 +374,91 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         val rowsDeleted = db.delete("Pilar", "id = ?", arrayOf(id.toString()))
         return rowsDeleted > 0
     }
+
+
+    data class PilarDTO(val id: Int, val numero: Int, val nome: String, val descricao: String,
+                        val dataInicio: String, val dataConclusao: String, val criadoPor: Int)
+    fun getPilaresComAtividadesDoUsuario(usuarioId: Int): List<PilarDTO> {
+        val pilares = mutableListOf<PilarDTO>()
+        val db = readableDatabase
+
+        val query = """
+        SELECT DISTINCT p.id, p.numero, p.nome, p.descricao, p.data_inicio, p.data_conclusao, p.criado_por
+        FROM Pilar p
+        JOIN Acao a ON a.pilar_id = p.id
+        JOIN Atividade at ON at.acao_id = a.id
+        WHERE at.responsavel_id = ?
+    """.trimIndent()
+
+        val cursor = db.rawQuery(query, arrayOf(usuarioId.toString()))
+
+        if (cursor.moveToFirst()) {
+            do {
+                val pilar = PilarDTO(
+                    id = cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                    numero = cursor.getInt(cursor.getColumnIndexOrThrow("numero")),
+                    nome = cursor.getString(cursor.getColumnIndexOrThrow("nome")),
+                    descricao = cursor.getString(cursor.getColumnIndexOrThrow("descricao")),
+                    dataInicio = cursor.getString(cursor.getColumnIndexOrThrow("data_inicio")),
+                    dataConclusao = cursor.getString(cursor.getColumnIndexOrThrow("data_conclusao")),
+                    criadoPor = cursor.getInt(cursor.getColumnIndexOrThrow("criado_por"))
+                )
+                pilares.add(pilar)
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+
+        return pilares
+    }
+
+    fun buscarAcoesEAtividadesDoUsuarioPorPilar(pilarId: Int, usuarioId: Int): List<AcaoComAtividades> {
+        val resultado = mutableListOf<AcaoComAtividades>()
+
+        val db = readableDatabase
+
+        val acoesQuery = """
+        SELECT DISTINCT a.id, a.nome
+        FROM Acao a
+        JOIN Atividade at ON a.id = at.acao_id
+        WHERE a.pilar_id = ? AND at.responsavel_id = ?
+    """.trimIndent()
+
+        val cursorAcoes = db.rawQuery(acoesQuery, arrayOf(pilarId.toString(), usuarioId.toString()))
+
+        if (cursorAcoes.moveToFirst()) {
+            do {
+                val acaoId = cursorAcoes.getInt(0)
+                val acaoNome = cursorAcoes.getString(1)
+                val acao = Acao(acaoId, acaoNome)
+
+                val atividades = mutableListOf<Atividade>()
+
+                val atividadesQuery = """
+                SELECT id, nome
+                FROM Atividade
+                WHERE acao_id = ? AND responsavel_id = ?
+            """.trimIndent()
+
+                val cursorAtividades = db.rawQuery(atividadesQuery, arrayOf(acaoId.toString(), usuarioId.toString()))
+
+                if (cursorAtividades.moveToFirst()) {
+                    do {
+                        val atividadeId = cursorAtividades.getInt(0)
+                        val atividadeNome = cursorAtividades.getString(1)
+                        atividades.add(Atividade(atividadeId, atividadeNome))
+                    } while (cursorAtividades.moveToNext())
+                }
+
+                cursorAtividades.close()
+
+                resultado.add(AcaoComAtividades(acao, atividades))
+            } while (cursorAcoes.moveToNext())
+        }
+
+        cursorAcoes.close()
+        return resultado
+    }
+
 }
