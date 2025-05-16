@@ -374,4 +374,91 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         val rowsDeleted = db.delete("Pilar", "id = ?", arrayOf(id.toString()))
         return rowsDeleted > 0
     }
+
+
+    data class PilarDTO(val id: Int, val numero: Int, val nome: String, val descricao: String,
+                        val dataInicio: String, val dataConclusao: String, val criadoPor: Int)
+    fun getPilaresComAtividadesDoUsuario(usuarioId: Int): List<PilarDTO> {
+        val pilares = mutableListOf<PilarDTO>()
+        val db = readableDatabase
+
+        val query = """
+        SELECT DISTINCT p.id, p.numero, p.nome, p.descricao, p.data_inicio, p.data_conclusao, p.criado_por
+        FROM Pilar p
+        JOIN Acao a ON a.pilar_id = p.id
+        JOIN Atividade at ON at.acao_id = a.id
+        WHERE at.responsavel_id = ?
+    """.trimIndent()
+
+        val cursor = db.rawQuery(query, arrayOf(usuarioId.toString()))
+
+        if (cursor.moveToFirst()) {
+            do {
+                val pilar = PilarDTO(
+                    id = cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                    numero = cursor.getInt(cursor.getColumnIndexOrThrow("numero")),
+                    nome = cursor.getString(cursor.getColumnIndexOrThrow("nome")),
+                    descricao = cursor.getString(cursor.getColumnIndexOrThrow("descricao")),
+                    dataInicio = cursor.getString(cursor.getColumnIndexOrThrow("data_inicio")),
+                    dataConclusao = cursor.getString(cursor.getColumnIndexOrThrow("data_conclusao")),
+                    criadoPor = cursor.getInt(cursor.getColumnIndexOrThrow("criado_por"))
+                )
+                pilares.add(pilar)
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+
+        return pilares
+    }
+
+    fun buscarAcoesEAtividadesDoUsuarioPorPilar(pilarId: Int, usuarioId: Int): List<AcaoComAtividades> {
+        val resultado = mutableListOf<AcaoComAtividades>()
+
+        val db = readableDatabase
+
+        val acoesQuery = """
+        SELECT DISTINCT a.id, a.nome
+        FROM Acao a
+        JOIN Atividade at ON a.id = at.acao_id
+        WHERE a.pilar_id = ? AND at.responsavel_id = ?
+    """.trimIndent()
+
+        val cursorAcoes = db.rawQuery(acoesQuery, arrayOf(pilarId.toString(), usuarioId.toString()))
+
+        if (cursorAcoes.moveToFirst()) {
+            do {
+                val acaoId = cursorAcoes.getInt(0)
+                val acaoNome = cursorAcoes.getString(1)
+                val acao = Acao(acaoId, acaoNome)
+
+                val atividades = mutableListOf<Atividade>()
+
+                val atividadesQuery = """
+                SELECT id, nome
+                FROM Atividade
+                WHERE acao_id = ? AND responsavel_id = ?
+            """.trimIndent()
+
+                val cursorAtividades = db.rawQuery(atividadesQuery, arrayOf(acaoId.toString(), usuarioId.toString()))
+
+                if (cursorAtividades.moveToFirst()) {
+                    do {
+                        val atividadeId = cursorAtividades.getInt(0)
+                        val atividadeNome = cursorAtividades.getString(1)
+                        atividades.add(Atividade(atividadeId, atividadeNome))
+                    } while (cursorAtividades.moveToNext())
+                }
+
+                cursorAtividades.close()
+
+                resultado.add(AcaoComAtividades(acao, atividades))
+            } while (cursorAcoes.moveToNext())
+        }
+
+        cursorAcoes.close()
+        return resultado
+    }
+
 }
