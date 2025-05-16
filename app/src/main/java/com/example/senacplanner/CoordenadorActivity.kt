@@ -81,6 +81,7 @@ class CoordenadorActivity : AppCompatActivity() {
             val intent = Intent(this, NotificacoesActivity::class.java)
             intent.putExtra("ID_USUARIO", idUsuario)
             startActivity(intent)
+
         }
     }
 
@@ -88,6 +89,7 @@ class CoordenadorActivity : AppCompatActivity() {
         super.onResume()
         caixaCriarPilar.visibility = View.GONE
         caixaEditarPilar.visibility = View.GONE
+
     }
 
     private fun toggleCaixaCriarPilar() {

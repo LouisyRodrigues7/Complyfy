@@ -11,6 +11,8 @@ import com.example.senacplanner.Acoes.Type.PilarType
 import com.example.senacplanner.Acoes.Type.Usuario
 import java.io.FileOutputStream
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
@@ -284,14 +286,19 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         }
     }
 
+
     fun verificarNotificacoesDePilaresProximos() {
         val db = getDatabase()
         val diasAlvo = listOf(7, 3)
-        val milisPorDia = 24 * 60 * 60 * 1000L
-        val agora = System.currentTimeMillis()
 
         for (dias in diasAlvo) {
-            val alvoMillis = agora + dias * milisPorDia
+            val calendar = java.util.Calendar.getInstance()
+            calendar.set(java.util.Calendar.HOUR_OF_DAY, 0)
+            calendar.set(java.util.Calendar.MINUTE, 0)
+            calendar.set(java.util.Calendar.SECOND, 0)
+            calendar.set(java.util.Calendar.MILLISECOND, 0)
+            calendar.add(java.util.Calendar.DAY_OF_YEAR, dias)
+            val alvoMillis = calendar.timeInMillis
 
             val cursorPilares = db.rawQuery(
                 """
@@ -304,11 +311,15 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
                 val pilarId = cursorPilares.getInt(cursorPilares.getColumnIndexOrThrow("id"))
                 val nomePilar = cursorPilares.getString(cursorPilares.getColumnIndexOrThrow("nome"))
                 val dataConclusaoStr = cursorPilares.getString(cursorPilares.getColumnIndexOrThrow("data_conclusao"))
-                val dataConclusaoMillis = dataConclusaoStr.toLongOrNull() ?: continue
 
+                val dataConclusaoMillis = try {
+                    dataConclusaoStr.toLong()
+                } catch (e: Exception) {
+                    android.util.Log.e("DATA_PARSE", "Erro ao converter millis: $dataConclusaoStr", e)
+                    null
+                } ?: continue
 
-                val diferenca = kotlin.math.abs(dataConclusaoMillis - alvoMillis)
-                if (diferenca <= 12 * 60 * 60 * 1000) {
+                if (dataConclusaoMillis == alvoMillis) {
                     notificarUsuariosDoPilarProximo(pilarId, nomePilar, dias)
                 }
             }
@@ -317,6 +328,11 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         }
     }
 
+
+
+
+
+    // NÃO ESTÁ PEGANDO ESTA MERDA
     private fun notificarUsuariosDoPilarProximo(pilarId: Int, nomePilar: String, diasRestantes: Int) {
         val db = getDatabase()
 
@@ -352,7 +368,6 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
 
             cursorCheck.close()
         }
-
         cursor.close()
     }
 
@@ -434,15 +449,6 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     }
 
 
-    fun marcarNotificacaoComoLida(notificacaoId: Int) {
-        val db = writableDatabase
-        val values = ContentValues().apply {
-            put("lida", 1)
-        }
-        db.update("Notificacao", values, "id = ?", arrayOf(notificacaoId.toString()))
-        db.close()
-    }
-}
 
 
     data class PilarDTO(val id: Int, val numero: Int, val nome: String, val descricao: String,

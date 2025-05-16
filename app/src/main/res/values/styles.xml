@@ -13,9 +13,7 @@
     </style>
 
     <style name="CheckBoxThemeNoTint" parent="Theme.AppCompat.Light">
-
-    <style name="CheckBoxThemeNoTint">
-
+        <!-- Customize checkbox appearance here if needed -->
     </style>
 
 </resources>

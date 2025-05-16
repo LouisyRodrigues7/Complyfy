@@ -50,15 +50,6 @@ class NotificacaoAdapter(private val lista: List<Notificacao>) :
             holder.itemView.alpha = 1f
         }
 
-        // Clique para marcar como lida
-        holder.itemView.setOnClickListener {
-            val dbHelper = DatabaseHelper(context)
-            dbHelper.marcarNotificacaoComoLida(notificacao.id)
 
-            Toast.makeText(context, "Notificação marcada como lida", Toast.LENGTH_SHORT).show()
-
-            // Atualiza visual local (mas você teria que recarregar a lista na Activity/Fragment para refletir completamente)
-            holder.itemView.alpha = 0.5f
-        }
     }
 }
