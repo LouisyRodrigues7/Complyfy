@@ -4,4 +4,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="azul_escuro">#03324A</color>
     <color name="laranja">#FF7A00</color>
+    <color name="notificacao_nao_lida">#FFFFFF</color>
+    <color name="notificacao_lida">#E0E0E0</color>
 </resources>

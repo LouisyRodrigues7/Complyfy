@@ -22,7 +22,7 @@ class NotificacoesActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerViewNotificacoes)
 
         val idUsuario = intent.getIntExtra("ID_USUARIO", -1)
-        val notificacoes = buscarNotificacoesDoUsuario(idUsuario)
+        val notificacoes = buscarNotificacoesDoUsuario(idUsuario).toMutableList()
         adapter = NotificacaoAdapter(notificacoes)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
