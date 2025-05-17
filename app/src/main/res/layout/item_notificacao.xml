@@ -1,41 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/itemContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="12dp"
-    android:background="#F0F0F0">
+    android:background="@color/notificacao_nao_lida">
 
-    <ImageView
-        android:id="@+id/iconNotificacao"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/icon_notific"
-        android:layout_marginEnd="12dp"
-        android:contentDescription="Ícone Notificação" />
+<ImageView
+android:id="@+id/iconNotificacao"
+android:layout_width="40dp"
+android:layout_height="40dp"
+android:src="@drawable/icon_notific"
+android:layout_marginEnd="12dp"
+android:contentDescription="Ícone Notificação" />
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+<LinearLayout
+android:layout_width="0dp"
+android:layout_height="wrap_content"
+android:layout_weight="1"
+android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textoNotificacao"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Texto da notificação"
-            android:textColor="#000000"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+<TextView
+    android:id="@+id/textoNotificacao"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Texto da notificação"
+    android:textColor="#000000"
+    android:textSize="16sp"
+    android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/textoHorario"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="10 minutos atrás"
-            android:textColor="#525252"
-            android:textSize="13sp" />
-    </LinearLayout>
-
+<TextView
+    android:id="@+id/textoHorario"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="10 minutos atrás"
+    android:textColor="#525252"
+    android:textSize="13sp" />
 </LinearLayout>
+
+    </LinearLayout>

@@ -164,6 +164,15 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         db.close()
     }
 
+    fun marcarNotificacaoComoLida(idNotificacao: Int) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("lida", 1)
+        }
+        db.update("Notificacao", values, "id = ?", arrayOf(idNotificacao.toString()))
+        db.close()
+    }
+
     fun verificarPilaresProximosDaConclusao() {
         val db = writableDatabase
         val cursorPilares = db.rawQuery("SELECT id, nome, data_conclusao FROM Pilar", null)
