@@ -11,8 +11,6 @@ import com.example.senacplanner.Acoes.Type.PilarType
 import com.example.senacplanner.Acoes.Type.Usuario
 import java.io.FileOutputStream
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
@@ -46,7 +44,6 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
 
         val buffer = ByteArray(1024)
         var length: Int
-
         while (inputStream.read(buffer).also { length = it } > 0) {
             outputStream.write(buffer, 0, length)
         }
@@ -55,10 +52,8 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         outputStream.close()
         inputStream.close()
     }
-    // O método onCreate foi alterado para não recriar a tabela, já que o banco de dados já está copiado
-    override fun onCreate(db: SQLiteDatabase?) {
-        // Não é necessário recriar a tabela, já que ela já existe no arquivo copiado
-    }
+
+    override fun onCreate(db: SQLiteDatabase?) {}
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {}
 
     fun openDatabase() {
@@ -144,6 +139,30 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return lista
     }
 
+    fun notificarTodosUsuarios(mensagem: String, atividadeId: Int? = null) {
+        val db = writableDatabase
+        val cursor = db.rawQuery("SELECT id FROM Usuario", null)
+        val dataAtual = System.currentTimeMillis().toString()
+
+        if (cursor.moveToFirst()) {
+            do {
+                val usuarioId = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val values = ContentValues().apply {
+                    put("usuario_id", usuarioId)
+                    put("mensagem", mensagem)
+                    put("data", dataAtual)
+                    put("lida", 0)
+                    if (atividadeId != null) put("atividade_id", atividadeId)
+                }
+                db.insert("Notificacao", null, values)
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+    }
+
+
     fun cadastrarPilar(
         numero: Int,
         nome: String,
@@ -156,68 +175,20 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         val values = ContentValues().apply {
             put("numero", numero)
             put("nome", nome)
-            if (descricao != null) {
-                put("descricao", descricao)
-            } else {
-                putNull("descricao")
-            }
+            if (descricao != null) put("descricao", descricao) else putNull("descricao")
             put("data_inicio", dataInicio)
             put("data_conclusao", dataConclusao)
             put("criado_por", criadoPorId)
         }
 
         val resultado = db.insert("Pilar", null, values)
+
         if (resultado != -1L) {
-            criarNotificacaoParaTodos("Novo Pilar criado: $nome")
+            notificarTodosUsuarios("Novo Pilar criado: $nome") //
         }
+
         db.close()
         return resultado
-    }
-
-    fun vincularUsuarioAoPilar(usuarioId: Int, pilarId: Long): Boolean {
-        val db = writableDatabase
-        val values = ContentValues().apply {
-            put("usuario_id", usuarioId)
-            put("pilar_id", pilarId)
-        }
-        val resultado = db.insert("UsuarioPilar", null, values)
-        db.close()
-        return resultado != -1L
-    }
-
-    fun criarNotificacaoParaUsuario(usuarioId: Int, mensagem: String, atividadeId: Int? = null) {
-        val db = writableDatabase
-        val values = ContentValues().apply {
-            put("usuario_id", usuarioId)
-            put("mensagem", mensagem)
-            put("data", System.currentTimeMillis().toString())
-            put("lida", 0)
-            if (atividadeId != null) put("atividade_id", atividadeId)
-        }
-        db.insert("Notificacao", null, values)
-        db.close()
-    }
-
-    fun criarNotificacaoParaTodos(mensagem: String, atividadeId: Int? = null) {
-        val db = writableDatabase
-        val cursor = db.rawQuery("SELECT id FROM Usuario", null)
-
-        if (cursor.moveToFirst()) {
-            do {
-                val usuarioId = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
-                val values = ContentValues().apply {
-                    put("usuario_id", usuarioId)
-                    put("mensagem", mensagem)
-                    put("data", System.currentTimeMillis().toString())
-                    put("lida", 0)
-                    if (atividadeId != null) put("atividade_id", atividadeId)
-                }
-                db.insert("Notificacao", null, values)
-            } while (cursor.moveToNext())
-        }
-
-        cursor.close()
-        db.close()
     }
 
     fun obterProximoNumeroPilar(): Int {
@@ -248,10 +219,8 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
 
             val atividades = mutableListOf<Atividade>()
             while (cursorAtividades.moveToNext()) {
-                val idAtividade =
-                    cursorAtividades.getInt(cursorAtividades.getColumnIndexOrThrow("id"))
-                val nomeAtividade =
-                    cursorAtividades.getString(cursorAtividades.getColumnIndexOrThrow("nome"))
+                val idAtividade = cursorAtividades.getInt(cursorAtividades.getColumnIndexOrThrow("id"))
+                val nomeAtividade = cursorAtividades.getString(cursorAtividades.getColumnIndexOrThrow("nome"))
                 atividades.add(Atividade(idAtividade, nome = nomeAtividade))
             }
             cursorAtividades.close()
@@ -286,92 +255,6 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         }
     }
 
-
-    fun verificarNotificacoesDePilaresProximos() {
-        val db = getDatabase()
-        val diasAlvo = listOf(7, 3)
-
-        for (dias in diasAlvo) {
-            val calendar = java.util.Calendar.getInstance()
-            calendar.set(java.util.Calendar.HOUR_OF_DAY, 0)
-            calendar.set(java.util.Calendar.MINUTE, 0)
-            calendar.set(java.util.Calendar.SECOND, 0)
-            calendar.set(java.util.Calendar.MILLISECOND, 0)
-            calendar.add(java.util.Calendar.DAY_OF_YEAR, dias)
-            val alvoMillis = calendar.timeInMillis
-
-            val cursorPilares = db.rawQuery(
-                """
-            SELECT id, nome, data_conclusao FROM Pilar
-            WHERE data_conclusao IS NOT NULL
-            """, null
-            )
-
-            while (cursorPilares.moveToNext()) {
-                val pilarId = cursorPilares.getInt(cursorPilares.getColumnIndexOrThrow("id"))
-                val nomePilar = cursorPilares.getString(cursorPilares.getColumnIndexOrThrow("nome"))
-                val dataConclusaoStr = cursorPilares.getString(cursorPilares.getColumnIndexOrThrow("data_conclusao"))
-
-                val dataConclusaoMillis = try {
-                    dataConclusaoStr.toLong()
-                } catch (e: Exception) {
-                    android.util.Log.e("DATA_PARSE", "Erro ao converter millis: $dataConclusaoStr", e)
-                    null
-                } ?: continue
-
-                if (dataConclusaoMillis == alvoMillis) {
-                    notificarUsuariosDoPilarProximo(pilarId, nomePilar, dias)
-                }
-            }
-
-            cursorPilares.close()
-        }
-    }
-
-
-
-
-
-    // NÃO ESTÁ PEGANDO ESTA MERDA
-    private fun notificarUsuariosDoPilarProximo(pilarId: Int, nomePilar: String, diasRestantes: Int) {
-        val db = getDatabase()
-
-        val cursor = db.rawQuery(
-            "SELECT usuario_id FROM UsuarioPilar WHERE pilar_id = ?",
-            arrayOf(pilarId.toString())
-        )
-
-        val mensagem = "Fique atento! O pilar \"$nomePilar\" precisa ser concluído em $diasRestantes dias."
-        val dataAtual = System.currentTimeMillis().toString()
-
-        while (cursor.moveToNext()) {
-            val usuarioId = cursor.getInt(cursor.getColumnIndexOrThrow("usuario_id"))
-
-            // Verifica se notificação já existe para evitar duplicatas
-            val cursorCheck = db.rawQuery(
-                """
-            SELECT id FROM Notificacao 
-            WHERE usuario_id = ? AND mensagem = ? AND ABS(CAST(data AS INTEGER) - ?) < 86400000
-            """.trimIndent(),
-                arrayOf(usuarioId.toString(), mensagem, dataAtual)
-            )
-
-            if (!cursorCheck.moveToFirst()) {
-                val values = ContentValues().apply {
-                    put("usuario_id", usuarioId)
-                    put("mensagem", mensagem)
-                    put("data", dataAtual)
-                    put("lida", 0)
-                }
-                db.insert("Notificacao", null, values)
-            }
-
-            cursorCheck.close()
-        }
-        cursor.close()
-    }
-
-
     fun getDatasPilarById(id: Int): Triple<String, String, String>? {
         val db = getDatabase()
         val cursor = db.rawQuery(
@@ -399,7 +282,9 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     ) {
         val db = getDatabase()
 
+        // Pega os dados antigos (nome, data_inicio, data_conclusao)
         val dadosAntigos = getDatasPilarById(id)
+
         val values = ContentValues().apply {
             put("nome", novoNome)
             put("data_inicio", novaDataInicio)
@@ -408,8 +293,9 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
 
         db.update("Pilar", values, "id = ?", arrayOf(id.toString()))
 
+        // Compara datas e envia notificação
         if (dadosAntigos != null) {
-            val (nome, dataInicioAntiga, dataConclusaoAntiga) = dadosAntigos
+            val (nomeAntigo, dataInicioAntiga, dataConclusaoAntiga) = dadosAntigos
             val alteracoes = mutableListOf<String>()
 
             if (dataInicioAntiga != novaDataInicio) {
@@ -420,16 +306,17 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
             }
 
             if (alteracoes.isNotEmpty()) {
-                val msg = "O Pilar \"$nome\" teve alteração na ${alteracoes.joinToString(" e ")}."
-                criarNotificacaoParaTodos(msg)
+                val msg = "O Pilar \"$nomeAntigo\" teve alteração na ${alteracoes.joinToString(" e ")}."
+                notificarTodosUsuarios(msg)
             }
         }
     }
 
+
     fun excluirPilar(id: Int): Boolean {
         val db = writableDatabase
 
-        // Buscar nome antes de excluir
+        // Buscar nome do Pilar antes de excluir
         val cursor = db.rawQuery("SELECT nome FROM Pilar WHERE id = ?", arrayOf(id.toString()))
         var nomePilar: String? = null
         if (cursor.moveToFirst()) {
@@ -437,22 +324,21 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         }
         cursor.close()
 
+        // Executar a exclusão
         val rowsDeleted = db.delete("Pilar", "id = ?", arrayOf(id.toString()))
 
+        // Se excluído com sucesso, enviar notificação
         if (rowsDeleted > 0 && nomePilar != null) {
-            criarNotificacaoParaTodos("O Pilar \"$nomePilar\" foi excluído da lista de Pilares.")
+            notificarTodosUsuarios("O Pilar \"$nomePilar\" foi excluído da lista de Pilares.")
         }
-
 
         db.close()
         return rowsDeleted > 0
     }
 
-
-
-
     data class PilarDTO(val id: Int, val numero: Int, val nome: String, val descricao: String,
                         val dataInicio: String, val dataConclusao: String, val criadoPor: Int)
+
     fun getPilaresComAtividadesDoUsuario(usuarioId: Int): List<PilarDTO> {
         val pilares = mutableListOf<PilarDTO>()
         val db = readableDatabase
@@ -484,13 +370,11 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
 
         cursor.close()
         db.close()
-
         return pilares
     }
 
     fun buscarAcoesEAtividadesDoUsuarioPorPilar(pilarId: Int, usuarioId: Int): List<AcaoComAtividades> {
         val resultado = mutableListOf<AcaoComAtividades>()
-
         val db = readableDatabase
 
         val acoesQuery = """
@@ -527,7 +411,6 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
                 }
 
                 cursorAtividades.close()
-
                 resultado.add(AcaoComAtividades(acao, atividades))
             } while (cursorAcoes.moveToNext())
         }
@@ -535,5 +418,4 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         cursorAcoes.close()
         return resultado
     }
-
 }

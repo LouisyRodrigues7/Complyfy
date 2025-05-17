@@ -18,8 +18,6 @@ class NotificacoesActivity : AppCompatActivity() {
 
         db = DatabaseHelper(this)
 
-        // 🔔 Verifica se há pilares próximos da data de conclusão (7 ou 3 dias)
-        db.verificarNotificacoesDePilaresProximos()
 
         recyclerView = findViewById(R.id.recyclerViewNotificacoes)
 
