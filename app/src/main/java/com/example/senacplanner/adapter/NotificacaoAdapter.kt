@@ -43,9 +43,9 @@ class NotificacaoAdapter(private val lista: List<Notificacao>) :
         )
         holder.horario.text = tempoPassado
 
-        // Estilo visual para notificação lida/não lida
+
         if (notificacao.lida) {
-            holder.itemView.alpha = 0.5f // deixa mais "apagada"
+            holder.itemView.alpha = 0.5f
         } else {
             holder.itemView.alpha = 1f
         }

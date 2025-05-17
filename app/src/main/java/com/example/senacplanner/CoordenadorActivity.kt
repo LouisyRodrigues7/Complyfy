@@ -26,6 +26,13 @@ class CoordenadorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_coordenador)
 
+        val db = DatabaseHelper(this)
+        db.verificarPilaresProximosDaConclusao()
+
+        // --- REMOVIDO: Verificação de notificações
+        // val db = DatabaseHelper(this)
+        // db.verificarNotificacoesDePilaresProximos()
+
         // Recuperar nome do usuário
         val nomeUsuario = intent.getStringExtra("NOME_USUARIO")
         val idUsuario = intent.getIntExtra("ID_USUARIO", -1)
@@ -72,24 +79,22 @@ class CoordenadorActivity : AppCompatActivity() {
 
         val btnHome = findViewById<ImageView>(R.id.btnHome)
         btnHome.setOnClickListener {
-            viewPager.setCurrentItem(0, true) // Volta para "Meus Pilares"
+            viewPager.setCurrentItem(0, true)
         }
 
-        // 🔔 Ação para botão de notificações
+        // --- REMOVIDO: botão de notificaçõess
         val btnNotificacoes = findViewById<ImageView>(R.id.btnNotificacoes)
         btnNotificacoes.setOnClickListener {
-            val intent = Intent(this, NotificacoesActivity::class.java)
-            intent.putExtra("ID_USUARIO", idUsuario)
-            startActivity(intent)
-
-        }
+        val intent = Intent(this, NotificacoesActivity::class.java)
+        intent.putExtra("ID_USUARIO", idUsuario)
+       startActivity(intent)
+       }
     }
 
     override fun onResume() {
         super.onResume()
         caixaCriarPilar.visibility = View.GONE
         caixaEditarPilar.visibility = View.GONE
-
     }
 
     private fun toggleCaixaCriarPilar() {

@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.example.senacplanner.Acoes.Type.Usuario
 import com.example.senacplanner.DatabaseHelper
 import com.example.senacplanner.R
 import java.text.SimpleDateFormat
@@ -20,7 +19,7 @@ class NovoPilarActivity : AppCompatActivity() {
     private lateinit var editTextDataConclusao: EditText
     private lateinit var btnCriarPilar: Button
 
-    private val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) // 🔹 formato brasileiro
+    private val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,13 +34,10 @@ class NovoPilarActivity : AppCompatActivity() {
         // Inicializa o banco de dados
         databaseHelper = DatabaseHelper(this)
 
-
-        // Configura o botão para mostrar o diálogo de confirmação
         btnCriarPilar.setOnClickListener {
             mostrarDialogoConfirmacao()
         }
 
-        // calendário
         editTextDataInicio.setOnClickListener {
             showDatePicker(editTextDataInicio)
         }
@@ -69,7 +65,6 @@ class NovoPilarActivity : AppCompatActivity() {
         datePicker.show()
     }
 
-    // Mostra o diálogo de confirmação
     private fun mostrarDialogoConfirmacao() {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.confirmar_pilar, null)
 
@@ -81,12 +76,10 @@ class NovoPilarActivity : AppCompatActivity() {
             .setCancelable(false)
             .create()
 
-        // Configura o botão de cancelar
         btnCancelar.setOnClickListener {
             alertDialog.dismiss()
         }
 
-        // Configura o botão de confirmar
         btnConfirmar.setOnClickListener {
             cadastrarPilar()
             alertDialog.dismiss()
@@ -96,7 +89,6 @@ class NovoPilarActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
-    // Realiza o cadastro do pilar no banco de dados
     private fun cadastrarPilar() {
         val nome = editTextNome.text.toString()
         val dataInicio = editTextDataInicio.text.toString()
@@ -113,8 +105,8 @@ class NovoPilarActivity : AppCompatActivity() {
             numero,
             nome,
             null,
-            converterParaMillis(dataInicio),
-            converterParaMillis(dataConclusao),
+            converterParaDataSql(dataInicio),
+            converterParaDataSql(dataConclusao),
             idUsuario
         )
 
@@ -123,15 +115,15 @@ class NovoPilarActivity : AppCompatActivity() {
         } else {
             Toast.makeText(this, "Erro ao cadastrar pilar.", Toast.LENGTH_SHORT).show()
         }
-
     }
 
-    // ✅ NOVA CONVERSÃO PARA FORMATAR COMO MILLIS
-    private fun converterParaMillis(dataBR: String): String {
+    // ✅ Converte dd/MM/yyyy -> yyyy-MM-dd
+    private fun converterParaDataSql(dataBR: String): String {
         return try {
-            val formato = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-            val data = formato.parse(dataBR)
-            data?.time?.toString() ?: ""
+            val formatoBR = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val data = formatoBR.parse(dataBR)
+            val formatoSQL = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            formatoSQL.format(data!!)
         } catch (e: Exception) {
             ""
         }
