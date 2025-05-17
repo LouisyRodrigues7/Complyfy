@@ -186,29 +186,33 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return proximo
     }
 
-    fun salvarAtividade(titulo: String, descricao: String, acaoId: Int, criadoPorId: Int): Boolean {
+    fun salvarAtividade(
+        titulo: String,
+        descricao: String,
+        acaoId: Int,
+        criadoPorId: Int,
+        dataInicio: String,
+        dataConclusao: String
+    ): Boolean {
         val db = this.writableDatabase
         val values = ContentValues().apply {
-            put("nome", titulo)  // Corrigido de "titulo" para "nome"
+            put("nome", titulo)
             put("descricao", descricao)
-            put("acao_id", acaoId)  // Certifique-se de passar o valor correto para 'acao_id'
-            put("data_inicio", "2025-05-10") // Exemplo, defina um valor adequado
-            put("criado_por", criadoPorId)  // Certifique-se de passar o valor correto para 'criado_por'
-            put("status", "Em andamento")  // Defina o status de acordo com a lógica do seu app
+            put("acao_id", acaoId)
+            put("data_inicio", dataInicio)
+            put("data_conclusao", dataConclusao)
+            put("criado_por", criadoPorId)
+            put("status", "Em andamento")
         }
 
         val resultado = db.insert("Atividade", null, values)
-
-        if (resultado == -1L) {
-            // Log do erro para o Logcat
-            Log.e("DatabaseError", "Erro ao salvar atividade. Código de erro: $resultado")
-            db.close()
-            return false
-        }
-
         db.close()
-        return true
+        val status = "Em andamento"
+        return resultado != -1L
+
     }
+
+
 
     fun getAcoes(): List<String> {
         val acoes = mutableListOf<String>()
