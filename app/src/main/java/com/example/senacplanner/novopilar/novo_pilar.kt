@@ -105,8 +105,8 @@ class NovoPilarActivity : AppCompatActivity() {
             numero,
             nome,
             null,
-            converterParaMillis(dataInicio),
-            converterParaMillis(dataConclusao),
+            converterParaDataSql(dataInicio),
+            converterParaDataSql(dataConclusao),
             idUsuario
         )
 
@@ -117,11 +117,13 @@ class NovoPilarActivity : AppCompatActivity() {
         }
     }
 
-    private fun converterParaMillis(dataBR: String): String {
+    // ✅ Converte dd/MM/yyyy -> yyyy-MM-dd
+    private fun converterParaDataSql(dataBR: String): String {
         return try {
-            val formato = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-            val data = formato.parse(dataBR)
-            data?.time?.toString() ?: ""
+            val formatoBR = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val data = formatoBR.parse(dataBR)
+            val formatoSQL = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            formatoSQL.format(data!!)
         } catch (e: Exception) {
             ""
         }

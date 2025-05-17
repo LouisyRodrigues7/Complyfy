@@ -26,6 +26,9 @@ class CoordenadorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_coordenador)
 
+        val db = DatabaseHelper(this)
+        db.verificarPilaresProximosDaConclusao()
+
         // --- REMOVIDO: Verificação de notificações
         // val db = DatabaseHelper(this)
         // db.verificarNotificacoesDePilaresProximos()

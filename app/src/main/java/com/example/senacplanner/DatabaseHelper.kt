@@ -11,6 +11,8 @@ import com.example.senacplanner.Acoes.Type.PilarType
 import com.example.senacplanner.Acoes.Type.Usuario
 import java.io.FileOutputStream
 import java.io.IOException
+import java.util.Calendar
+import java.util.Locale
 
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
@@ -162,6 +164,55 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         db.close()
     }
 
+    fun verificarPilaresProximosDaConclusao() {
+        val db = writableDatabase
+        val cursorPilares = db.rawQuery("SELECT id, nome, data_conclusao FROM Pilar", null)
+
+        val hoje = Calendar.getInstance()
+        val formatter = java.text.SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+        while (cursorPilares.moveToNext()) {
+            val nomePilar = cursorPilares.getString(1)
+            val dataConclusaoStr = cursorPilares.getString(2)
+
+            val dataConclusao: Long? = try {
+                formatter.parse(dataConclusaoStr)?.time
+            } catch (e: Exception) {
+                null
+            }
+
+            // Pula se a data for inválida
+            if (dataConclusao == null) continue
+
+            val diasRestantes = ((dataConclusao - hoje.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
+
+            if (diasRestantes == 7 || diasRestantes == 3) {
+                val mensagem = "O Pilar \"$nomePilar\" está a $diasRestantes dias da data de conclusão."
+
+                // Evita notificação duplicada
+                val cursorCheck = db.rawQuery(
+                    """
+                SELECT COUNT(*) FROM Notificacao 
+                WHERE mensagem = ? AND ABS(CAST(data AS INTEGER) - ?) < 86400000
+                """.trimIndent(),
+                    arrayOf(mensagem, System.currentTimeMillis().toString())
+                )
+
+                cursorCheck.moveToFirst()
+                val jaExiste = cursorCheck.getInt(0) > 0
+                cursorCheck.close()
+
+                if (!jaExiste) {
+                    notificarTodosUsuarios(mensagem)
+                }
+            }
+        }
+
+        cursorPilares.close()
+        db.close()
+    }
+
+
 
     fun cadastrarPilar(
         numero: Int,
@@ -184,12 +235,15 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         val resultado = db.insert("Pilar", null, values)
 
         if (resultado != -1L) {
-            notificarTodosUsuarios("Novo Pilar criado: $nome") //
+            notificarTodosUsuarios("Novo Pilar criado: $nome")
+            verificarPilaresProximosDaConclusao() //
         }
 
         db.close()
         return resultado
     }
+
+
 
     fun obterProximoNumeroPilar(): Int {
         val db = this.readableDatabase
