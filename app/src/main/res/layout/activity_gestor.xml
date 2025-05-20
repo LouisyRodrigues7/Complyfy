@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <!-- Cabeçalho com saudação -->
+
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -28,125 +30,104 @@
             android:gravity="start" />
     </LinearLayout>
 
-    <!-- Conteúdo scrollável -->
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:background="@android:color/white">
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:background="@android:color/white">
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:paddingStart="0dp"
+            android:paddingEnd="0dp">
 
-            <!-- Título -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Evolução dos pilares"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="#1C2A39"
-                android:layout_marginBottom="24dp" />
-
-            <!-- Pilar 1 -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Avaliação de Riscos"
-                android:textSize="16sp"
-                android:textColor="#000000"
-                android:layout_marginBottom="8dp"/>
-
-            <!-- Pilar 2 -->
-            <ImageView
+            <!-- Botão 1: Consultar Pilares, Ações e Atividades -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardConsultar"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:adjustViewBounds="true"
-                android:contentDescription="Avaliação de Riscos"
-                android:src="@drawable/pilar1" />
+                android:elevation="4dp"
+                card_view:cardCornerRadius="0dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Código de Conduta e Ética e Políticas de Compliance"
-                android:textSize="16sp"
-                android:textColor="#000000"
-                android:layout_marginBottom="8dp"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#162E47"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:src="@drawable/pilar2"
-                android:contentDescription="Código de Conduta e Ética e Políticas de Compliance"
-                android:adjustViewBounds="true"
-                android:layout_marginBottom="16dp"/>
+                    <TextView
+                        android:layout_width="37dp"
+                        android:layout_height="37dp"
+                        android:layout_marginEnd="16dp"
+                        android:background="#BB7535"
+                        android:gravity="center"
+                        android:text="1"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
-            <!-- Pilar 3 -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Controles Internos"
-                android:textSize="16sp"
-                android:textColor="#000000"
-                android:layout_marginBottom="8dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Consultar Pilares, Ações e Atividades"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:src="@drawable/pilar3"
-                android:contentDescription="Controles Internos"
-                android:adjustViewBounds="true"
-                android:layout_marginBottom="16dp"/>
-
-            <!-- Pilar 4 -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Investigações Internas"
-                android:textSize="16sp"
-                android:textColor="#000000"
-                android:layout_marginBottom="8dp"/>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:src="@drawable/pilar4"
-                android:contentDescription="Investigações Internas"
-                android:adjustViewBounds="true"
-                android:layout_marginBottom="16dp"/>
-
-            <!-- Pilar 5 -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Transparência"
-                android:textSize="16sp"
-                android:textColor="#000000"
-                android:layout_marginBottom="8dp"/>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:src="@drawable/pilar5"
-                android:contentDescription="Transparência"
-                android:adjustViewBounds="true"
-                android:layout_marginBottom="24dp"/>
-
-            <!-- Gráfico final -->
-            <ImageView
+            <!-- Botão 2: Gerar Relatórios -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardRelatorio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/graficopizza"
-                android:contentDescription="Gráfico de Pizza"
-                android:adjustViewBounds="true"
-                android:layout_marginBottom="32dp"/>
+                android:layout_marginBottom="12dp"
+                android:elevation="0dp"
+                card_view:cardCornerRadius="0dp"
+                card_view:cardBackgroundColor="#162E47">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="37dp"
+                        android:layout_height="37dp"
+                        android:layout_marginEnd="16dp"
+                        android:background="#BB7535"
+                        android:gravity="center"
+                        android:text="2"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Gerar Relatórios"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+
         </LinearLayout>
     </ScrollView>
+
 
     <LinearLayout
         android:id="@+id/rodape_com_botoes"
@@ -198,4 +179,5 @@
             android:layout_gravity="center"
             android:padding="8dp" />
     </LinearLayout>
+
 </LinearLayout>
