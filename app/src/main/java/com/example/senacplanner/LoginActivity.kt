@@ -2,19 +2,20 @@ package com.example.senacplanner
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.database.Cursor
 import android.os.Bundle
+import android.util.Log
 import android.widget.*
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.senacplanner.R
 
 class LoginActivity : AppCompatActivity() {
+    private lateinit var databaseHelper: DatabaseHelper
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_login)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -23,42 +24,64 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
-        // Referências
         val spinner = findViewById<Spinner>(R.id.spinner_tipo_usuario)
         val editTextLogin = findViewById<EditText>(R.id.editText_login)
-        val editTextSenha = findViewById<EditText>(R.id.editText_senha)
         val botaoEntrar = findViewById<Button>(R.id.button_entrar)
 
-        // Opções do Spinner
         val opcoes = listOf("Coordenador", "Apoio", "Gestor")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, opcoes)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        val adapter = ArrayAdapter(this, R.layout.spinner_item, opcoes)
+        adapter.setDropDownViewResource(R.layout.spinner_item)
         spinner.adapter = adapter
 
-        // Ação do botão Entrar
+        databaseHelper = DatabaseHelper(this)
+
         botaoEntrar.setOnClickListener {
-            val tipoSelecionado = spinner.selectedItem.toString()
-            val login = editTextLogin.text.toString()
-            val senha = editTextSenha.text.toString()
+            val tipoSelecionado = spinner.selectedItem.toString();
+            val login = editTextLogin.text.toString().trim()
 
-            when (tipoSelecionado) {
-                "Coordenador" -> {
-                    val intent = Intent(this, CoordenadorActivity::class.java)
-                    intent.putExtra("NOME_USUARIO", login)
-                    startActivity(intent)
+            if (login.isEmpty()) {
+                Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
+            } else {
+                val db = databaseHelper.readableDatabase
+
+                // Alteração: Remover a senha da consulta
+                val cursor: Cursor = db.rawQuery(
+                    "SELECT * FROM Usuario WHERE email = ? AND tipo = ?",
+                    arrayOf(login, tipoSelecionado)
+                )
+
+                Log.d("LOGIN_DEBUG", "Tentando login com: $login | Tipo: $tipoSelecionado")
+
+                if (cursor.moveToFirst()) {
+                    val nomeUsuario = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+                    val idUsuario = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                    when (tipoSelecionado) {
+                        "Coordenador", "Apoio" -> {
+                            val intent = Intent(this, CoordenadorActivity::class.java)
+                            intent.putExtra("NOME_USUARIO", nomeUsuario)
+                            intent.putExtra("ID_USUARIO", idUsuario)
+                            intent.putExtra("TIPO_USUARIO", tipoSelecionado)
+                            startActivity(intent)
+                        }
+                        "Gestor" -> {
+                            val intent = Intent(this, GestorActivity::class.java)
+                            intent.putExtra("NOME_USUARIO", nomeUsuario)
+                            intent.putExtra("ID_USUARIO", idUsuario)
+                            startActivity(intent)
+                        }
+                    }
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Usuário não encontrado. Verifique o e-mail e tipo.",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
-                "Apoio" -> {
-                    val intent = Intent(this, ApoioActivity::class.java)
-                    intent.putExtra("NOME_USUARIO", login)
-                    startActivity(intent)
-                }
-                "Gestor" -> {
-                    val intent = Intent(this, GestorActivity::class.java)
-                    intent.putExtra("NOME_USUARIO", login)
-                    startActivity(intent)
-                }
+
+                cursor.close()
+                db.close()
             }
-        } // Aqui vai a chave de fechamento para o setOnClickListener
-
-    } // Chave de fechamento para o método onCreate
+        }
+    }
 }
+

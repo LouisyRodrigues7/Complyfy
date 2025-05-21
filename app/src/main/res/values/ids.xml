@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="headerLayout" type="id" />
+    <item name="btnAddPilar" type="id" />
+    <item name="caixaCriarPilar" type="id" />
+    <item name="tabLayout" type="id" />
+    <item name="rodape_com_botoes" type="id" />
+    <item name="btnGraficos" type="id" />
+    <item name="btnHome" type="id" />
+    <item name="btnAcoes" type="id" />
+    <item name="btnNotificacoes" type="id" />
+    <item name="caixaEditarPilar" type="id" />
+</resources>

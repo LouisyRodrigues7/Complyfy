@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1C2A39"
+    android:fitsSystemWindows="true">
+
+    <!-- Toolbar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#1C2A39"
+            app:title="Novo Pilar"
+            app:titleTextColor="@android:color/white">
+
+            <ImageView
+                android:id="@+id/btnAddPilar"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:src="@drawable/plus_circle"
+                android:contentDescription="Adicionar Pilar"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="16dp"/>
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Conteúdo principal -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginBottom="81dp"
+        android:padding="24dp"
+        android:background="#F5F5F5">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- Título do formulário -->
+            <TextView
+                android:id="@+id/tituloFormulario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Criar Novo Pilar"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#1C2A39"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Campos do formulário -->
+            <EditText
+                android:id="@+id/editTextNome"
+                android:hint="Nome do Pilar"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+
+            <EditText
+                android:id="@+id/editTextDataInicio"
+                android:hint="Data de Início"
+                android:focusable="false"
+                android:clickable="true"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+
+            <EditText
+                android:id="@+id/editTextDataConclusao"
+                android:hint="Data de Conclusão"
+                android:focusable="false"
+                android:clickable="true"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+
+            <Button
+                android:id="@+id/btnCriarPilar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#4CAF50"
+                android:padding="14dp"
+                android:text="Criar Pilar"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Caixa flutuante (opcional) -->
+    <TextView
+        android:id="@+id/caixaCriarPilar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="56dp"
+        android:layout_marginEnd="16dp"
+        android:padding="8dp"
+        android:text="Criar novo pilar"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/rounded_box"
+        android:visibility="gone" />
+
+    <!-- Rodapé com botões -->
+    <LinearLayout
+        android:id="@+id/rodape_com_botoes"
+        android:layout_width="match_parent"
+        android:layout_height="81dp"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:background="#1C2A39"
+        android:padding="8dp"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/btnGraficos"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/graficos"
+            android:contentDescription="Gráficos"
+            android:layout_gravity="center"
+            android:padding="8dp" />
+
+        <ImageView
+            android:id="@+id/btnHome"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/home"
+            android:contentDescription="Home"
+            android:layout_gravity="center"
+            android:padding="8dp" />
+
+        <ImageView
+            android:id="@+id/btnAcoes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/acoes"
+            android:contentDescription="Ações"
+            android:layout_gravity="center"
+            android:padding="8dp" />
+
+        <ImageView
+            android:id="@+id/btnNotificacoes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/notificacao"
+            android:contentDescription="Notificações"
+            android:layout_gravity="center"
+            android:padding="8dp" />
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

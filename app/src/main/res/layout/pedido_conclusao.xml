@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#80000000"
+    android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="368dp"
+        android:layout_height="664dp"
+        android:layout_gravity="center"
+        android:background="#1C2A39"
+        android:elevation="8dp"
+        android:minWidth="300dp"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:id="@+id/textViewDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="Autorização de conclusão de atividade"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/tvNomePilar"
+            style="@style/CustomButtonTextView"
+            android:text="Nome do Pilar" />
+
+        <TextView
+            android:id="@+id/tvNomeAcao"
+            style="@style/CustomButtonTextView"
+            android:text="Nome da Ação" />
+
+        <TextView
+            android:id="@+id/tvNomeAtividade"
+            style="@style/CustomButtonTextView"
+            android:text="Nome da Atividade" />
+
+        <TextView
+            android:id="@+id/tvNomeResponsavel"
+            style="@style/CustomButtonTextView"
+            android:text="Nome do Responsável" />
+
+        <TextView
+            android:id="@+id/tvDataInicio"
+            style="@style/CustomButtonTextView"
+            android:text="Data de Início" />
+
+        <TextView
+            android:id="@+id/tvDataConclusao"
+            style="@style/CustomButtonTextView"
+            android:text="Data que foi Concluída" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Comentário"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etComentario"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/edit_button_background"
+            android:gravity="top|start"
+            android:hint="Escreva seu comentário aqui"
+            android:padding="12dp"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnCancelar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:backgroundTint="#B00020"
+                android:text="Cancelar"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/btnEnviar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="#388E3C"
+                android:text="Enviar"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+
+    </LinearLayout>
+</FrameLayout>
