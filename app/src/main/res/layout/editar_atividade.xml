@@ -6,183 +6,238 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0D1B2A"
-    android:padding="24dp">
+    android:padding="16dp">
 
-    <!-- Nome do Pilar -->
+
     <TextView
         android:id="@+id/tvNomePilar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:padding="12dp"
+        android:padding="8dp"
         android:text="Nome do Pilar"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    <TextView
+        android:id="@+id/tvNomeAcao"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:padding="4dp"
+        android:text="Nome da Ação"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvNomePilar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Card Container (nome da atividade) -->
+
     <androidx.cardview.widget.CardView
         android:id="@+id/cardContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         app:cardBackgroundColor="#1B2B3A"
         app:cardCornerRadius="16dp"
-        app:cardElevation="6dp"
-        android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@id/tvNomePilar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:cardElevation="4dp"
+        app:layout_constraintTop_toBottomOf="@id/tvNomeAcao"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Card com os Ícones e os dados -->
-        <androidx.constraintlayout.widget.ConstraintLayout
+
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="24dp">
+            android:padding="16dp">
 
             <ImageView
                 android:id="@+id/ivEdit"
                 android:layout_width="34dp"
                 android:layout_height="37dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="8dp"
                 android:contentDescription="Editar"
                 android:src="@drawable/edit"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"/>
 
-            <!-- Nome da atividade -->
             <TextView
                 android:id="@+id/tvNomeAtividade"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="8dp"
                 android:background="@drawable/edit_button_background"
                 android:gravity="center"
-                android:padding="12dp"
+                android:padding="10dp"
                 android:text="Nome da Atividade"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ivEdit"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ivEdit" />
+                app:layout_constraintEnd_toEndOf="parent"/>
 
-            <!-- Responsável pela atividade -->
+            <TextView
+                android:id="@+id/tvNovoNome"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/edit_button_background"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="Novo Nome"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/tvNomeAtividade"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+
             <TextView
                 android:id="@+id/tvResponsavel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 android:text="Responsável pela atividade"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvNomeAtividade" />
+                app:layout_constraintTop_toBottomOf="@id/tvNovoNome"
+                app:layout_constraintStart_toStartOf="parent"/>
 
-            <!-- (responsável selecionado) -->
             <TextView
                 android:id="@+id/tvResponsavelSelecionado"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="8dp"
                 android:background="@drawable/edit_button_background"
                 android:gravity="center"
-                android:padding="12dp"
+                android:padding="10dp"
                 android:text="Responsável pela atividade:"
                 android:textColor="#FFFFFF"
                 app:layout_constraintTop_toBottomOf="@id/tvResponsavel"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"/>
 
-            <!-- Label: Data de início -->
+
             <TextView
                 android:id="@+id/tvDataInicioLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="16dp"
                 android:text="Data de início"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvResponsavelSelecionado" />
+                app:layout_constraintTop_toBottomOf="@id/tvResponsavelSelecionado"
+                app:layout_constraintStart_toStartOf="parent"/>
 
             <TextView
                 android:id="@+id/tvDataInicio"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:background="@drawable/edit_button_background"
                 android:gravity="center"
-                android:padding="12dp"
+                android:padding="10dp"
                 android:text="Selecionar data de início"
                 android:textColor="#FFFFFF"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintTop_toBottomOf="@id/tvDataInicioLabel"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvDataInicioLabel" />
+                app:layout_constraintEnd_toEndOf="parent"/>
 
             <TextView
                 android:id="@+id/tvDataConclusaoLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="16dp"
                 android:text="Data de conclusão"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvDataInicio" />
+                app:layout_constraintTop_toBottomOf="@id/tvDataInicio"
+                app:layout_constraintStart_toStartOf="parent"/>
 
             <TextView
                 android:id="@+id/tvDataConclusao"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:background="@drawable/edit_button_background"
                 android:gravity="center"
-                android:padding="12dp"
+                android:padding="10dp"
                 android:text="Selecionar data de conclusão"
                 android:textColor="#FFFFFF"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintTop_toBottomOf="@id/tvDataConclusaoLabel"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvDataConclusaoLabel" />
+                app:layout_constraintEnd_toEndOf="parent"/>
+
 
             <TextView
                 android:id="@+id/tvStatus"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
+                android:layout_marginTop="20dp"
                 android:background="@drawable/status_button_background"
                 android:gravity="center"
-                android:padding="12dp"
+                android:padding="10dp"
                 android:text="Em andamento"
                 android:textColor="#FFFF00"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintTop_toBottomOf="@id/tvDataConclusao"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvDataConclusao" />
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+
+        <LinearLayout
+            android:id="@+id/llButtons"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/tvStatus"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <Button
-                android:id="@+id/btnConcluido"
+                android:id="@+id/btnCancelar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
                 android:backgroundTint="#757575"
-                android:paddingHorizontal="32dp"
-                android:paddingVertical="12dp"
-                android:text="CONCLUÍDO"
+                android:text="CANCELAR"
                 android:textColor="#FFFFFF"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.497"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvStatus" />
+                android:layout_marginEnd="8dp"/>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/btnExcluir"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#F44336"
+                android:text="EXCLUIR"
+                android:textColor="#FFFFFF"
+                android:layout_marginEnd="8dp"/>
+
+            <Button
+                android:id="@+id/btnSalvar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#4CAF50"
+                android:text="SALVAR"
+                android:textColor="#FFFFFF"/>
+
+        </LinearLayout>
+
+
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
