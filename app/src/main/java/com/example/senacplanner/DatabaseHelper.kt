@@ -119,6 +119,29 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return pilares
     }
 
+    // 🔹 Buscar ações de um pilar específico
+
+    fun getAcoesByPilarId(pilarId: Int): List<Acao> {
+        val listaAcoes = mutableListOf<Acao>()
+        val db = getDatabase()
+
+        val cursor = db.rawQuery(
+            "SELECT id, nome FROM Acao WHERE pilar_id = ?",
+            arrayOf(pilarId.toString())
+        )
+
+        if (cursor.moveToFirst()) {
+            do {
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+                listaAcoes.add(Acao(id = id, nome = nome))
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        return listaAcoes
+    }
+
     fun listarResponsaveis(): List<Usuario> {
         val lista = mutableListOf<Usuario>()
         val db = this.readableDatabase

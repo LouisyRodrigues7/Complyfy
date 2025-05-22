@@ -9,16 +9,18 @@
     <!-- Cabeçalho -->
     <include layout="@layout/header_layout"/>
 
-    <!-- "Evolução do Pilar" -->
+    <!-- Título do Pilar -->
     <TextView
+        android:id="@+id/tvTituloPilar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Evolução do Pilar"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:gravity="center"
         android:background="#BB7535"
         android:textColor="#FFFFFF"
-        android:padding="8dp"/>
+        android:padding="8dp"
+        android:textStyle="bold"/>
 
     <!-- Conteúdo rolável -->
     <ScrollView
@@ -46,8 +48,9 @@
                 android:elevation="2dp"
                 android:clipToPadding="false">
 
-                <!-- Título -->
+                <!-- Título do Nome do Pilar -->
                 <TextView
+                    android:id="@+id/tvNomePilar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Nome do Pilar"
@@ -57,7 +60,7 @@
                     android:textColor="#FFFFFF"
                     android:layout_marginBottom="16dp"/>
 
-                <!-- Ações -->
+                <!-- Label Ações -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -67,40 +70,13 @@
                     android:textColor="#FFFFFF"
                     android:layout_marginBottom="12dp"/>
 
-                <!-- Boxes de ação -->
+                <!-- Container dinâmico das Ações -->
                 <LinearLayout
+                    android:id="@+id/containerAcoes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_marginBottom="24dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Nome da ação"
-                        android:background="@drawable/bg_box_acao"
-                        android:padding="12dp"
-                        android:layout_marginBottom="12dp"
-                        android:textColor="#FFFFFF"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Nome da ação"
-                        android:background="@drawable/bg_box_acao"
-                        android:padding="12dp"
-                        android:layout_marginBottom="12dp"
-                        android:textColor="#FFFFFF"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Nome da ação"
-                        android:background="@drawable/bg_box_acao"
-                        android:padding="12dp"
-                        android:layout_marginBottom="0dp"
-                        android:textColor="#FFFFFF"/>
-                </LinearLayout>
+                    android:layout_marginBottom="24dp"/>
 
                 <!-- Datas -->
                 <TextView
@@ -159,4 +135,5 @@
 
     <!-- Rodapé -->
     <include layout="@layout/footer_layout"/>
+
 </LinearLayout>
