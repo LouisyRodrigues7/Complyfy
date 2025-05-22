@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/bg_spinner_button.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#3E5B6A"/>  <!-- Cor de fundo (ajuste para o que você deseja) -->
+    <corners android:radius="16dp"/>  <!-- Borda arredondada -->
+</shape>

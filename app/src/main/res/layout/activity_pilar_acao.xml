@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <!-- Cabeçalho -->
+    <include layout="@layout/header_layout"/>
+
+    <!-- Título -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Visualização de Pilar"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:background="#BB7535"
+        android:padding="8dp"
+        android:textColor="#FFFFFF"/>
+
+    <!-- Container que cresce para empurrar o rodapé pra baixo -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Box azul com bordas arredondadas -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_box_azul"
+            android:padding="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginHorizontal="8dp"
+            android:elevation="4dp"
+            android:clipToPadding="false">
+
+            <!-- Spinner com bordas arredondadas e altura aumentada -->
+            <Spinner
+                android:id="@+id/spinnerPilar"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/bg_spinner_button"/>
+
+            <Spinner
+                android:id="@+id/spinnerAcao"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_spinner_button"/>
+
+            <!-- Botão com bordas arredondadas -->
+
+            <Button
+                android:id="@+id/btnBuscar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Buscar"
+                android:background="@drawable/bg_button_verde"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="24dp"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Rodapé fixo no fundo -->
+    <include layout="@layout/footer_layout"/>
+
+</LinearLayout>
