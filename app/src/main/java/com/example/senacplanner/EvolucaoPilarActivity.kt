@@ -82,25 +82,34 @@ class EvolucaoPilarActivity : AppCompatActivity() {
             val texto = TextView(this)
             texto.text = "Nenhuma ação cadastrada."
             texto.setTextColor(resources.getColor(android.R.color.white))
+            texto.setPadding(16, 16, 16, 16)
             containerAcoes.addView(texto)
         } else {
-            val inflater = LayoutInflater.from(this)
             listaAcoes.forEach { acao ->
                 val box = TextView(this)
                 box.text = acao.nome
-                box.setPadding(12, 12, 12, 12)
+                box.setPadding(20, 20, 20, 20)
                 box.setBackgroundResource(R.drawable.bg_box_acao)
                 box.setTextColor(resources.getColor(android.R.color.white))
+                box.textSize = 16f
+
+                // Definidor de altura
+                box.minHeight = 50.dpToPx() // aqui aumenta e diminui altura da box
 
                 val params = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
-                params.setMargins(0, 0, 0, 16)
+                params.setMargins(0, 0, 0, 24) // espaço entre as boxes
                 box.layoutParams = params
 
                 containerAcoes.addView(box)
             }
         }
+    }
+
+    // 🔥 Extensão para transformar dp em px
+    private fun Int.dpToPx(): Int {
+        return (this * resources.displayMetrics.density).toInt()
     }
 }
