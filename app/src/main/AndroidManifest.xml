@@ -16,6 +16,10 @@
         <activity
             android:name=".editarpilar.EditarActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".editarAtividade.EditarAtividadeActivity"
+            android:exported="false" />
         <!-- Tela principal (Login) -->
         <activity
             android:name=".LoginActivity"

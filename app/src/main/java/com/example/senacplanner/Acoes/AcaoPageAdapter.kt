@@ -8,12 +8,13 @@ import com.example.senacplanner.Acoes.Type.AcaoComAtividades
 
 class AcoesPagerAdapter(
     fragmentActivity: FragmentActivity,
-    private val acoes: List<AcaoComAtividades>
+    private val acoes: List<AcaoComAtividades>,
+    private val pilarNome: String?
 ) : FragmentStateAdapter(fragmentActivity) {
 
     override fun getItemCount(): Int = acoes.size
 
     override fun createFragment(position: Int): Fragment {
-        return AcaoPageFragment.Companion.newInstance(acoes[position])
+        return AcaoPageFragment.newInstance(acoes[position], pilarNome)
     }
 }
