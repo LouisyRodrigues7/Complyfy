@@ -12,6 +12,7 @@ import java.util.*
 class EvolucaoPilarActivity : AppCompatActivity() {
 
     private lateinit var tvTitulo: TextView
+    private lateinit var tvNomePilar: TextView
     private lateinit var tvDataInicio: TextView
     private lateinit var tvDataConclusao: TextView
     private lateinit var tvStatusPilar: TextView
@@ -30,12 +31,15 @@ class EvolucaoPilarActivity : AppCompatActivity() {
         }
 
         tvTitulo = findViewById(R.id.tvTituloPilar)
+        tvNomePilar = findViewById(R.id.tvNomePilar)
         tvDataInicio = findViewById(R.id.tvDataInicio)
         tvDataConclusao = findViewById(R.id.tvDataConclusao)
         tvStatusPilar = findViewById(R.id.tvStatusPilar)
         containerAcoes = findViewById(R.id.containerAcoes)
 
         dbHelper = DatabaseHelper(this)
+
+        tvTitulo.text = "Evolução do Pilar"
 
         carregarDetalhesPilar(pilarId)
     }
@@ -46,7 +50,7 @@ class EvolucaoPilarActivity : AppCompatActivity() {
         if (dados != null) {
             val (nome, dataInicio, dataConclusao) = dados
 
-            tvTitulo.text = nome
+            tvNomePilar.text = nome
             tvDataInicio.text = dataInicio
             tvDataConclusao.text = dataConclusao
 
@@ -93,8 +97,7 @@ class EvolucaoPilarActivity : AppCompatActivity() {
                 box.setTextColor(resources.getColor(android.R.color.white))
                 box.textSize = 16f
 
-                // Definidor de altura
-                box.minHeight = 50.dpToPx() // aqui aumenta e diminui altura da box
+                box.minHeight = 70.dpToPx() // aqui aumenta e diminui altura da box
 
                 val params = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -108,7 +111,7 @@ class EvolucaoPilarActivity : AppCompatActivity() {
         }
     }
 
-    // 🔥 Extensão para transformar dp em px
+    // 🔥 Extensão para dp → px
     private fun Int.dpToPx(): Int {
         return (this * resources.displayMetrics.density).toInt()
     }
