@@ -9,6 +9,7 @@ import com.example.senacplanner.Acoes.Type.AcaoComAtividades
 import com.example.senacplanner.Acoes.Type.Atividade
 import com.example.senacplanner.Acoes.Type.PilarType
 import com.example.senacplanner.Acoes.Type.Usuario
+import com.example.senacplanner.editarAtividade.AtividadeEdit
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Calendar
@@ -17,7 +18,7 @@ import java.util.Locale
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     companion object {
-        private const val DB_NAME = "banco_teste17.db"
+        private const val DB_NAME = "banco_teste18.db"
         private const val DB_VERSION = 1
     }
 
@@ -284,6 +285,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
             while (cursorAtividades.moveToNext()) {
                 val idAtividade = cursorAtividades.getInt(cursorAtividades.getColumnIndexOrThrow("id"))
                 val nomeAtividade = cursorAtividades.getString(cursorAtividades.getColumnIndexOrThrow("nome"))
+
                 atividades.add(Atividade(idAtividade, nome = nomeAtividade))
             }
             cursorAtividades.close()
@@ -481,4 +483,49 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         cursorAcoes.close()
         return resultado
     }
+
+    fun atualizarAtividade(
+        id: Int,
+        novoNome: String,
+        responsavel: Int,
+        dataInicio: String,
+        dataConclusao: String,
+        status: String
+    ): AtividadeEdit? {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("nome", novoNome)
+            put("responsavel_id", responsavel)
+            put("data_inicio", dataInicio)
+            put("data_conclusao", dataConclusao)
+            put("status", status)
+        }
+
+        db.update("Atividade", values, "id = ?", arrayOf(id.toString()))
+
+        return buscarAtividadePorId(id)
+    }
+
+
+    fun buscarAtividadePorId(id: Int): AtividadeEdit? {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM atividade WHERE id = ?", arrayOf(id.toString()))
+
+        var atividade: AtividadeEdit? = null
+
+        if (cursor.moveToFirst()) {
+            val nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+            val responsavelId = cursor.getInt(cursor.getColumnIndexOrThrow("responsavel_id"))
+            val dataInicio = cursor.getString(cursor.getColumnIndexOrThrow("data_inicio"))
+            val dataConclusao = cursor.getString(cursor.getColumnIndexOrThrow("data_conclusao"))
+            val status = cursor.getString(cursor.getColumnIndexOrThrow("status"))
+
+            atividade = AtividadeEdit(id, nome, status, dataInicio, dataConclusao, responsavelId)
+        }
+
+        cursor.close()
+        db.close()
+        return atividade
+    }
+
 }
