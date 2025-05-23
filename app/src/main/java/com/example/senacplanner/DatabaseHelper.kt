@@ -528,4 +528,30 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return atividade
     }
 
+    fun inserirAtividade(
+        acaoId: Int,
+        nome: String,
+        descricao: String,
+        status: String,
+        dataInicio: String,
+        dataConclusao: String?,
+        criadoPor: Int
+    ) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("acao_id", acaoId)
+            put("nome", nome)
+            put("descricao", descricao)
+            put("status", status)
+            put("data_inicio", dataInicio)
+            put("data_conclusao", dataConclusao)
+            put("criado_por", criadoPor)
+            put("aprovado", 0) // valor padrão
+        }
+
+        db.insert("atividade", null, values)
+        db.close()
+    }
+
+
 }

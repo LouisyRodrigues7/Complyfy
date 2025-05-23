@@ -39,4 +39,12 @@
     <string name="minhasatividades">Minhas Atividades</string>
 
     <string name="pilares_">Pilares</string>
+
+    <string-array name="status_array">
+        <item>Em andamento</item>
+        <item>Concluído</item>
+        <item>Pendente</item>
+        <item>Cancelado</item>
+    </string-array>
+
 </resources>

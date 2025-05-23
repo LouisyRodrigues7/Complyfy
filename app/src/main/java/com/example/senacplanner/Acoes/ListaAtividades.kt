@@ -1,10 +1,14 @@
 package com.example.senacplanner.Acoes
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
+import com.example.senacplanner.Acoes.Type.AcaoComAtividades
 import com.example.senacplanner.DatabaseHelper
 import com.example.senacplanner.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+
 
 class ListaAtividades : AppCompatActivity() {
 
@@ -14,6 +18,7 @@ class ListaAtividades : AppCompatActivity() {
     private var pilarNumero: Int = -1
     private var pilarNome: String? = null
     private var idUsuario: Int = -1
+    private lateinit var acoes: List<AcaoComAtividades>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +34,22 @@ class ListaAtividades : AppCompatActivity() {
         databaseHelper = DatabaseHelper(this)
         viewPager = findViewById(R.id.viewPager)
 
+        val fabNovaAtividade = findViewById<FloatingActionButton>(R.id.fabNovaAtividade)
+        fabNovaAtividade.setOnClickListener {
+            val intent = Intent(this, CriarAtividadeActivity::class.java)
+            intent.putExtra("ACAO_ID", pilarId)
+            intent.putExtra("USUARIO_ID", idUsuario)
+            startActivity(intent)
+        }
+
         carregarDados()
+
+        acoes = if (idUsuario != -1) {
+            databaseHelper.buscarAcoesEAtividadesDoUsuarioPorPilar(pilarId, idUsuario)
+        } else {
+            databaseHelper.buscarAcoesEAtividadesPorPilar(pilarId)
+        }
+
 
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         toolbar.title = "Pilar $pilarNumero - $pilarNome"

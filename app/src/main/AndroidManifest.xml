@@ -48,6 +48,9 @@
 
         <activity android:name=".NotificacoesActivity" />
 
+        <activity android:name=".Acoes.CriarAtividadeActivity" />
+
+
     </application>
 
 </manifest>
