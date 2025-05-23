@@ -47,6 +47,10 @@
             android:exported="false" />
 
         <activity android:name=".NotificacoesActivity" />
+        <activity android:name=".EvolucaoPilarActivity"/>
+        <activity android:name=".PilarAcaoActivity" />
+
+
 
     </application>
 

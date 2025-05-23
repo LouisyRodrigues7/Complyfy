@@ -9,16 +9,18 @@
     <!-- Cabeçalho -->
     <include layout="@layout/header_layout"/>
 
-    <!-- "Evolução do Pilar" -->
+    <!-- Título do Pilar -->
     <TextView
+        android:id="@+id/tvTituloPilar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Evolução do Pilar"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:gravity="center"
         android:background="#BB7535"
         android:textColor="#FFFFFF"
-        android:padding="8dp"/>
+        android:paddingVertical="16dp"
+        android:textStyle="bold"/>
 
     <!-- Conteúdo rolável -->
     <ScrollView
@@ -31,127 +33,101 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="24dp">
 
-            <!-- Container Azul Arredondado -->
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/bg_box_azul"
-                android:padding="20dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:layout_marginHorizontal="8dp"
-                android:elevation="2dp"
+                android:padding="24dp"
+                android:layout_marginBottom="32dp"
+                android:elevation="4dp"
                 android:clipToPadding="false">
 
-                <!-- Título -->
+                <!-- Título do Nome do Pilar -->
                 <TextView
+                    android:id="@+id/tvNomePilar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Nome do Pilar"
-                    android:textSize="20sp"
+                    android:textSize="22sp"
                     android:textStyle="bold"
                     android:gravity="center"
                     android:textColor="#FFFFFF"
-                    android:layout_marginBottom="16dp"/>
+                    android:layout_marginBottom="24dp"/>
 
-                <!-- Ações -->
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Ações em andamento"
-                    android:textSize="16sp"
+                    android:textSize="17sp"
                     android:textStyle="bold"
                     android:textColor="#FFFFFF"
-                    android:layout_marginBottom="12dp"/>
+                    android:layout_marginBottom="14dp"/>
 
-                <!-- Boxes de ação -->
+                <!-- Container dinâmico das Ações -->
                 <LinearLayout
+                    android:id="@+id/containerAcoes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_marginBottom="24dp">
+                    android:layout_marginBottom="32dp"/>
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Nome da ação"
-                        android:background="@drawable/bg_box_acao"
-                        android:padding="12dp"
-                        android:layout_marginBottom="12dp"
-                        android:textColor="#FFFFFF"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Nome da ação"
-                        android:background="@drawable/bg_box_acao"
-                        android:padding="12dp"
-                        android:layout_marginBottom="12dp"
-                        android:textColor="#FFFFFF"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Nome da ação"
-                        android:background="@drawable/bg_box_acao"
-                        android:padding="12dp"
-                        android:layout_marginBottom="0dp"
-                        android:textColor="#FFFFFF"/>
-                </LinearLayout>
-
-                <!-- Datas -->
+                <!-- Data de Início -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Data de Início"
                     android:textStyle="bold"
                     android:textColor="#FFFFFF"
-                    android:layout_marginBottom="8dp"/>
+                    android:layout_marginBottom="6dp"/>
 
                 <TextView
                     android:id="@+id/tvDataInicio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_box_cinza"
-                    android:padding="10dp"
+                    android:padding="14dp"
                     android:textColor="#FFFFFF"
-                    android:layout_marginBottom="16dp"/>
+                    android:layout_marginBottom="18dp"/>
 
+                <!-- Data de Conclusão -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Data de Conclusão"
                     android:textStyle="bold"
                     android:textColor="#FFFFFF"
-                    android:layout_marginBottom="8dp"/>
+                    android:layout_marginBottom="6dp"/>
 
                 <TextView
                     android:id="@+id/tvDataConclusao"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_box_cinza"
-                    android:padding="10dp"
+                    android:padding="14dp"
                     android:textColor="#FFFFFF"
-                    android:layout_marginBottom="16dp"/>
+                    android:layout_marginBottom="18dp"/>
 
-                <!-- Status -->
+                <!-- Status do Pilar -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Status do Pilar"
                     android:textStyle="bold"
                     android:textColor="#FFFFFF"
-                    android:layout_marginBottom="8dp"/>
+                    android:layout_marginBottom="6dp"/>
 
                 <TextView
                     android:id="@+id/tvStatusPilar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_box_cinza"
-                    android:padding="10dp"
+                    android:padding="14dp"
                     android:textColor="#FFFFFF"/>
             </LinearLayout>
         </LinearLayout>
@@ -159,4 +135,5 @@
 
     <!-- Rodapé -->
     <include layout="@layout/footer_layout"/>
+
 </LinearLayout>
