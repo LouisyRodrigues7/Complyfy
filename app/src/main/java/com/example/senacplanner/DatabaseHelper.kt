@@ -535,7 +535,8 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         status: String,
         dataInicio: String,
         dataConclusao: String?,
-        criadoPor: Int
+        criadoPor: Int,
+        responsavelId: Int
     ) {
         val db = writableDatabase
         val values = ContentValues().apply {
@@ -546,7 +547,8 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
             put("data_inicio", dataInicio)
             put("data_conclusao", dataConclusao)
             put("criado_por", criadoPor)
-            put("aprovado", 0) // valor padrão
+            put("aprovado", 0)
+            put("responsavel_id", responsavelId)
         }
 
         db.insert("atividade", null, values)

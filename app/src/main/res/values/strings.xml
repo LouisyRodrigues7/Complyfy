@@ -42,9 +42,7 @@
 
     <string-array name="status_array">
         <item>Em andamento</item>
-        <item>Concluído</item>
-        <item>Pendente</item>
-        <item>Cancelado</item>
+        <item>Finalizada</item>
     </string-array>
 
 </resources>

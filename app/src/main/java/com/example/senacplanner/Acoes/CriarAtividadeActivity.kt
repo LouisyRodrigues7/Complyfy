@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.example.senacplanner.Acoes.Type.Usuario
 import com.example.senacplanner.DatabaseHelper
 import com.example.senacplanner.R
 import java.text.SimpleDateFormat
@@ -17,6 +18,8 @@ class CriarAtividadeActivity : AppCompatActivity() {
     private lateinit var dataConclusaoButton: Button
     private lateinit var statusSpinner: Spinner
     private lateinit var salvarButton: Button
+    private lateinit var spinnerResponsavel: Spinner
+    private lateinit var dbHelper: DatabaseHelper
 
     private var dataInicio: String = ""
     private var dataConclusao: String = ""
@@ -35,9 +38,16 @@ class CriarAtividadeActivity : AppCompatActivity() {
         dataConclusaoButton = findViewById(R.id.btnDataConclusao)
         statusSpinner = findViewById(R.id.spinnerStatus)
         salvarButton = findViewById(R.id.btnSalvar)
+        spinnerResponsavel = findViewById(R.id.spinnerResponsavel)
 
         acaoId = intent.getIntExtra("ACAO_ID", -1)
         usuarioId = intent.getIntExtra("USUARIO_ID", -1)
+
+        dbHelper = DatabaseHelper(this)
+        val responsaveis = dbHelper.listarResponsaveis()
+        val adapter = ArrayAdapter(this, R.layout.spinner_item, responsaveis)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerResponsavel.adapter = adapter
 
         if (acaoId == -1 || usuarioId == -1) {
             Toast.makeText(this, "Erro ao obter contexto da ação ou usuário.", Toast.LENGTH_SHORT).show()
@@ -54,33 +64,40 @@ class CriarAtividadeActivity : AppCompatActivity() {
 
         dataInicioButton.setOnClickListener { showDatePicker { date ->
             dataInicio = date
-            dataInicioButton.text = date
+            dataInicioButton.text = formatarDataParaBR(date)
         }}
 
         dataConclusaoButton.setOnClickListener { showDatePicker { date ->
             dataConclusao = date
-            dataConclusaoButton.text = date
+            dataConclusaoButton.text = formatarDataParaBR(date)
         }}
 
         salvarButton.setOnClickListener {
             val nome = nomeEditText.text.toString()
             val descricao = descricaoEditText.text.toString()
             val status = statusSpinner.selectedItem.toString()
+            val usuarioSelecionado = spinnerResponsavel.selectedItem as? Usuario
 
             if (nome.isBlank() || dataInicio.isBlank()) {
                 Toast.makeText(this, "Preencha os campos obrigatórios.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val db = DatabaseHelper(this)
-            db.inserirAtividade(
+            if (usuarioSelecionado == null) {
+                Toast.makeText(this, "Selecione um responsável.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+
+            dbHelper.inserirAtividade(
                 acaoId,
                 nome,
                 descricao,
                 status,
                 dataInicio,
                 dataConclusao,
-                usuarioId
+                usuarioId,
+                usuarioSelecionado.id
             )
 
             Toast.makeText(this, "Atividade criada com sucesso!", Toast.LENGTH_SHORT).show()
@@ -95,5 +112,23 @@ class CriarAtividadeActivity : AppCompatActivity() {
             data.set(year, month, day)
             callback(dateFormat.format(data.time))
         }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show()
+    }
+
+
+    fun formatarDataParaBR(dataISO: String): String {
+        return try {
+            val timestamp = dataISO.toLongOrNull()
+            val data: Date? = if (timestamp != null) {
+                Date(timestamp)
+            } else {
+                val formatoEntrada = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                formatoEntrada.parse(dataISO)
+            }
+            val formatoSaida = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            if (data != null) formatoSaida.format(data) else ""
+        } catch (e: Exception) {
+            ""
+        }
+
     }
 }

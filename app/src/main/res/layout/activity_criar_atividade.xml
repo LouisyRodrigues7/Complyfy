@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp"
     tools:context=".Acoes.CriarAtividadeActivity">
 
@@ -43,6 +44,20 @@
             android:id="@+id/spinnerStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
+
+        <Spinner
+            android:id="@+id/spinnerResponsavel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:padding="10dp"
+            android:background="@drawable/edit_button_background"
+            android:dropDownSelector="@drawable/spinner_dropdown_background"
+            app:layout_constraintTop_toBottomOf="@id/btnSalvar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <Button
             android:id="@+id/btnSalvar"
