@@ -52,6 +52,9 @@
 
 
 
+        <activity android:name=".Acoes.CriarAtividadeActivity" />
+
+
     </application>
 
 </manifest>

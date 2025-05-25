@@ -18,7 +18,7 @@ import java.util.Locale
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     companion object {
-        private const val DB_NAME = "banco_teste18.db"
+        private const val DB_NAME = "banco_teste19.db"
         private const val DB_VERSION = 1
     }
 
@@ -550,5 +550,33 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         db.close()
         return atividade
     }
+
+    fun inserirAtividade(
+        acaoId: Int,
+        nome: String,
+        descricao: String,
+        status: String,
+        dataInicio: String,
+        dataConclusao: String?,
+        criadoPor: Int,
+        responsavelId: Int
+    ) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("acao_id", acaoId)
+            put("nome", nome)
+            put("descricao", descricao)
+            put("status", status)
+            put("data_inicio", dataInicio)
+            put("data_conclusao", dataConclusao)
+            put("criado_por", criadoPor)
+            put("aprovado", 0)
+            put("responsavel_id", responsavelId)
+        }
+
+        db.insert("atividade", null, values)
+        db.close()
+    }
+
 
 }
