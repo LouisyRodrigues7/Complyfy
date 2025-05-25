@@ -21,7 +21,6 @@
         android:padding="8dp"
         android:textColor="#FFFFFF"/>
 
-    <!-- Container que cresce para empurrar o rodapé pra baixo -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -29,7 +28,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Box azul com bordas arredondadas -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,23 +40,25 @@
             android:elevation="4dp"
             android:clipToPadding="false">
 
-            <!-- Spinner com bordas arredondadas e altura aumentada -->
+            <!-- Subtítulo: Selecione um Pilar -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Selecione um Pilar"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="16dp" />
+
+            <!-- Spinner de Pilar -->
             <Spinner
                 android:id="@+id/spinnerPilar"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-            android:layout_marginTop="32dp"
-            android:background="@drawable/bg_spinner_button"/>
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_spinner_button"/>
 
-            <Spinner
-                android:id="@+id/spinnerAcao"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/bg_spinner_button"/>
-
-            <!-- Botão com bordas arredondadas -->
-
+            <!-- Botão -->
             <Button
                 android:id="@+id/btnBuscar"
                 android:layout_width="match_parent"
