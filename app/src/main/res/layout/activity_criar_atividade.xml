@@ -7,7 +7,6 @@
     android:gravity="center"
     tools:context=".Acoes.CriarAtividadeActivity">
 
-
     <TextView
         android:id="@+id/tvTitulo"
         android:layout_width="wrap_content"
@@ -19,7 +18,6 @@
         android:layout_gravity="top|center_horizontal"
         android:layout_marginTop="80dp"/>
 
-
     <LinearLayout
         android:layout_width="368dp"
         android:layout_height="wrap_content"
@@ -30,7 +28,6 @@
         android:padding="24dp"
         android:gravity="center">
 
-
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -40,48 +37,85 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nome da atividade"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="4dp"/>
+
                 <EditText
                     android:id="@+id/editNome"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Nome da atividade"
+                    android:hint="Digite o novo nome"
                     android:background="@drawable/bg_input_criar_atividade"
                     android:inputType="textPersonName"
                     android:padding="12dp"
                     android:textColor="#FFFFFF"
                     android:textColorHint="#AAAAAA"/>
 
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Descrição"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="4dp"/>
+
                 <EditText
                     android:id="@+id/editDescricao"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Descrição"
+                    android:hint="Digite a descrição da atividade"
                     android:background="@drawable/bg_input_criar_atividade"
                     android:inputType="textMultiLine"
                     android:minLines="3"
                     android:gravity="top"
                     android:padding="12dp"
                     android:textColor="#FFFFFF"
-                    android:textColorHint="#AAAAAA"
-                    android:layout_marginTop="8dp"/>
+                    android:textColorHint="#AAAAAA"/>
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Data de início"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="4dp"/>
 
                 <Button
                     android:id="@+id/btnDataInicio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Selecionar data de início"
+                    android:text="Selecionar data"
                     android:backgroundTint="#3E5B6A"
+                    android:textColor="#FFFFFF" />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Data de conclusão"
                     android:textColor="#FFFFFF"
-                    android:layout_marginTop="8dp"/>
+                    android:textSize="16sp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="4dp"/>
 
                 <Button
                     android:id="@+id/btnDataConclusao"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Selecionar data de conclusão (opcional)"
+                    android:text="Selecionar data"
                     android:backgroundTint="#3E5B6A"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginTop="8dp"/>
+                    android:textColor="#FFFFFF" />
+
 
                 <Spinner
                     android:id="@+id/spinnerStatus"
@@ -91,6 +125,15 @@
                     android:background="@drawable/bg_input_criar_atividade"
                     android:padding="10dp" />
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Selecione um responsável"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="4dp"/>
+
                 <Spinner
                     android:id="@+id/spinnerResponsavel"
                     android:layout_width="match_parent"
@@ -98,7 +141,6 @@
                     android:layout_marginTop="8dp"
                     android:background="@drawable/bg_input_criar_atividade"
                     android:padding="10dp" />
-
 
                 <LinearLayout
                     android:layout_width="match_parent"
