@@ -1,11 +1,12 @@
-package com.example.senacplanner
+package com.example.senacplanner.ui
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.senacplanner.Acoes.Type.Acao
+import com.example.senacplanner.R
+import com.example.senacplanner.model.DatabaseHelper
 import java.text.SimpleDateFormat
 import java.util.*
 

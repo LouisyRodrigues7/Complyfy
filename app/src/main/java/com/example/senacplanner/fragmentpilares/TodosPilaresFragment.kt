@@ -9,7 +9,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.example.senacplanner.DatabaseHelper
+import com.example.senacplanner.model.DatabaseHelper
 import com.example.senacplanner.LoginActivity
 import com.example.senacplanner.Acoes.ListaAtividades
 import com.example.senacplanner.R

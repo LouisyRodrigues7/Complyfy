@@ -34,7 +34,7 @@
             android:name=".novopilar.NovoPilarActivity"
             android:exported="true" />
         <activity
-            android:name=".CoordenadorActivity"
+            android:name=".ui.CoordenadorActivity"
             android:exported="false" />
         <activity
             android:name=".GestorActivity"
@@ -47,7 +47,7 @@
             android:exported="false" />
 
         <activity android:name=".NotificacoesActivity" />
-        <activity android:name=".EvolucaoPilarActivity"/>
+        <activity android:name=".ui.EvolucaoPilarActivity"/>
         <activity android:name=".PilarAcaoActivity" />
 
 

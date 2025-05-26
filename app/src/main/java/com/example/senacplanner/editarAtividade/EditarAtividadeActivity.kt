@@ -10,12 +10,9 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.senacplanner.Acoes.Type.Atividade
-import com.example.senacplanner.Acoes.Type.PilarType
 import com.example.senacplanner.Acoes.Type.Usuario
-import com.example.senacplanner.DatabaseHelper
+import com.example.senacplanner.model.DatabaseHelper
 import com.example.senacplanner.R
-import org.w3c.dom.Text
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date

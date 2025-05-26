@@ -9,6 +9,8 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.senacplanner.model.DatabaseHelper
+import com.example.senacplanner.ui.CoordenadorActivity
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var databaseHelper: DatabaseHelper

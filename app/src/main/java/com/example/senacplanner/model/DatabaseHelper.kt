@@ -1,4 +1,4 @@
-package com.example.senacplanner
+package com.example.senacplanner.model
 
 import android.content.ContentValues
 import android.content.Context

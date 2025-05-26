@@ -16,6 +16,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // JitPack biblioteca de gráficos
+        maven("https://jitpack.io")
     }
 }
 

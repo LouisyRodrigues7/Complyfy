@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.senacplanner.Acoes.Type.Usuario
-import com.example.senacplanner.DatabaseHelper
+import com.example.senacplanner.model.DatabaseHelper
 import com.example.senacplanner.R
 import java.text.SimpleDateFormat
 import java.util.*

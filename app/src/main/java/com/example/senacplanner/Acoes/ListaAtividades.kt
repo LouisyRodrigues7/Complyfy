@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.example.senacplanner.Acoes.Type.AcaoComAtividades
-import com.example.senacplanner.DatabaseHelper
+import com.example.senacplanner.model.DatabaseHelper
 import com.example.senacplanner.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 

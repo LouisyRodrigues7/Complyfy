@@ -8,6 +8,8 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.senacplanner.Acoes.Type.PilarType
+import com.example.senacplanner.model.DatabaseHelper
+import com.example.senacplanner.ui.EvolucaoPilarActivity
 
 class PilarAcaoActivity : AppCompatActivity() {
 
