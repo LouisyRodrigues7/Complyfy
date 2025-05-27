@@ -28,8 +28,8 @@ class CoordenadorActivity : AppCompatActivity() {
 
         val db = DatabaseHelper(this)
         db.verificarPilaresProximosDaConclusao()
+        db.verificarAtividadesProximasDaConclusao()
 
-        // --- REMOVIDO: Verificação de notificações
         // val db = DatabaseHelper(this)
         // db.verificarNotificacoesDePilaresProximos()
 
