@@ -39,12 +39,19 @@ class CriarAtividadeActivity : AppCompatActivity() {
         statusSpinner = findViewById(R.id.spinnerStatus)
         salvarButton = findViewById(R.id.btnSalvar)
         spinnerResponsavel = findViewById(R.id.spinnerResponsavel)
+        val cancelarButton = findViewById<Button>(R.id.btnCancelar)
+        cancelarButton.setOnClickListener {
+            finish() // Fecha esta tela e volta para a anterior
+        }
+
 
         acaoId = intent.getIntExtra("ACAO_ID", -1)
         usuarioId = intent.getIntExtra("USUARIO_ID", -1)
 
         dbHelper = DatabaseHelper(this)
-        val responsaveis = dbHelper.listarResponsaveis()
+        val responsaveis = mutableListOf<Usuario>()
+        responsaveis.add(Usuario(id = -1, nome = "Nenhum", tipo = "Nenhum")) // Adiciona opção 'Nenhum'
+        responsaveis.addAll(dbHelper.listarResponsaveis()) // Adiciona os demais
         val adapter = ArrayAdapter(this, R.layout.spinner_item, responsaveis)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerResponsavel.adapter = adapter
@@ -77,6 +84,8 @@ class CriarAtividadeActivity : AppCompatActivity() {
             val descricao = descricaoEditText.text.toString()
             val status = statusSpinner.selectedItem.toString()
             val usuarioSelecionado = spinnerResponsavel.selectedItem as? Usuario
+            val responsavelId = if (usuarioSelecionado?.id == -1) null else usuarioSelecionado?.id
+
 
             if (nome.isBlank() || dataInicio.isBlank()) {
                 Toast.makeText(this, "Preencha os campos obrigatórios.", Toast.LENGTH_SHORT).show()
@@ -97,8 +106,9 @@ class CriarAtividadeActivity : AppCompatActivity() {
                 dataInicio,
                 dataConclusao,
                 usuarioId,
-                usuarioSelecionado.id
+                responsavelId
             )
+
 
             Toast.makeText(this, "Atividade criada com sucesso!", Toast.LENGTH_SHORT).show()
             finish()
