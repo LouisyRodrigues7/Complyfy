@@ -9,6 +9,7 @@ import com.example.senacplanner.Acoes.Type.AcaoComAtividades
 import com.example.senacplanner.Acoes.Type.Atividade
 import com.example.senacplanner.Acoes.Type.PilarType
 import com.example.senacplanner.Acoes.Type.Usuario
+import com.example.senacplanner.editarAtividade.AtividadeEdit
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Calendar
@@ -17,7 +18,7 @@ import java.util.Locale
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     companion object {
-        private const val DB_NAME = "banco_teste17.db"
+        private const val DB_NAME = "banco_teste19.db"
         private const val DB_VERSION = 1
     }
 
@@ -116,6 +117,29 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
 
         cursor.close()
         return pilares
+    }
+
+    // 🔹 Buscar ações de um pilar específico
+
+    fun getAcoesByPilarId(pilarId: Int): List<Acao> {
+        val listaAcoes = mutableListOf<Acao>()
+        val db = getDatabase()
+
+        val cursor = db.rawQuery(
+            "SELECT id, nome FROM Acao WHERE pilar_id = ?",
+            arrayOf(pilarId.toString())
+        )
+
+        if (cursor.moveToFirst()) {
+            do {
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+                listaAcoes.add(Acao(id = id, nome = nome))
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        return listaAcoes
     }
 
     fun listarResponsaveis(): List<Usuario> {
@@ -284,6 +308,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
             while (cursorAtividades.moveToNext()) {
                 val idAtividade = cursorAtividades.getInt(cursorAtividades.getColumnIndexOrThrow("id"))
                 val nomeAtividade = cursorAtividades.getString(cursorAtividades.getColumnIndexOrThrow("nome"))
+
                 atividades.add(Atividade(idAtividade, nome = nomeAtividade))
             }
             cursorAtividades.close()
@@ -481,4 +506,197 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         cursorAcoes.close()
         return resultado
     }
+
+    fun atualizarAtividade(
+        id: Int,
+        novoNome: String,
+        responsavel: Int,
+        dataInicio: String,
+        dataConclusao: String,
+        status: String
+    ): AtividadeEdit? {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("nome", novoNome)
+            put("responsavel_id", responsavel)
+            put("data_inicio", dataInicio)
+            put("data_conclusao", dataConclusao)
+            put("status", status)
+        }
+
+        db.update("Atividade", values, "id = ?", arrayOf(id.toString()))
+
+        return buscarAtividadePorId(id)
+    }
+
+
+    fun buscarAtividadePorId(id: Int): AtividadeEdit? {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM atividade WHERE id = ?", arrayOf(id.toString()))
+
+        var atividade: AtividadeEdit? = null
+
+        if (cursor.moveToFirst()) {
+            val nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+            val responsavelId = cursor.getInt(cursor.getColumnIndexOrThrow("responsavel_id"))
+            val dataInicio = cursor.getString(cursor.getColumnIndexOrThrow("data_inicio"))
+            val dataConclusao = cursor.getString(cursor.getColumnIndexOrThrow("data_conclusao"))
+            val status = cursor.getString(cursor.getColumnIndexOrThrow("status"))
+
+            atividade = AtividadeEdit(id, nome, status, dataInicio, dataConclusao, responsavelId)
+        }
+
+        cursor.close()
+        db.close()
+        return atividade
+    }
+
+    fun inserirAtividade(
+        acaoId: Int,
+        nome: String,
+        descricao: String,
+        status: String,
+        dataInicio: String,
+        dataConclusao: String?,
+        criadoPor: Int,
+        responsavelId: Int?
+    ) {
+        val db = writableDatabase
+
+        //Buscar nome da Ação e do Pilar
+        val cursorAcao = db.rawQuery(
+            "SELECT nome, pilar_id FROM Acao WHERE id = ?",
+            arrayOf(acaoId.toString())
+        )
+
+        var nomeAcao = ""
+        var pilarId = -1
+
+        if (cursorAcao.moveToFirst()) {
+            nomeAcao = cursorAcao.getString(cursorAcao.getColumnIndexOrThrow("nome"))
+            pilarId = cursorAcao.getInt(cursorAcao.getColumnIndexOrThrow("pilar_id"))
+        }
+        cursorAcao.close()
+
+        var nomePilar = ""
+        if (pilarId != -1) {
+            val cursorPilar = db.rawQuery(
+                "SELECT nome FROM Pilar WHERE id = ?",
+                arrayOf(pilarId.toString())
+            )
+            if (cursorPilar.moveToFirst()) {
+                nomePilar = cursorPilar.getString(cursorPilar.getColumnIndexOrThrow("nome"))
+            }
+            cursorPilar.close()
+        }
+
+        val values = ContentValues().apply {
+            put("acao_id", acaoId)
+            put("nome", nome)
+            put("descricao", descricao)
+            put("status", status)
+            put("data_inicio", dataInicio)
+            put("data_conclusao", dataConclusao)
+            put("criado_por", criadoPor)
+            put("aprovado", 0)
+            if (responsavelId != null) {
+                put("responsavel_id", responsavelId)
+            }
+        }
+
+        val atividadeId = db.insert("Atividade", null, values)
+
+        // Gerar notificação se tiver responsável
+        if (responsavelId != null && atividadeId != -1L) {
+            val mensagem = "Nova atividade \"$nome\" atribuída a você, na ação \"$nomeAcao\" do pilar \"$nomePilar\"."
+            val dataAtual = System.currentTimeMillis().toString()
+
+            val notificacao = ContentValues().apply {
+                put("usuario_id", responsavelId)
+                put("mensagem", mensagem)
+                put("data", dataAtual)
+                put("lida", 0)
+                put("atividade_id", atividadeId.toInt())
+            }
+
+            db.insert("Notificacao", null, notificacao)
+        }
+
+        db.close()
+    }
+
+    fun verificarAtividadesProximasDaConclusao() {
+        val db = writableDatabase
+        val cursor = db.rawQuery(
+            """
+        SELECT a.id, a.nome, a.data_conclusao, u.id as responsavel_id, 
+               ac.nome as nome_acao, p.numero as numero_pilar, p.nome as nome_pilar
+        FROM Atividade a
+        JOIN Acao ac ON a.acao_id = ac.id
+        JOIN Pilar p ON ac.pilar_id = p.id
+        JOIN Usuario u ON a.responsavel_id = u.id
+        WHERE a.data_conclusao IS NOT NULL AND a.responsavel_id IS NOT NULL
+        """.trimIndent(), null
+        )
+
+        val hoje = Calendar.getInstance()
+        val formatter = java.text.SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+        while (cursor.moveToNext()) {
+            val atividadeId = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+            val nomeAtividade = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+            val dataConclusaoStr = cursor.getString(cursor.getColumnIndexOrThrow("data_conclusao"))
+            val responsavelId = cursor.getInt(cursor.getColumnIndexOrThrow("responsavel_id"))
+            val numeroPilar = cursor.getInt(cursor.getColumnIndexOrThrow("numero_pilar"))
+            val nomePilar = cursor.getString(cursor.getColumnIndexOrThrow("nome_pilar"))
+
+            val dataConclusao: Long? = try {
+                formatter.parse(dataConclusaoStr)?.time
+            } catch (e: Exception) {
+                null
+            }
+
+            if (dataConclusao == null) continue
+
+            val diasRestantes = ((dataConclusao - hoje.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
+
+            if (diasRestantes == 3 || diasRestantes == 7) {
+                val mensagem = "Sua atividade \"$nomeAtividade\" do pilar $numeroPilar - $nomePilar está a $diasRestantes dias da conclusão."
+
+                val cursorCheck = db.rawQuery(
+                    """
+                SELECT COUNT(*) FROM Notificacao 
+                WHERE usuario_id = ? AND atividade_id = ? AND mensagem = ? AND ABS(CAST(data AS INTEGER) - ?) < 86400000
+                """.trimIndent(),
+                    arrayOf(
+                        responsavelId.toString(),
+                        atividadeId.toString(),
+                        mensagem,
+                        System.currentTimeMillis().toString()
+                    )
+                )
+
+                cursorCheck.moveToFirst()
+                val jaExiste = cursorCheck.getInt(0) > 0
+                cursorCheck.close()
+
+                if (!jaExiste) {
+                    val values = ContentValues().apply {
+                        put("usuario_id", responsavelId)
+                        put("mensagem", mensagem)
+                        put("data", System.currentTimeMillis().toString())
+                        put("lida", 0)
+                        put("atividade_id", atividadeId)
+                    }
+
+                    db.insert("Notificacao", null, values)
+                }
+            }
+        }
+
+        cursor.close()
+        db.close()
+    }
+
+
 }

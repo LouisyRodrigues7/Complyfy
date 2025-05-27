@@ -16,6 +16,10 @@
         <activity
             android:name=".editarpilar.EditarActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".editarAtividade.EditarAtividadeActivity"
+            android:exported="false" />
         <!-- Tela principal (Login) -->
         <activity
             android:name=".LoginActivity"
@@ -43,6 +47,13 @@
             android:exported="false" />
 
         <activity android:name=".NotificacoesActivity" />
+        <activity android:name=".EvolucaoPilarActivity"/>
+        <activity android:name=".PilarAcaoActivity" />
+
+
+
+        <activity android:name=".Acoes.CriarAtividadeActivity" />
+
 
     </application>
 

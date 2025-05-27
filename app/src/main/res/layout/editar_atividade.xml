@@ -84,7 +84,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
-            <TextView
+            <EditText
                 android:id="@+id/tvNovoNome"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -127,6 +127,20 @@
                 app:layout_constraintEnd_toEndOf="parent"/>
 
 
+            <Spinner
+                android:id="@+id/spinnerResponsavel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/edit_button_background"
+                android:gravity="center"
+                android:padding="10dp"
+                android:dropDownSelector="@drawable/spinner_dropdown_background"
+                app:layout_constraintTop_toBottomOf="@id/tvResponsavel"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+
             <TextView
                 android:id="@+id/tvDataInicioLabel"
                 android:layout_width="wrap_content"
@@ -138,7 +152,7 @@
                 app:layout_constraintTop_toBottomOf="@id/tvResponsavelSelecionado"
                 app:layout_constraintStart_toStartOf="parent"/>
 
-            <TextView
+            <EditText
                 android:id="@+id/tvDataInicio"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -163,7 +177,7 @@
                 app:layout_constraintTop_toBottomOf="@id/tvDataInicio"
                 app:layout_constraintStart_toStartOf="parent"/>
 
-            <TextView
+            <EditText
                 android:id="@+id/tvDataConclusao"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
