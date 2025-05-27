@@ -560,10 +560,36 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         dataConclusao: String?,
         criadoPor: Int,
         responsavelId: Int?
-
-        )
-    {
+    ) {
         val db = writableDatabase
+
+        //Buscar nome da Ação e do Pilar
+        val cursorAcao = db.rawQuery(
+            "SELECT nome, pilar_id FROM Acao WHERE id = ?",
+            arrayOf(acaoId.toString())
+        )
+
+        var nomeAcao = ""
+        var pilarId = -1
+
+        if (cursorAcao.moveToFirst()) {
+            nomeAcao = cursorAcao.getString(cursorAcao.getColumnIndexOrThrow("nome"))
+            pilarId = cursorAcao.getInt(cursorAcao.getColumnIndexOrThrow("pilar_id"))
+        }
+        cursorAcao.close()
+
+        var nomePilar = ""
+        if (pilarId != -1) {
+            val cursorPilar = db.rawQuery(
+                "SELECT nome FROM Pilar WHERE id = ?",
+                arrayOf(pilarId.toString())
+            )
+            if (cursorPilar.moveToFirst()) {
+                nomePilar = cursorPilar.getString(cursorPilar.getColumnIndexOrThrow("nome"))
+            }
+            cursorPilar.close()
+        }
+
         val values = ContentValues().apply {
             put("acao_id", acaoId)
             put("nome", nome)
@@ -578,9 +604,28 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
             }
         }
 
-        db.insert("atividade", null, values)
+        val atividadeId = db.insert("Atividade", null, values)
+
+        // Gerar notificação se tiver responsável
+        if (responsavelId != null && atividadeId != -1L) {
+            val mensagem = "Nova atividade \"$nome\" atribuída a você, na ação \"$nomeAcao\" do pilar \"$nomePilar\"."
+            val dataAtual = System.currentTimeMillis().toString()
+
+            val notificacao = ContentValues().apply {
+                put("usuario_id", responsavelId)
+                put("mensagem", mensagem)
+                put("data", dataAtual)
+                put("lida", 0)
+                put("atividade_id", atividadeId.toInt())
+            }
+
+            db.insert("Notificacao", null, notificacao)
+        }
+
         db.close()
     }
+
+
 
 
 }
