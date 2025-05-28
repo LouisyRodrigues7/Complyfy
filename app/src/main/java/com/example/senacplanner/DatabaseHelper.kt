@@ -794,4 +794,3 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     }
 
 }
-
