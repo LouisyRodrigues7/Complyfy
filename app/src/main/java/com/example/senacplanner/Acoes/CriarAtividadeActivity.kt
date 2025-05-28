@@ -1,12 +1,18 @@
 package com.example.senacplanner.Acoes
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.senacplanner.Acoes.Type.Usuario
 import com.example.senacplanner.DatabaseHelper
+import com.example.senacplanner.NotificacoesActivity
 import com.example.senacplanner.R
+import com.example.senacplanner.adapter.NotificacaoAdapter
+import com.example.senacplanner.adapter.TipoNotificacao
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -25,6 +31,9 @@ class CriarAtividadeActivity : AppCompatActivity() {
     private var dataConclusao: String = ""
     private var acaoId: Int = -1
     private var usuarioId: Int = -1
+    private var idUsuario: Int = -1
+    private var pilarNome: String = ""
+    private var atividadeId: Long = -1
 
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
@@ -39,25 +48,23 @@ class CriarAtividadeActivity : AppCompatActivity() {
         statusSpinner = findViewById(R.id.spinnerStatus)
         salvarButton = findViewById(R.id.btnSalvar)
         spinnerResponsavel = findViewById(R.id.spinnerResponsavel)
-        val cancelarButton = findViewById<Button>(R.id.btnCancelar)
-        cancelarButton.setOnClickListener {
-            finish() // Fecha esta tela e volta para a anterior
-        }
 
+        dbHelper = DatabaseHelper(this)
 
         acaoId = intent.getIntExtra("ACAO_ID", -1)
         usuarioId = intent.getIntExtra("USUARIO_ID", -1)
+        pilarNome = intent.getStringExtra("PILAR_NOME").toString()
 
-        dbHelper = DatabaseHelper(this)
-        val responsaveis = mutableListOf<Usuario>()
-        responsaveis.add(Usuario(id = -1, nome = "Nenhum", tipo = "Nenhum")) // Adiciona opção 'Nenhum'
-        responsaveis.addAll(dbHelper.listarResponsaveis()) // Adiciona os demais
+        val tipoUsuario = dbHelper.obterUsuario(usuarioId)
+        Log.d("USUARIO ID", (tipoUsuario?.tipo ?: '-').toString())
+        val responsaveis = dbHelper.listarResponsaveis()
         val adapter = ArrayAdapter(this, R.layout.spinner_item, responsaveis)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerResponsavel.adapter = adapter
 
         if (acaoId == -1 || usuarioId == -1) {
-            Toast.makeText(this, "Erro ao obter contexto da ação ou usuário.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Erro ao obter contexto da ação ou usuário.", Toast.LENGTH_SHORT)
+                .show()
             finish()
         }
 
@@ -69,23 +76,25 @@ class CriarAtividadeActivity : AppCompatActivity() {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
 
-        dataInicioButton.setOnClickListener { showDatePicker { date ->
-            dataInicio = date
-            dataInicioButton.text = formatarDataParaBR(date)
-        }}
+        dataInicioButton.setOnClickListener {
+            showDatePicker { date ->
+                dataInicio = date
+                dataInicioButton.text = formatarDataParaBR(date)
+            }
+        }
 
-        dataConclusaoButton.setOnClickListener { showDatePicker { date ->
-            dataConclusao = date
-            dataConclusaoButton.text = formatarDataParaBR(date)
-        }}
+        dataConclusaoButton.setOnClickListener {
+            showDatePicker { date ->
+                dataConclusao = date
+                dataConclusaoButton.text = formatarDataParaBR(date)
+            }
+        }
 
         salvarButton.setOnClickListener {
             val nome = nomeEditText.text.toString()
             val descricao = descricaoEditText.text.toString()
             val status = statusSpinner.selectedItem.toString()
             val usuarioSelecionado = spinnerResponsavel.selectedItem as? Usuario
-            val responsavelId = if (usuarioSelecionado?.id == -1) null else usuarioSelecionado?.id
-
 
             if (nome.isBlank() || dataInicio.isBlank()) {
                 Toast.makeText(this, "Preencha os campos obrigatórios.", Toast.LENGTH_SHORT).show()
@@ -97,8 +106,7 @@ class CriarAtividadeActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-
-            dbHelper.inserirAtividade(
+            atividadeId = dbHelper.inserirAtividade(
                 acaoId,
                 nome,
                 descricao,
@@ -106,13 +114,19 @@ class CriarAtividadeActivity : AppCompatActivity() {
                 dataInicio,
                 dataConclusao,
                 usuarioId,
-                responsavelId
+                usuarioSelecionado.id,
             )
 
 
-            Toast.makeText(this, "Atividade criada com sucesso!", Toast.LENGTH_SHORT).show()
+            dbHelper.criarNotificacaoParaCoordenador(
+                "Nova atividade ($nome) aguardando aprovação!!",
+                atividadeId.toInt(),
+                TipoNotificacao.APROVACAO_ATIVIDADE
+            )
+            Toast.makeText(this, "Atividade aguardando aprovação!", Toast.LENGTH_SHORT).show()
             finish()
         }
+
     }
 
     private fun showDatePicker(callback: (String) -> Unit) {

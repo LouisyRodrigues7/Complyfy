@@ -9,6 +9,7 @@ import com.example.senacplanner.Acoes.Type.AcaoComAtividades
 import com.example.senacplanner.Acoes.Type.Atividade
 import com.example.senacplanner.Acoes.Type.PilarType
 import com.example.senacplanner.Acoes.Type.Usuario
+import com.example.senacplanner.adapter.TipoNotificacao
 import com.example.senacplanner.editarAtividade.AtividadeEdit
 import java.io.FileOutputStream
 import java.io.IOException
@@ -18,7 +19,7 @@ import java.util.Locale
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     companion object {
-        private const val DB_NAME = "banco_teste19.db"
+        private const val DB_NAME = "novobanco.db"
         private const val DB_VERSION = 1
     }
 
@@ -126,7 +127,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         val db = getDatabase()
 
         val cursor = db.rawQuery(
-            "SELECT id, nome FROM Acao WHERE pilar_id = ?",
+            "SELECT id, nome, pilar_id FROM Acao WHERE pilar_id = ?",
             arrayOf(pilarId.toString())
         )
 
@@ -134,7 +135,8 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
             do {
                 val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
                 val nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
-                listaAcoes.add(Acao(id = id, nome = nome))
+                val pilarId = cursor.getInt(cursor.getColumnIndexOrThrow("pilar_id"))
+                listaAcoes.add(Acao(id = id, nome = nome, pilarId))
             } while (cursor.moveToNext())
         }
 
@@ -217,10 +219,12 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
             // Pula se a data for inválida
             if (dataConclusao == null) continue
 
-            val diasRestantes = ((dataConclusao - hoje.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
+            val diasRestantes =
+                ((dataConclusao - hoje.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
 
             if (diasRestantes == 7 || diasRestantes == 3) {
-                val mensagem = "O Pilar \"$nomePilar\" está a $diasRestantes dias da data de conclusão."
+                val mensagem =
+                    "O Pilar \"$nomePilar\" está a $diasRestantes dias da data de conclusão."
 
                 // Evita notificação duplicada
                 val cursorCheck = db.rawQuery(
@@ -244,7 +248,6 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         cursorPilares.close()
         db.close()
     }
-
 
 
     fun cadastrarPilar(
@@ -277,7 +280,6 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     }
 
 
-
     fun obterProximoNumeroPilar(): Int {
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT MAX(numero) as max_numero FROM Pilar", null)
@@ -300,20 +302,26 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         while (cursorAcao.moveToNext()) {
             val acaoId = cursorAcao.getInt(cursorAcao.getColumnIndexOrThrow("id"))
             val nomeAcao = cursorAcao.getString(cursorAcao.getColumnIndexOrThrow("nome"))
+            val pilarId = cursorAcao.getInt(cursorAcao.getColumnIndexOrThrow("pilar_id"))
 
-            val queryAtividades = "SELECT * FROM Atividade WHERE acao_id = ?"
+            val queryAtividades = "SELECT id, nome , status, aprovado FROM Atividade WHERE acao_id = ?"
             val cursorAtividades = db.rawQuery(queryAtividades, arrayOf(acaoId.toString()))
 
             val atividades = mutableListOf<Atividade>()
             while (cursorAtividades.moveToNext()) {
-                val idAtividade = cursorAtividades.getInt(cursorAtividades.getColumnIndexOrThrow("id"))
-                val nomeAtividade = cursorAtividades.getString(cursorAtividades.getColumnIndexOrThrow("nome"))
-
-                atividades.add(Atividade(idAtividade, nome = nomeAtividade))
+                val idAtividade =
+                    cursorAtividades.getInt(cursorAtividades.getColumnIndexOrThrow("id"))
+                val nomeAtividade =
+                    cursorAtividades.getString(cursorAtividades.getColumnIndexOrThrow("nome"))
+                val status =
+                    cursorAtividades.getString(cursorAtividades.getColumnIndexOrThrow("status"))
+                val aprovado =
+                    cursorAtividades.getInt(cursorAtividades.getColumnIndexOrThrow("aprovado")) == 1
+                atividades.add(Atividade(idAtividade, nomeAtividade, status, aprovado))
             }
             cursorAtividades.close()
 
-            lista.add(AcaoComAtividades(Acao(id = acaoId, nome = nomeAcao), atividades))
+            lista.add(AcaoComAtividades(Acao(id = acaoId, nome = nomeAcao, pilarId), atividades))
         }
 
         cursorAcao.close()
@@ -394,7 +402,8 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
             }
 
             if (alteracoes.isNotEmpty()) {
-                val msg = "O Pilar \"$nomeAntigo\" teve alteração na ${alteracoes.joinToString(" e ")}."
+                val msg =
+                    "O Pilar \"$nomeAntigo\" teve alteração na ${alteracoes.joinToString(" e ")}."
                 notificarTodosUsuarios(msg)
             }
         }
@@ -424,9 +433,34 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return rowsDeleted > 0
     }
 
-    data class PilarDTO(val id: Int, val numero: Int, val nome: String, val descricao: String,
-                        val dataInicio: String, val dataConclusao: String, val criadoPor: Int)
 
+
+    data class AcaoDTO(
+        val id: Int, val nome: String, val pilar_id: Int
+    )
+    fun buscarAcaoPorId(id: Int): AcaoDTO? {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM Acao WHERE id = ?", arrayOf(id.toString()))
+
+        var acao: AcaoDTO? = null
+
+        if (cursor.moveToFirst()) {
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+            val nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+            val pilarId = cursor.getInt(cursor.getColumnIndexOrThrow("pilar_id"))
+            acao = AcaoDTO(id, nome, pilarId)
+        }
+
+        cursor.close()
+        db.close()
+        return acao
+    }
+
+
+    data class PilarDTO(
+        val id: Int, val numero: Int, val nome: String, val descricao: String,
+        val dataInicio: String, val dataConclusao: String, val criadoPor: Int
+    )
     fun getPilaresComAtividadesDoUsuario(usuarioId: Int): List<PilarDTO> {
         val pilares = mutableListOf<PilarDTO>()
         val db = readableDatabase
@@ -461,12 +495,37 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return pilares
     }
 
-    fun buscarAcoesEAtividadesDoUsuarioPorPilar(pilarId: Int, usuarioId: Int): List<AcaoComAtividades> {
+
+    data class PilarDTObyId(
+        val id: Int, val nome: String
+    )
+    fun buscarPilarPorId(id: Int): PilarDTObyId? {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM Pilar WHERE id = ?", arrayOf(id.toString()))
+
+        var pilar: PilarDTObyId? = null
+
+        if (cursor.moveToFirst()) {
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+            val nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+            pilar = PilarDTObyId(id, nome)
+        }
+
+        cursor.close()
+        db.close()
+        return pilar
+    }
+
+
+    fun buscarAcoesEAtividadesDoUsuarioPorPilar(
+        pilarId: Int,
+        usuarioId: Int
+    ): List<AcaoComAtividades> {
         val resultado = mutableListOf<AcaoComAtividades>()
         val db = readableDatabase
 
         val acoesQuery = """
-        SELECT DISTINCT a.id, a.nome
+        SELECT DISTINCT a.id, a.nome, a.pilar_id
         FROM Acao a
         JOIN Atividade at ON a.id = at.acao_id
         WHERE a.pilar_id = ? AND at.responsavel_id = ?
@@ -478,23 +537,28 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
             do {
                 val acaoId = cursorAcoes.getInt(0)
                 val acaoNome = cursorAcoes.getString(1)
-                val acao = Acao(acaoId, acaoNome)
+                val pilarId = cursorAcoes.getInt(2)
+                val acao = Acao(acaoId, acaoNome, pilarId)
 
                 val atividades = mutableListOf<Atividade>()
 
                 val atividadesQuery = """
-                SELECT id, nome
+                SELECT id, nome, status, aprovado
                 FROM Atividade
                 WHERE acao_id = ? AND responsavel_id = ?
             """.trimIndent()
 
-                val cursorAtividades = db.rawQuery(atividadesQuery, arrayOf(acaoId.toString(), usuarioId.toString()))
+                val cursorAtividades =
+                    db.rawQuery(atividadesQuery, arrayOf(acaoId.toString(), usuarioId.toString()))
 
                 if (cursorAtividades.moveToFirst()) {
                     do {
                         val atividadeId = cursorAtividades.getInt(0)
                         val atividadeNome = cursorAtividades.getString(1)
-                        atividades.add(Atividade(atividadeId, atividadeNome))
+                        val status = cursorAtividades.getString(cursorAtividades.getColumnIndexOrThrow("status"))
+                        val aprovado = cursorAtividades.getInt(cursorAtividades.getColumnIndexOrThrow("aprovado")) == 1
+
+                        atividades.add(Atividade(atividadeId, atividadeNome, status, aprovado))
                     } while (cursorAtividades.moveToNext())
                 }
 
@@ -504,6 +568,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         }
 
         cursorAcoes.close()
+        db.close()
         return resultado
     }
 
@@ -530,20 +595,44 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     }
 
 
-    fun buscarAtividadePorId(id: Int): AtividadeEdit? {
+
+    fun buscarAtividadePorId(id: Int?): AtividadeEdit? {
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM atividade WHERE id = ?", arrayOf(id.toString()))
+        val cursor = db.rawQuery("SELECT * FROM Atividade WHERE id = ?", arrayOf(id.toString()))
 
         var atividade: AtividadeEdit? = null
 
         if (cursor.moveToFirst()) {
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
             val nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
             val responsavelId = cursor.getInt(cursor.getColumnIndexOrThrow("responsavel_id"))
             val dataInicio = cursor.getString(cursor.getColumnIndexOrThrow("data_inicio"))
             val dataConclusao = cursor.getString(cursor.getColumnIndexOrThrow("data_conclusao"))
             val status = cursor.getString(cursor.getColumnIndexOrThrow("status"))
+            val criadoPor = cursor.getInt(cursor.getColumnIndexOrThrow("criado_por"))
+            val acaoId = cursor.getInt(cursor.getColumnIndexOrThrow("acao_id"))
+            atividade = AtividadeEdit(id, nome, status, dataInicio, dataConclusao, responsavelId, criadoPor, acaoId)
+        }
 
-            atividade = AtividadeEdit(id, nome, status, dataInicio, dataConclusao, responsavelId)
+        cursor.close()
+        db.close()
+        return atividade
+    }
+
+
+    data class AtividadeDTObyId(
+        val id: Int, val aprovado: Boolean
+    )
+    fun buscarAtividadeAprovada(id: Int?): AtividadeDTObyId? {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM Atividade WHERE id = ?", arrayOf(id.toString()))
+
+        var atividade: AtividadeDTObyId? = null
+
+        if (cursor.moveToFirst()) {
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+            val aprovado = cursor.getInt(cursor.getColumnIndexOrThrow("aprovado")) == 1
+            atividade = AtividadeDTObyId(id, aprovado)
         }
 
         cursor.close()
@@ -559,37 +648,9 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         dataInicio: String,
         dataConclusao: String?,
         criadoPor: Int,
-        responsavelId: Int?
-    ) {
+        responsavelId: Int,
+    ): Long {
         val db = writableDatabase
-
-        //Buscar nome da Ação e do Pilar
-        val cursorAcao = db.rawQuery(
-            "SELECT nome, pilar_id FROM Acao WHERE id = ?",
-            arrayOf(acaoId.toString())
-        )
-
-        var nomeAcao = ""
-        var pilarId = -1
-
-        if (cursorAcao.moveToFirst()) {
-            nomeAcao = cursorAcao.getString(cursorAcao.getColumnIndexOrThrow("nome"))
-            pilarId = cursorAcao.getInt(cursorAcao.getColumnIndexOrThrow("pilar_id"))
-        }
-        cursorAcao.close()
-
-        var nomePilar = ""
-        if (pilarId != -1) {
-            val cursorPilar = db.rawQuery(
-                "SELECT nome FROM Pilar WHERE id = ?",
-                arrayOf(pilarId.toString())
-            )
-            if (cursorPilar.moveToFirst()) {
-                nomePilar = cursorPilar.getString(cursorPilar.getColumnIndexOrThrow("nome"))
-            }
-            cursorPilar.close()
-        }
-
         val values = ContentValues().apply {
             put("acao_id", acaoId)
             put("nome", nome)
@@ -599,104 +660,137 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
             put("data_conclusao", dataConclusao)
             put("criado_por", criadoPor)
             put("aprovado", 0)
-            if (responsavelId != null) {
-                put("responsavel_id", responsavelId)
-            }
+            put("responsavel_id", responsavelId)
         }
 
         val atividadeId = db.insert("Atividade", null, values)
+        db.close()
+        return atividadeId
+    }
 
-        // Gerar notificação se tiver responsável
-        if (responsavelId != null && atividadeId != -1L) {
-            val mensagem = "Nova atividade \"$nome\" atribuída a você, na ação \"$nomeAcao\" do pilar \"$nomePilar\"."
-            val dataAtual = System.currentTimeMillis().toString()
-
-            val notificacao = ContentValues().apply {
-                put("usuario_id", responsavelId)
-                put("mensagem", mensagem)
-                put("data", dataAtual)
-                put("lida", 0)
-                put("atividade_id", atividadeId.toInt())
-            }
-
-            db.insert("Notificacao", null, notificacao)
+    fun atualizarStatus(idAtividade: Int, novoStatus: String) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("status", novoStatus)
         }
-
+        db.update("Atividade", values, "id = ?", arrayOf(idAtividade.toString()))
         db.close()
     }
 
-    fun verificarAtividadesProximasDaConclusao() {
+    fun calcularProgressoPilar(pilarId: Int): Int {
+        val db = this.readableDatabase
+
+        val queryTotal = """
+        SELECT COUNT(*) FROM Atividade 
+        INNER JOIN Acao ON Atividade.acao_id = Acao.id
+        WHERE Acao.pilar_id = ?
+    """.trimIndent()
+
+        val queryConcluidas = """
+        SELECT COUNT(*) FROM Atividade 
+        INNER JOIN Acao ON Atividade.acao_id = Acao.id
+        WHERE Acao.pilar_id = ? AND Atividade.status = 'Finalizada'
+    """.trimIndent()
+
+        val cursorTotal = db.rawQuery(queryTotal, arrayOf(pilarId.toString()))
+        val cursorConcluidas = db.rawQuery(queryConcluidas, arrayOf(pilarId.toString()))
+
+        var total = 0
+        var concluidas = 0
+
+        if (cursorTotal.moveToFirst()) {
+            total = cursorTotal.getInt(0)
+        }
+        if (cursorConcluidas.moveToFirst()) {
+            concluidas = cursorConcluidas.getInt(0)
+        }
+
+        cursorTotal.close()
+        cursorConcluidas.close()
+        db.close()
+
+        if (total == 0) return 0
+
+        val progresso = (concluidas * 100) / total
+        return progresso
+    }
+
+
+    fun criarNotificacaoParaCoordenador(mensagem: String, atividadeId: Int? = null, tipoNotificacao: TipoNotificacao) {
         val db = writableDatabase
-        val cursor = db.rawQuery(
-            """
-        SELECT a.id, a.nome, a.data_conclusao, u.id as responsavel_id, 
-               ac.nome as nome_acao, p.numero as numero_pilar, p.nome as nome_pilar
-        FROM Atividade a
-        JOIN Acao ac ON a.acao_id = ac.id
-        JOIN Pilar p ON ac.pilar_id = p.id
-        JOIN Usuario u ON a.responsavel_id = u.id
-        WHERE a.data_conclusao IS NOT NULL AND a.responsavel_id IS NOT NULL
-        """.trimIndent(), null
-        )
+        val dataAtual = System.currentTimeMillis().toString()
 
-        val hoje = Calendar.getInstance()
-        val formatter = java.text.SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val cursor = db.rawQuery("SELECT id FROM Usuario WHERE tipo = 'Coordenador'", null)
 
-        while (cursor.moveToNext()) {
-            val atividadeId = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
-            val nomeAtividade = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
-            val dataConclusaoStr = cursor.getString(cursor.getColumnIndexOrThrow("data_conclusao"))
-            val responsavelId = cursor.getInt(cursor.getColumnIndexOrThrow("responsavel_id"))
-            val numeroPilar = cursor.getInt(cursor.getColumnIndexOrThrow("numero_pilar"))
-            val nomePilar = cursor.getString(cursor.getColumnIndexOrThrow("nome_pilar"))
-
-            val dataConclusao: Long? = try {
-                formatter.parse(dataConclusaoStr)?.time
-            } catch (e: Exception) {
-                null
-            }
-
-            if (dataConclusao == null) continue
-
-            val diasRestantes = ((dataConclusao - hoje.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
-
-            if (diasRestantes == 3 || diasRestantes == 7) {
-                val mensagem = "Sua atividade \"$nomeAtividade\" do pilar $numeroPilar - $nomePilar está a $diasRestantes dias da conclusão."
-
-                val cursorCheck = db.rawQuery(
-                    """
-                SELECT COUNT(*) FROM Notificacao 
-                WHERE usuario_id = ? AND atividade_id = ? AND mensagem = ? AND ABS(CAST(data AS INTEGER) - ?) < 86400000
-                """.trimIndent(),
-                    arrayOf(
-                        responsavelId.toString(),
-                        atividadeId.toString(),
-                        mensagem,
-                        System.currentTimeMillis().toString()
-                    )
-                )
-
-                cursorCheck.moveToFirst()
-                val jaExiste = cursorCheck.getInt(0) > 0
-                cursorCheck.close()
-
-                if (!jaExiste) {
-                    val values = ContentValues().apply {
-                        put("usuario_id", responsavelId)
-                        put("mensagem", mensagem)
-                        put("data", System.currentTimeMillis().toString())
-                        put("lida", 0)
-                        put("atividade_id", atividadeId)
-                    }
-
-                    db.insert("Notificacao", null, values)
+        if (cursor.moveToFirst()) {
+            do {
+                val coordenadorId = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val values = ContentValues().apply {
+                    put("usuario_id", coordenadorId)
+                    put("mensagem", mensagem)
+                    put("data", dataAtual)
+                    put("lida", 0)
+                    if (atividadeId != null) put("atividade_id", atividadeId)
+                    put("tipo_notificacao", tipoNotificacao.toString())
                 }
-            }
+                db.insert("Notificacao", null, values)
+            } while (cursor.moveToNext())
         }
 
         cursor.close()
         db.close()
     }
 
+
+
+
+    fun aprovarAtividade(id: Int?) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("aprovado", 1)
+        }
+        db.update("Atividade", values, "id = ?", arrayOf(id.toString()))
+    }
+
+
+    fun obterUsuario(id: Int): Usuario? {
+        val db = this.readableDatabase
+
+        val cursor = db.rawQuery("SELECT * FROM Usuario WHERE id = ?", arrayOf(id.toString()))
+
+        var usuario: Usuario? = null
+
+        if (cursor.moveToFirst()) {
+            usuario = Usuario(
+                id = cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                nome = cursor.getString(cursor.getColumnIndexOrThrow("nome")),
+                tipo = cursor.getString(cursor.getColumnIndexOrThrow("tipo"))
+            )
+        }
+
+        cursor.close()
+        db.close()
+        return usuario
+    }
+
+
+    fun excluirAtividade(id: Int): Boolean {
+        val db = writableDatabase
+        val cursor = db.rawQuery("SELECT nome FROM Atividade WHERE id = ?", arrayOf(id.toString()))
+        var nomeAtividade: String? = null
+        if (cursor.moveToFirst()) {
+            nomeAtividade = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+        }
+        cursor.close()
+
+        val rowsDeleted = db.delete("Atividade", "id = ?", arrayOf(id.toString()))
+
+        if (rowsDeleted > 0 && nomeAtividade != null) {
+            notificarTodosUsuarios("A Atividade \"$nomeAtividade\" foi excluída.")
+        }
+
+        db.close()
+        return rowsDeleted > 0
+    }
 
 }
