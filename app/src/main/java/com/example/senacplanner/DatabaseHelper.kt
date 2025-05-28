@@ -793,8 +793,6 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return rowsDeleted > 0
     }
 
-    fun verificarAtividadesProximasDaConclusao() {
-        TODO("Not yet implemented")
-    }
+
 
 }
