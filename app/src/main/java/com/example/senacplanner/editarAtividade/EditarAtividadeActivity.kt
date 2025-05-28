@@ -3,6 +3,7 @@ package com.example.senacplanner.editarAtividade
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -10,12 +11,9 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.senacplanner.Acoes.Type.Atividade
-import com.example.senacplanner.Acoes.Type.PilarType
 import com.example.senacplanner.Acoes.Type.Usuario
 import com.example.senacplanner.DatabaseHelper
 import com.example.senacplanner.R
-import org.w3c.dom.Text
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -40,6 +38,7 @@ class EditarAtividadeActivity : AppCompatActivity() {
         val nomeAcao = intent.getStringExtra("nomeAcao")
         val idAtividade = intent.getIntExtra("atividadeID", -1)
 
+
         if (idAtividade != -1) {
             val dados = dbHelper.buscarAtividadePorId(idAtividade)
             dados?.let {
@@ -58,6 +57,7 @@ class EditarAtividadeActivity : AppCompatActivity() {
 
         val btnSalvar = findViewById<Button>(R.id.btnSalvar);
         val btnCancelar = findViewById<Button>(R.id.btnCancelar);
+        val btnExcluir = findViewById<Button>(R.id.btnExcluir)
 
         spinnerResponsavel = findViewById<Spinner>(R.id.spinnerResponsavel)
 
@@ -98,6 +98,12 @@ class EditarAtividadeActivity : AppCompatActivity() {
 
         btnCancelar.setOnClickListener {
             Toast.makeText(this, "Edição de Atividade cancelada!", Toast.LENGTH_SHORT).show()
+            finish()
+        }
+
+        btnExcluir.setOnClickListener {
+            dbHelper.excluirAtividade(idAtividade)
+            Toast.makeText(this, "Atividade Excluída!", Toast.LENGTH_SHORT).show()
             finish()
         }
 

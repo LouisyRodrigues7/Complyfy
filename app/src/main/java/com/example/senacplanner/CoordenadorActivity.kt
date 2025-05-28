@@ -1,7 +1,9 @@
 package com.example.senacplanner
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -10,13 +12,17 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.viewpager2.widget.ViewPager2
+
 import com.example.senacplanner.editarpilar.EditarActivity
 import com.example.senacplanner.fragmentpilares.MeusPilaresFragment
 import com.example.senacplanner.fragmentpilares.TodosPilaresFragment
 import com.example.senacplanner.fragmentpilares.ViewPagerAdapter
 import com.example.senacplanner.novopilar.NovoPilarActivity
+
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import java.util.Calendar
+import java.util.concurrent.TimeUnit
 
 class CoordenadorActivity : AppCompatActivity() {
     private lateinit var caixaCriarPilar: TextView
@@ -89,6 +95,8 @@ class CoordenadorActivity : AppCompatActivity() {
         intent.putExtra("ID_USUARIO", idUsuario)
        startActivity(intent)
        }
+
+
     }
 
     override fun onResume() {
