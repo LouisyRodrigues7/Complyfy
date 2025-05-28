@@ -52,6 +52,7 @@ class ListaAtividades : AppCompatActivity() {
             val intent = Intent(this, CriarAtividadeActivity::class.java)
             intent.putExtra("ACAO_ID", idAcao)
             intent.putExtra("USUARIO_ID", idUsuario)
+            intent.putExtra("PILAR_NOME", pilarNome)
             startActivity(intent)
         }
 
@@ -76,7 +77,7 @@ class ListaAtividades : AppCompatActivity() {
        }
 
         val currentItem = if (::viewPager.isInitialized) viewPager.currentItem else 0
-        viewPager.adapter = AcoesPagerAdapter(this, acoes, pilarNome)
+        viewPager.adapter = AcoesPagerAdapter(this, acoes, pilarNome, idUsuario)
         viewPager.setCurrentItem(currentItem, false)
 
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
