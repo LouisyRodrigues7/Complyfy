@@ -3,6 +3,7 @@ package com.example.senacplanner
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.senacplanner.Acoes.Type.Acao
@@ -18,6 +19,9 @@ class EvolucaoPilarActivity : AppCompatActivity() {
     private lateinit var tvStatusPilar: TextView
     private lateinit var containerAcoes: LinearLayout
 
+    private lateinit var progressBar: ProgressBar
+    private lateinit var tvProgressoPorcentagem: TextView
+
     private lateinit var dbHelper: DatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,12 +34,16 @@ class EvolucaoPilarActivity : AppCompatActivity() {
             finish()
         }
 
+        // Inicializa elementos da tela
         tvTitulo = findViewById(R.id.tvTituloPilar)
         tvNomePilar = findViewById(R.id.tvNomePilar)
         tvDataInicio = findViewById(R.id.tvDataInicio)
         tvDataConclusao = findViewById(R.id.tvDataConclusao)
         tvStatusPilar = findViewById(R.id.tvStatusPilar)
         containerAcoes = findViewById(R.id.containerAcoes)
+
+        progressBar = findViewById(R.id.progressBarPilar)
+        tvProgressoPorcentagem = findViewById(R.id.tvProgressoPorcentagem)
 
         dbHelper = DatabaseHelper(this)
 
@@ -58,6 +66,7 @@ class EvolucaoPilarActivity : AppCompatActivity() {
             tvStatusPilar.text = status
 
             carregarAcoes(pilarId)
+            atualizarProgressoPilar(pilarId)
         }
     }
 
@@ -97,18 +106,25 @@ class EvolucaoPilarActivity : AppCompatActivity() {
                 box.setTextColor(resources.getColor(android.R.color.white))
                 box.textSize = 16f
 
-                box.minHeight = 70.dpToPx() // aqui aumenta e diminui altura da box
+                box.minHeight = 70.dpToPx()
 
                 val params = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
-                params.setMargins(0, 0, 0, 24) // espaço entre as boxes
+                params.setMargins(0, 0, 0, 24)
                 box.layoutParams = params
 
                 containerAcoes.addView(box)
             }
         }
+    }
+
+    private fun atualizarProgressoPilar(pilarId: Int) {
+        val progresso = dbHelper.calcularProgressoPilar(pilarId)
+
+        progressBar.progress = progresso
+        tvProgressoPorcentagem.text = "$progresso% concluído"
     }
 
     // 🔥 Extensão para dp → px

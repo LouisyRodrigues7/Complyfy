@@ -578,5 +578,43 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         db.close()
     }
 
+    fun calcularProgressoPilar(pilarId: Int): Int {
+        val db = this.readableDatabase
+
+        val queryTotal = """
+        SELECT COUNT(*) FROM Atividade 
+        INNER JOIN Acao ON Atividade.acao_id = Acao.id
+        WHERE Acao.pilar_id = ?
+    """.trimIndent()
+
+        val queryConcluidas = """
+        SELECT COUNT(*) FROM Atividade 
+        INNER JOIN Acao ON Atividade.acao_id = Acao.id
+        WHERE Acao.pilar_id = ? AND Atividade.status = 'Finalizada'
+    """.trimIndent()
+
+        val cursorTotal = db.rawQuery(queryTotal, arrayOf(pilarId.toString()))
+        val cursorConcluidas = db.rawQuery(queryConcluidas, arrayOf(pilarId.toString()))
+
+        var total = 0
+        var concluidas = 0
+
+        if (cursorTotal.moveToFirst()) {
+            total = cursorTotal.getInt(0)
+        }
+        if (cursorConcluidas.moveToFirst()) {
+            concluidas = cursorConcluidas.getInt(0)
+        }
+
+        cursorTotal.close()
+        cursorConcluidas.close()
+        db.close()
+
+        if (total == 0) return 0
+
+        val progresso = (concluidas * 100) / total
+        return progresso
+    }
+
 
 }
