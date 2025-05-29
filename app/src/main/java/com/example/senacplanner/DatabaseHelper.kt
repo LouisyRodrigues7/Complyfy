@@ -1104,6 +1104,22 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return rowsDeleted > 0
     }
 
+    fun inserirAcao(pilarId: Int, nome: String, descricao: String, criadoPor: Int): Boolean {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("pilar_id", pilarId)
+            put("nome", nome)
+            put("descricao", descricao)
+            put("criado_por", criadoPor)
+            put("aprovado", 0)
+        }
+        val id = db.insert("Acao", null, values)
+        db.close()
+        return id != -1L
+    }
+
+
+
 
 
 }
