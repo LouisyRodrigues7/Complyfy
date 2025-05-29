@@ -19,6 +19,7 @@ class ListaAtividades : AppCompatActivity() {
     private var pilarId: Int = -1
     private var pilarNumero: Int = -1
     private var pilarNome: String? = null
+    private var usuarioTipo: String? = ""
     private var idUsuario: Int = -1
     private var idAcao: Int = -1
     private lateinit var acoes: List<AcaoComAtividades>
@@ -32,6 +33,7 @@ class ListaAtividades : AppCompatActivity() {
         pilarNumero = intent.getIntExtra("PILAR_NUMERO", -1)
         pilarNome = intent.getStringExtra("PILAR_NOME")
         idUsuario = intent.getIntExtra("ID_USUARIO", -1)
+        usuarioTipo = intent.getStringExtra("TIPO_USUARIO").toString()
         visualizacaoGeral = intent.getBooleanExtra("VISUALIZACAO_GERAL", false)
 
         if (pilarId == -1) return
@@ -53,6 +55,7 @@ class ListaAtividades : AppCompatActivity() {
             intent.putExtra("ACAO_ID", idAcao)
             intent.putExtra("USUARIO_ID", idUsuario)
             intent.putExtra("PILAR_NOME", pilarNome)
+            intent.putExtra("TIPO_USUARIO", usuarioTipo)
             startActivity(intent)
         }
 

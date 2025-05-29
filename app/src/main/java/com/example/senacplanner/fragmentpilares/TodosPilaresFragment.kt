@@ -19,6 +19,7 @@ class TodosPilaresFragment : Fragment() {
     private lateinit var databaseHelper: DatabaseHelper
     private lateinit var layout: LinearLayout
     private var idUsuario: Int = -1
+    private var usuarioTipo: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,6 +29,7 @@ class TodosPilaresFragment : Fragment() {
         layout = view.findViewById(R.id.layoutListaPilares)
 
         idUsuario = requireActivity().intent.getIntExtra("ID_USUARIO", -1)
+        usuarioTipo = requireActivity().intent.getStringExtra("TIPO_USUARIO").toString()
 
         if (idUsuario == -1) {
             Toast.makeText(requireContext(), "Sessão expirada. Faça login novamente.", Toast.LENGTH_SHORT).show()
@@ -64,6 +66,7 @@ class TodosPilaresFragment : Fragment() {
                 intent.putExtra("PILAR_NOME", pilar.nome)
                 intent.putExtra("VISUALIZACAO_GERAL", true)
                 intent.putExtra("ID_USUARIO", idUsuario)
+                intent.putExtra("TIPO_USUARIO", usuarioTipo)
                 startActivity(intent)
             }
 
