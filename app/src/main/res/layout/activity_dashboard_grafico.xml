@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/dashboardGraficoLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="#FFFFFF"
     tools:context=".DashboardGraficoActivity">
 
@@ -24,22 +25,47 @@
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pieChart"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:layout_below="@id/tvTituloGrafico"
-        android:layout_margin="16dp" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="16dp"
+        android:visibility="visible" />
 
-    <!-- Rodapé (igual ao anterior) -->
+    <!-- Gráfico de Barras -->
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/barChart"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="16dp"
+        android:visibility="gone" />
+
+    <!-- Legendas do Gráfico de Barras -->
+    <HorizontalScrollView
+        android:id="@+id/barChartLegendScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:padding="8dp">
+
+        <LinearLayout
+            android:id="@+id/barChartLegendContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical" />
+    </HorizontalScrollView>
+
+    <!-- Rodapé -->
     <LinearLayout
         android:id="@+id/rodape_com_botoes"
         android:layout_width="match_parent"
         android:layout_height="81dp"
-        android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         android:background="#1C2A39"
         android:padding="8dp"
         android:gravity="center">
 
-        <!-- Botões do rodapé aqui -->
+        <!-- Aqui você coloca seus botões -->
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

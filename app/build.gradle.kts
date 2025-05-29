@@ -46,6 +46,7 @@ dependencies {
     implementation("androidx.viewpager2:viewpager2:1.0.0")
     implementation(libs.androidx.activity)
     implementation("com.github.PhilJay:MPAndroidChart:3.1.0")
+    implementation ("com.google.android.flexbox:flexbox:3.0.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
