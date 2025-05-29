@@ -15,6 +15,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Calendar
 import java.util.Locale
+import android.util.Log
 
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
@@ -575,24 +576,90 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     fun atualizarAtividade(
         id: Int,
         novoNome: String,
-        responsavel: Int,
-        dataInicio: String,
-        dataConclusao: String,
-        status: String
+        novoResponsavel: Int,
+        novaDataInicio: String,
+        novaDataConclusao: String,
+        novoStatus: String
     ): AtividadeEdit? {
         val db = this.writableDatabase
+
+        // Obter dados antigos
+        val atividadeAntiga = buscarAtividadePorId(id) ?: return null
+
         val values = ContentValues().apply {
             put("nome", novoNome)
-            put("responsavel_id", responsavel)
-            put("data_inicio", dataInicio)
-            put("data_conclusao", dataConclusao)
-            put("status", status)
+            put("responsavel_id", novoResponsavel)
+            put("data_inicio", novaDataInicio)
+            put("data_conclusao", novaDataConclusao)
+            put("status", novoStatus)
         }
 
         db.update("Atividade", values, "id = ?", arrayOf(id.toString()))
 
-        return buscarAtividadePorId(id)
+        val atividadeAtualizada = buscarAtividadePorId(id)
+
+        // 🚨 Notificações
+        if (atividadeAtualizada != null) {
+            val mudouResponsavel = atividadeAntiga.responsavel_id != novoResponsavel
+            val semResponsavelAntes = atividadeAntiga.responsavel_id == 0 || atividadeAntiga.responsavel_id == -1
+
+            val dadosAlterados = atividadeAntiga.nome != novoNome ||
+                    atividadeAntiga.data_inicio != novaDataInicio ||
+                    atividadeAntiga.data_conclusao != novaDataConclusao
+
+            // ✅ Notificar novo responsável se foi designado agora
+            if (mudouResponsavel && semResponsavelAntes && novoResponsavel > 0) {
+                notificarUsuario(
+                    usuarioId = novoResponsavel,
+                    mensagem = "Você foi designado como responsável pela atividade '${novoNome}'.",
+                    atividadeId = id,
+                    tipo = TipoNotificacao.IMPORTANTE
+                )
+            }
+
+            // ✅ Notificar usuário responsável atual se houve alteração importante
+            if (dadosAlterados && novoResponsavel > 0) {
+                notificarUsuario(
+                    usuarioId = novoResponsavel,
+                    mensagem = "A atividade '${novoNome}', da qual você é responsável, foi atualizada.",
+                    atividadeId = id,
+                    tipo = TipoNotificacao.ALERTA
+                )
+            }
+        }
+
+        return atividadeAtualizada
     }
+
+
+    fun notificarUsuario(
+        usuarioId: Int,
+        mensagem: String,
+        atividadeId: Int? = null,
+        tipo: TipoNotificacao = TipoNotificacao.GERAL
+    ) {
+        val db = this.writableDatabase
+        val dataAtual = System.currentTimeMillis()
+
+        val values = ContentValues().apply {
+            put("usuario_id", usuarioId)
+            put("mensagem", mensagem)
+            put("data", dataAtual)
+            put("lida", 0)
+            put("tipo_notificacao", tipo.name)
+            if (atividadeId != null) {
+                put("atividade_id", atividadeId)
+            }
+        }
+
+        db.insert("Notificacao", null, values)
+
+
+        Log.d("NOTIFICAÇÃO", "Notificação enviada para usuário $usuarioId: $mensagem")
+    }
+
+
+
 
 
 
@@ -615,7 +682,6 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         }
 
         cursor.close()
-        db.close()
         return atividade
     }
 
