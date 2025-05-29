@@ -16,6 +16,7 @@ import java.io.IOException
 import java.util.Calendar
 import java.util.Locale
 import android.util.Log
+import com.example.senacplanner.model.AtividadeDetalhe
 
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
@@ -658,9 +659,41 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         Log.d("NOTIFICAÇÃO", "Notificação enviada para usuário $usuarioId: $mensagem")
     }
 
+    fun getNomeAcaoById(acaoId: Int): String {
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT nome FROM Acao WHERE id = ?", arrayOf(acaoId.toString()))
+        var nome = "Ação" // valor padrão
+
+        if (cursor.moveToFirst()) {
+            nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+        }
+
+        cursor.close()
+        return nome
+    }
 
 
-
+    fun getAtividadesByAcaoId(acaoId: Int): List<AtividadeDetalhe> {
+        val lista = mutableListOf<AtividadeDetalhe>()
+        val db = readableDatabase
+        val query = """
+        SELECT A.nome, U.nome, A.data_inicio, A.data_conclusao, A.status
+        FROM Atividade A
+        LEFT JOIN Usuario U ON A.responsavel_id = U.id
+        WHERE A.acao_id = ?
+    """
+        val cursor = db.rawQuery(query, arrayOf(acaoId.toString()))
+        while (cursor.moveToNext()) {
+            val nome = cursor.getString(0)
+            val responsavel = cursor.getString(1) ?: "Sem responsável"
+            val dataInicio = cursor.getString(2)
+            val dataConclusao = cursor.getString(3)
+            val status = cursor.getString(4)
+            lista.add(AtividadeDetalhe(nome, responsavel, dataInicio, dataConclusao, status))
+        }
+        cursor.close()
+        return lista
+    }
 
 
     fun buscarAtividadePorId(id: Int?): AtividadeEdit? {
@@ -715,11 +748,10 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         dataConclusao: String?,
         criadoPor: Int,
         responsavelId: Int?
-    ): Long {  // Mude para Long
+    ): Long {
 
         val db = writableDatabase
 
-        // Buscar nome da Ação e do Pilar (igual ao seu código)
         val cursorAcao = db.rawQuery(
             "SELECT nome, pilar_id FROM Acao WHERE id = ?",
             arrayOf(acaoId.toString())

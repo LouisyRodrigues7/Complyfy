@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#0D1E2E"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
+    android:fitsSystemWindows="true">
+
+
+    <!-- Nome da Ação -->
+    <TextView
+        android:id="@+id/tvNomeAcao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nome da ação"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Barra de progresso -->
+    <ProgressBar
+        android:id="@+id/progressBarAcao"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:progressDrawable="@drawable/progress_bar_custom"
+        android:max="100"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/tvPorcentagemAcao"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0% concluído"
+        android:textColor="#FFFFFF"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Container para atividades -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/containerAtividades"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+    </ScrollView>
+</LinearLayout>
