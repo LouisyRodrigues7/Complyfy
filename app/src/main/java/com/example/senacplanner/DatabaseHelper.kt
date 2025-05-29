@@ -15,6 +15,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Calendar
 import java.util.Locale
+import android.util.Log
 
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
@@ -575,24 +576,90 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     fun atualizarAtividade(
         id: Int,
         novoNome: String,
-        responsavel: Int,
-        dataInicio: String,
-        dataConclusao: String,
-        status: String
+        novoResponsavel: Int,
+        novaDataInicio: String,
+        novaDataConclusao: String,
+        novoStatus: String
     ): AtividadeEdit? {
         val db = this.writableDatabase
+
+        // Obter dados antigos
+        val atividadeAntiga = buscarAtividadePorId(id) ?: return null
+
         val values = ContentValues().apply {
             put("nome", novoNome)
-            put("responsavel_id", responsavel)
-            put("data_inicio", dataInicio)
-            put("data_conclusao", dataConclusao)
-            put("status", status)
+            put("responsavel_id", novoResponsavel)
+            put("data_inicio", novaDataInicio)
+            put("data_conclusao", novaDataConclusao)
+            put("status", novoStatus)
         }
 
         db.update("Atividade", values, "id = ?", arrayOf(id.toString()))
 
-        return buscarAtividadePorId(id)
+        val atividadeAtualizada = buscarAtividadePorId(id)
+
+        // 🚨 Notificações
+        if (atividadeAtualizada != null) {
+            val mudouResponsavel = atividadeAntiga.responsavel_id != novoResponsavel
+            val semResponsavelAntes = atividadeAntiga.responsavel_id == 0 || atividadeAntiga.responsavel_id == -1
+
+            val dadosAlterados = atividadeAntiga.nome != novoNome ||
+                    atividadeAntiga.data_inicio != novaDataInicio ||
+                    atividadeAntiga.data_conclusao != novaDataConclusao
+
+            // ✅ Notificar novo responsável se foi designado agora
+            if (mudouResponsavel && semResponsavelAntes && novoResponsavel > 0) {
+                notificarUsuario(
+                    usuarioId = novoResponsavel,
+                    mensagem = "Você foi designado como responsável pela atividade '${novoNome}'.",
+                    atividadeId = id,
+                    tipo = TipoNotificacao.IMPORTANTE
+                )
+            }
+
+            // ✅ Notificar usuário responsável atual se houve alteração importante
+            if (dadosAlterados && novoResponsavel > 0) {
+                notificarUsuario(
+                    usuarioId = novoResponsavel,
+                    mensagem = "A atividade '${novoNome}', da qual você é responsável, foi atualizada.",
+                    atividadeId = id,
+                    tipo = TipoNotificacao.ALERTA
+                )
+            }
+        }
+
+        return atividadeAtualizada
     }
+
+
+    fun notificarUsuario(
+        usuarioId: Int,
+        mensagem: String,
+        atividadeId: Int? = null,
+        tipo: TipoNotificacao = TipoNotificacao.GERAL
+    ) {
+        val db = this.writableDatabase
+        val dataAtual = System.currentTimeMillis()
+
+        val values = ContentValues().apply {
+            put("usuario_id", usuarioId)
+            put("mensagem", mensagem)
+            put("data", dataAtual)
+            put("lida", 0)
+            put("tipo_notificacao", tipo.name)
+            if (atividadeId != null) {
+                put("atividade_id", atividadeId)
+            }
+        }
+
+        db.insert("Notificacao", null, values)
+
+
+        Log.d("NOTIFICAÇÃO", "Notificação enviada para usuário $usuarioId: $mensagem")
+    }
+
+
+
 
 
 
@@ -615,7 +682,6 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         }
 
         cursor.close()
-        db.close()
         return atividade
     }
 
@@ -648,9 +714,38 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         dataInicio: String,
         dataConclusao: String?,
         criadoPor: Int,
-        responsavelId: Int,
-    ): Long {
+        responsavelId: Int?
+    ): Long {  // Mude para Long
+
         val db = writableDatabase
+
+        // Buscar nome da Ação e do Pilar (igual ao seu código)
+        val cursorAcao = db.rawQuery(
+            "SELECT nome, pilar_id FROM Acao WHERE id = ?",
+            arrayOf(acaoId.toString())
+        )
+
+        var nomeAcao = ""
+        var pilarId = -1
+
+        if (cursorAcao.moveToFirst()) {
+            nomeAcao = cursorAcao.getString(cursorAcao.getColumnIndexOrThrow("nome"))
+            pilarId = cursorAcao.getInt(cursorAcao.getColumnIndexOrThrow("pilar_id"))
+        }
+        cursorAcao.close()
+
+        var nomePilar = ""
+        if (pilarId != -1) {
+            val cursorPilar = db.rawQuery(
+                "SELECT nome FROM Pilar WHERE id = ?",
+                arrayOf(pilarId.toString())
+            )
+            if (cursorPilar.moveToFirst()) {
+                nomePilar = cursorPilar.getString(cursorPilar.getColumnIndexOrThrow("nome"))
+            }
+            cursorPilar.close()
+        }
+
         val values = ContentValues().apply {
             put("acao_id", acaoId)
             put("nome", nome)
@@ -660,13 +755,111 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
             put("data_conclusao", dataConclusao)
             put("criado_por", criadoPor)
             put("aprovado", 0)
-            put("responsavel_id", responsavelId)
+            if (responsavelId != null) {
+                put("responsavel_id", responsavelId)
+            }
         }
 
         val atividadeId = db.insert("Atividade", null, values)
+
+        // Gerar notificação se tiver responsável
+        if (responsavelId != null && atividadeId != -1L) {
+            val mensagem = "Nova atividade \"$nome\" atribuída a você, na ação \"$nomeAcao\" do pilar \"$nomePilar\"."
+            val dataAtual = System.currentTimeMillis().toString()
+
+            val notificacao = ContentValues().apply {
+                put("usuario_id", responsavelId)
+                put("mensagem", mensagem)
+                put("data", dataAtual)
+                put("lida", 0)
+                put("atividade_id", atividadeId.toInt())
+            }
+
+            db.insert("Notificacao", null, notificacao)
+        }
+
         db.close()
-        return atividadeId
+
+        return atividadeId  // Retorna o ID inserido
     }
+
+
+    fun verificarAtividadesProximasDaConclusao() {
+        val db = writableDatabase
+        val cursor = db.rawQuery(
+            """
+        SELECT a.id, a.nome, a.data_conclusao, u.id as responsavel_id, 
+               ac.nome as nome_acao, p.numero as numero_pilar, p.nome as nome_pilar
+        FROM Atividade a
+        JOIN Acao ac ON a.acao_id = ac.id
+        JOIN Pilar p ON ac.pilar_id = p.id
+        JOIN Usuario u ON a.responsavel_id = u.id
+        WHERE a.data_conclusao IS NOT NULL AND a.responsavel_id IS NOT NULL
+        """.trimIndent(), null
+        )
+
+        val hoje = Calendar.getInstance()
+        val formatter = java.text.SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+        while (cursor.moveToNext()) {
+            val atividadeId = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+            val nomeAtividade = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+            val dataConclusaoStr = cursor.getString(cursor.getColumnIndexOrThrow("data_conclusao"))
+            val responsavelId = cursor.getInt(cursor.getColumnIndexOrThrow("responsavel_id"))
+            val numeroPilar = cursor.getInt(cursor.getColumnIndexOrThrow("numero_pilar"))
+            val nomePilar = cursor.getString(cursor.getColumnIndexOrThrow("nome_pilar"))
+
+            val dataConclusao: Long? = try {
+                formatter.parse(dataConclusaoStr)?.time
+            } catch (e: Exception) {
+                null
+            }
+
+            if (dataConclusao == null) continue
+
+            val diasRestantes = ((dataConclusao - hoje.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
+
+            if (diasRestantes == 3 || diasRestantes == 7) {
+                val mensagem = "Sua atividade \"$nomeAtividade\" do pilar $numeroPilar - $nomePilar está a $diasRestantes dias da conclusão."
+
+                // Verificar se já existe uma notificação parecida hoje para não duplicar
+                val cursorCheck = db.rawQuery(
+                    """
+                SELECT COUNT(*) FROM Notificacao 
+                WHERE usuario_id = ? AND atividade_id = ? AND mensagem = ? AND ABS(CAST(data AS INTEGER) - ?) < 86400000
+                """.trimIndent(),
+                    arrayOf(
+                        responsavelId.toString(),
+                        atividadeId.toString(),
+                        mensagem,
+                        System.currentTimeMillis().toString()
+                    )
+                )
+
+                cursorCheck.moveToFirst()
+                val jaExiste = cursorCheck.getInt(0) > 0
+                cursorCheck.close()
+
+                if (!jaExiste) {
+                    val values = ContentValues().apply {
+                        put("usuario_id", responsavelId)
+                        put("mensagem", mensagem)
+                        put("data", System.currentTimeMillis().toString())
+                        put("lida", 0)
+                        put("atividade_id", atividadeId)
+                    }
+
+                    db.insert("Notificacao", null, values)
+                }
+            }
+        }
+
+        cursor.close()
+        db.close()
+    }
+
+
+
 
     fun atualizarStatus(idAtividade: Int, novoStatus: String) {
         val db = writableDatabase
