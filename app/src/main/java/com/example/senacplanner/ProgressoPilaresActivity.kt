@@ -32,8 +32,7 @@ class ProgressoPilaresActivity : AppCompatActivity() {
         )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerPilares.adapter = adapter
-
-        // 👉 Apenas quando clicar no botão confirmar
+        
         val btnConfirmar = findViewById<Button>(R.id.btnConfirmar)
 
         btnConfirmar.setOnClickListener {

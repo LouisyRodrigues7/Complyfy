@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.senacplanner.model.AcaoComProgresso
@@ -24,7 +25,9 @@ class DashboardGraficoActivity : AppCompatActivity() {
     private lateinit var db: DatabaseHelper
     private lateinit var legendaContainer: LinearLayout
     private lateinit var legendaScroll: HorizontalScrollView
-
+    private lateinit var progressoContainer: LinearLayout
+    private lateinit var progressBarTotal: ProgressBar
+    private lateinit var tvProgressoTotal: TextView
     private var pilarId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +35,9 @@ class DashboardGraficoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_dashboard_grafico)
 
         pieChart = findViewById(R.id.pieChart)
+        progressoContainer = findViewById(R.id.progressoContainer)
+        progressBarTotal = findViewById(R.id.progressBarTotal)
+        tvProgressoTotal = findViewById(R.id.tvProgressoTotal)
         barChart = findViewById(R.id.barChart)
         legendaContainer = findViewById(R.id.barChartLegendContainer)
         legendaScroll = findViewById(R.id.barChartLegendScroll)
@@ -52,26 +58,39 @@ class DashboardGraficoActivity : AppCompatActivity() {
             pieChart.visibility = View.GONE
             barChart.visibility = View.VISIBLE
             mostrarGraficoAcoesBarras(lista)
+            progressoContainer.visibility = View.GONE
         }
     }
 
     private fun mostrarGraficoPilares(lista: List<PilarComProgresso>) {
-        val entries = mutableListOf<PieEntry>()
+        val totalConcluidasGeral = lista.sumOf { it.concluidas }
+        val totalAtividades = lista.sumOf { it.total }
 
-        for (pilar in lista) {
-            if (pilar.total > 0) {
-                val progresso = pilar.concluidas * 100f / pilar.total
-                entries.add(PieEntry(progresso, pilar.nome))
-            }
-        }
-
-        if (entries.isEmpty()) {
+        // Esconde a barra de progresso se não houver atividades
+        if (totalAtividades == 0) {
             pieChart.clear()
-            pieChart.setNoDataText("Nenhum progresso encontrado")
+            pieChart.setNoDataText("Nenhuma atividade encontrada")
+            progressoContainer.visibility = View.GONE
             return
         }
 
-        val dataSet = PieDataSet(entries, "Progresso por Pilar").apply {
+        // Mostra e atualiza a barra de progresso
+        val percentual = (totalConcluidasGeral * 100f / totalAtividades).toInt()
+        progressoContainer.visibility = View.VISIBLE
+        progressBarTotal.progress = percentual
+        tvProgressoTotal.text = "Progresso Total: $totalConcluidasGeral de $totalAtividades atividades concluídas ($percentual%)"
+
+        val entries = mutableListOf<PieEntry>()
+
+        for (pilar in lista) {
+            if (pilar.concluidas > 0) {
+                // Exibe o nome do pilar com o progresso (ex: "Educação (5/10)")
+                val label = "${pilar.nome} (${pilar.concluidas}/${pilar.total})"
+                entries.add(PieEntry(pilar.concluidas.toFloat(), label))
+            }
+        }
+
+        val dataSet = PieDataSet(entries, "Atividades Concluídas por Pilar").apply {
             colors = ColorTemplate.COLORFUL_COLORS.toList()
             sliceSpace = 3f
             valueTextSize = 12f
@@ -80,7 +99,7 @@ class DashboardGraficoActivity : AppCompatActivity() {
 
         pieChart.apply {
             data = PieData(dataSet)
-            setUsePercentValues(true)
+            setUsePercentValues(false) // mostra valores absolutos (quantidade de atividades)
             setEntryLabelColor(Color.DKGRAY)
             setEntryLabelTextSize(12f)
             description.isEnabled = false
@@ -99,6 +118,9 @@ class DashboardGraficoActivity : AppCompatActivity() {
             invalidate()
         }
     }
+
+
+
 
     private fun mostrarGraficoAcoesBarras(lista: List<AcaoComProgresso>) {
         val entries = ArrayList<BarEntry>()
@@ -156,7 +178,6 @@ class DashboardGraficoActivity : AppCompatActivity() {
             invalidate()
         }
 
-        // Atualiza legenda externa
         legendaContainer.removeAllViews()
 
         labels.forEachIndexed { index, nome ->
