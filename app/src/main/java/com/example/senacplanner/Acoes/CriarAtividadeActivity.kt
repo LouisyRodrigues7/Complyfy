@@ -139,7 +139,7 @@ class CriarAtividadeActivity : AppCompatActivity() {
         }
 
         cancelarButton = findViewById(R.id.btnCancelar)
-
+        
         cancelarButton.setOnClickListener {
             finish()  // Fecha a activity e volta para a tela anterior
         }
