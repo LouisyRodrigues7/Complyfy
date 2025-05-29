@@ -26,6 +26,8 @@ class CriarAtividadeActivity : AppCompatActivity() {
     private lateinit var salvarButton: Button
     private lateinit var spinnerResponsavel: Spinner
     private lateinit var dbHelper: DatabaseHelper
+    private lateinit var cancelarButton: Button
+
 
     private var dataInicio: String = ""
     private var dataConclusao: String = ""
@@ -126,6 +128,13 @@ class CriarAtividadeActivity : AppCompatActivity() {
             Toast.makeText(this, "Atividade aguardando aprovação!", Toast.LENGTH_SHORT).show()
             finish()
         }
+
+        cancelarButton = findViewById(R.id.btnCancelar)
+
+        cancelarButton.setOnClickListener {
+            finish()  // Fecha a activity e volta para a tela anterior
+        }
+
 
     }
 
