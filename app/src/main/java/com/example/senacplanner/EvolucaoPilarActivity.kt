@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.senacplanner.Acoes.Type.Acao
 import java.text.SimpleDateFormat
 import java.util.*
+import android.content.Intent
 
 class EvolucaoPilarActivity : AppCompatActivity() {
 
@@ -18,6 +19,7 @@ class EvolucaoPilarActivity : AppCompatActivity() {
     private lateinit var tvDataConclusao: TextView
     private lateinit var tvStatusPilar: TextView
     private lateinit var containerAcoes: LinearLayout
+
 
     private lateinit var progressBar: ProgressBar
     private lateinit var tvProgressoPorcentagem: TextView
@@ -114,11 +116,18 @@ class EvolucaoPilarActivity : AppCompatActivity() {
                 )
                 params.setMargins(0, 0, 0, 24)
                 box.layoutParams = params
+                
+                box.setOnClickListener {
+                    val intent = Intent(this, EvolucaoAcaoActivity::class.java)
+                    intent.putExtra("ACAO_ID", acao.id)
+                    startActivity(intent)
+                }
 
                 containerAcoes.addView(box)
             }
         }
     }
+
 
     private fun atualizarProgressoPilar(pilarId: Int) {
         val progresso = dbHelper.calcularProgressoPilar(pilarId)

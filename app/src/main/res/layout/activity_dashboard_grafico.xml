@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dashboardGraficoLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    tools:context=".DashboardGraficoActivity">
+
+    <!-- Cabeçalho -->
+    <TextView
+        android:id="@+id/tvTituloGrafico"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Progresso do Pilar"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
+        android:background="#1C2A39"
+        android:padding="16dp"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <!-- Gráfico de Pizza -->
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pieChart"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="16dp"
+        android:visibility="visible" />
+    <!-- Barra de Progresso Geral -->
+    <LinearLayout
+        android:id="@+id/progressoContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvProgressoTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Progresso Total"
+            android:textSize="14sp"
+            android:textColor="#000000"
+            android:layout_marginBottom="8dp" />
+
+        <ProgressBar
+            android:id="@+id/progressBarTotal"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:progressTint="#4CAF50"
+            android:max="100"
+            android:progress="0" />
+    </LinearLayout>
+
+
+    <!-- Gráfico de Barras -->
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/barChart"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="16dp"
+        android:visibility="gone" />
+
+    <!-- Legendas do Gráfico de Barras -->
+    <HorizontalScrollView
+        android:id="@+id/barChartLegendScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:padding="8dp">
+
+        <LinearLayout
+            android:id="@+id/barChartLegendContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical" />
+    </HorizontalScrollView>
+
+    <!-- Rodapé -->
+    <LinearLayout
+        android:id="@+id/rodape_com_botoes"
+        android:layout_width="match_parent"
+        android:layout_height="81dp"
+        android:orientation="horizontal"
+        android:background="#1C2A39"
+        android:padding="8dp"
+        android:gravity="center">
+
+
+    </LinearLayout>
+
+</LinearLayout>

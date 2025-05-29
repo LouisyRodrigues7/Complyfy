@@ -16,6 +16,10 @@ import java.io.IOException
 import java.util.Calendar
 import java.util.Locale
 import android.util.Log
+import com.example.senacplanner.model.AtividadeDetalhe
+import com.example.senacplanner.model.PilarItem
+import com.example.senacplanner.model.AcaoComProgresso
+import com.example.senacplanner.model.PilarComProgresso
 
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
@@ -118,6 +122,88 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         }
 
         cursor.close()
+        return pilares
+    }
+
+    fun getAcoesComProgressoDoPilar(pilarId: Int): List<AcaoComProgresso> {
+        val lista = mutableListOf<AcaoComProgresso>()
+        val db = readableDatabase
+
+        val cursor = db.rawQuery("""
+        SELECT a.nome,
+               COUNT(at.id) as total,
+               SUM(CASE WHEN at.status = 'Finalizada' THEN 1 ELSE 0 END) as concluidas
+        FROM Acao a
+        LEFT JOIN Atividade at ON a.id = at.acao_id
+        WHERE a.pilar_id = ?
+        GROUP BY a.nome
+    """, arrayOf(pilarId.toString()))
+
+        if (cursor.moveToFirst()) {
+            do {
+                lista.add(
+                    AcaoComProgresso(
+                        nome = cursor.getString(0),
+                        total = cursor.getInt(1),
+                        concluidas = cursor.getInt(2)
+                    )
+                )
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        return lista
+    }
+    fun getProgressoTodosPilares(): List<PilarComProgresso> {
+        val lista = mutableListOf<PilarComProgresso>()
+        val db = readableDatabase
+
+        val cursor = db.rawQuery("""
+        SELECT p.nome,
+               COUNT(at.id) as total,
+               SUM(CASE WHEN at.status = 'Finalizada' THEN 1 ELSE 0 END) as concluidas
+        FROM Pilar p
+        LEFT JOIN Acao a ON a.pilar_id = p.id
+        LEFT JOIN Atividade at ON at.acao_id = a.id
+        GROUP BY p.nome
+    """, null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                lista.add(
+                    PilarComProgresso(
+                        nome = cursor.getString(0),
+                        total = cursor.getInt(1),
+                        concluidas = cursor.getInt(2)
+                    )
+                )
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        return lista
+    }
+
+
+
+    fun getTodosPilares(): List<PilarItem> {
+        val pilares = mutableListOf<PilarItem>()
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT id, numero, nome FROM Pilar ORDER BY numero ASC", null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val pilar = PilarItem(
+                    id = cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                    numero = cursor.getInt(cursor.getColumnIndexOrThrow("numero")),
+                    nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+                )
+                pilares.add(pilar)
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
         return pilares
     }
 
@@ -658,9 +744,41 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         Log.d("NOTIFICAÇÃO", "Notificação enviada para usuário $usuarioId: $mensagem")
     }
 
+    fun getNomeAcaoById(acaoId: Int): String {
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT nome FROM Acao WHERE id = ?", arrayOf(acaoId.toString()))
+        var nome = "Ação" // valor padrão
+
+        if (cursor.moveToFirst()) {
+            nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+        }
+
+        cursor.close()
+        return nome
+    }
 
 
-
+    fun getAtividadesByAcaoId(acaoId: Int): List<AtividadeDetalhe> {
+        val lista = mutableListOf<AtividadeDetalhe>()
+        val db = readableDatabase
+        val query = """
+        SELECT A.nome, U.nome, A.data_inicio, A.data_conclusao, A.status
+        FROM Atividade A
+        LEFT JOIN Usuario U ON A.responsavel_id = U.id
+        WHERE A.acao_id = ?
+    """
+        val cursor = db.rawQuery(query, arrayOf(acaoId.toString()))
+        while (cursor.moveToNext()) {
+            val nome = cursor.getString(0)
+            val responsavel = cursor.getString(1) ?: "Sem responsável"
+            val dataInicio = cursor.getString(2)
+            val dataConclusao = cursor.getString(3)
+            val status = cursor.getString(4)
+            lista.add(AtividadeDetalhe(nome, responsavel, dataInicio, dataConclusao, status))
+        }
+        cursor.close()
+        return lista
+    }
 
 
     fun buscarAtividadePorId(id: Int?): AtividadeEdit? {
@@ -715,11 +833,10 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         dataConclusao: String?,
         criadoPor: Int,
         responsavelId: Int?
-    ): Long {  // Mude para Long
+    ): Long {
 
         val db = writableDatabase
 
-        // Buscar nome da Ação e do Pilar (igual ao seu código)
         val cursorAcao = db.rawQuery(
             "SELECT nome, pilar_id FROM Acao WHERE id = ?",
             arrayOf(acaoId.toString())
