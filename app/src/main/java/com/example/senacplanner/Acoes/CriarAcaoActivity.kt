@@ -15,6 +15,9 @@ class CriarAcaoActivity : Activity() {
     private lateinit var editDescricao: EditText
     private lateinit var btnSalvar: Button
     private lateinit var btnCancelar: Button
+    private var usuarioId: Int = -1
+    private var pilarId: Int = -1
+    private var criadoPorId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,8 +28,9 @@ class CriarAcaoActivity : Activity() {
         btnSalvar = findViewById(R.id.btnSalvarAcao)
         btnCancelar = findViewById(R.id.btnCancelar)
 
-        val pilarId = intent.getIntExtra("pilar_id", -1)
-        val criadoPorId = 1 // Substituir com ID do usuário logado, se tiver controle
+        pilarId = intent.getIntExtra("PILAR_ID", -1)
+        usuarioId = intent.getIntExtra("ID_USUARIO", -1)
+        criadoPorId = usuarioId // Substituir com ID do usuário logado, se tiver controle
 
         btnSalvar.setOnClickListener {
             val nome = editNome.text.toString()

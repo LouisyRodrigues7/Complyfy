@@ -79,5 +79,9 @@
             android:name=".DashboardGraficoActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".NotificacoesActivity"
+            android:exported="false" />
+
     </application>
 </manifest>

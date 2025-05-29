@@ -16,6 +16,7 @@ class MeusPilaresFragment : Fragment() {
     private lateinit var databaseHelper: DatabaseHelper
     private lateinit var layout: LinearLayout
     private var idUsuario: Int = -1
+    private var usuarioTipo: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,6 +27,7 @@ class MeusPilaresFragment : Fragment() {
 
         databaseHelper = DatabaseHelper(requireContext());
         idUsuario = requireActivity().intent.getIntExtra("ID_USUARIO", -1)
+        usuarioTipo = requireActivity().intent.getStringExtra("TIPO_USUARIO").toString()
         carregarPilaresDoUsuario(inflater)
         return view
     }
@@ -50,6 +52,7 @@ class MeusPilaresFragment : Fragment() {
                 intent.putExtra("PILAR_NUMERO", pilar.numero)
                 intent.putExtra("PILAR_NOME", pilar.nome)
                 intent.putExtra("ID_USUARIO", idUsuario)
+                intent.putExtra("TIPO_USUARIO", usuarioTipo)
                 startActivity(intent)
             }
 

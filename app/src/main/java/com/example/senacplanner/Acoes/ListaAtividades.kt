@@ -22,8 +22,9 @@ class ListaAtividades : AppCompatActivity() {
     private var pilarNome: String? = null
     private var idUsuario: Int = -1
     private var idAcao: Int = -1
-    private lateinit var acoes: List<AcaoComAtividades>
+    private var acoes: List<AcaoComAtividades> = emptyList()
     private var visualizacaoGeral: Boolean = false
+    private var usuarioTipo: String? = ""
 
     private lateinit var fabAdicionar: FloatingActionButton
 
@@ -35,7 +36,9 @@ class ListaAtividades : AppCompatActivity() {
         }
         viewPager.adapter = AcoesPagerAdapter(this, acoes, pilarNome, idUsuario)
         if (acoes.isNotEmpty()) {
-            idAcao = acoes[0].acao.id
+           val ultimaPosicao = acoes.size - 1
+           viewPager.setCurrentItem(ultimaPosicao, false)
+           idAcao = acoes[ultimaPosicao].acao.id
         }
     }
 
@@ -51,6 +54,7 @@ class ListaAtividades : AppCompatActivity() {
         pilarNumero = intent.getIntExtra("PILAR_NUMERO", -1)
         pilarNome = intent.getStringExtra("PILAR_NOME")
         idUsuario = intent.getIntExtra("ID_USUARIO", -1)
+        usuarioTipo = intent.getStringExtra("TIPO_USUARIO").toString()
         visualizacaoGeral = intent.getBooleanExtra("VISUALIZACAO_GERAL", false)
 
         if (pilarId == -1) return
@@ -75,13 +79,15 @@ class ListaAtividades : AppCompatActivity() {
                         Log.d("ListaAtividades", "Abrindo CriarAtividadeActivity com ACAO_ID=$idAcao e USUARIO_ID=$idUsuario")
                         val intent = Intent(this, CriarAtividadeActivity::class.java)
                         intent.putExtra("ACAO_ID", idAcao)
-                        intent.putExtra("USUARIO_ID", idUsuario)
+                        intent.putExtra("ID_USUARIO", idUsuario)
+                        intent.putExtra("TIPO_USUARIO", usuarioTipo)
                         startActivity(intent)
                     }
                     1 -> {
                         val intent = Intent(this, CriarAcaoActivity::class.java)
                         intent.putExtra("PILAR_ID", pilarId)
                         intent.putExtra("ID_USUARIO", idUsuario)
+                        intent.putExtra("TIPO_USUARIO", usuarioTipo)
                         startActivityForResult(intent, 100)
                     }
                 }
