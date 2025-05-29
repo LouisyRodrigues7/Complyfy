@@ -50,9 +50,9 @@
         <activity android:name=".EvolucaoPilarActivity"/>
         <activity android:name=".PilarAcaoActivity" />
         <activity android:name=".EvolucaoAcaoActivity" />
-
-
-
+        <activity android:name=".ProgressoPilaresActivity" />
+        <activity android:name=".GraficosActivity" />
+        <activity android:name=".DashboardGraficoActivity" />
         <activity android:name=".Acoes.CriarAtividadeActivity" />
 
 

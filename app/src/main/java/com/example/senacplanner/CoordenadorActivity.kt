@@ -88,6 +88,12 @@ class CoordenadorActivity : AppCompatActivity() {
             viewPager.setCurrentItem(0, true)
         }
 
+        val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)  // <-- encontra o botão gráfico
+        btnGraficos.setOnClickListener {
+            val intent = Intent(this, GraficosActivity::class.java)
+            startActivity(intent)  // <-- inicia a segunda Activity
+        }
+
         // --- REMOVIDO: botão de notificaçõess
         val btnNotificacoes = findViewById<ImageView>(R.id.btnNotificacoes)
         btnNotificacoes.setOnClickListener {

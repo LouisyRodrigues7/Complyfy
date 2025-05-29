@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dashboardGraficoLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".DashboardGraficoActivity">
+
+    <!-- Cabeçalho -->
+    <TextView
+        android:id="@+id/tvTituloGrafico"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Progresso do Pilar"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
+        android:background="#1C2A39"
+        android:padding="16dp"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <!-- Gráfico de Pizza -->
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pieChart"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_below="@id/tvTituloGrafico"
+        android:layout_margin="16dp" />
+
+    <!-- Rodapé (igual ao anterior) -->
+    <LinearLayout
+        android:id="@+id/rodape_com_botoes"
+        android:layout_width="match_parent"
+        android:layout_height="81dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:background="#1C2A39"
+        android:padding="8dp"
+        android:gravity="center">
+
+        <!-- Botões do rodapé aqui -->
+    </LinearLayout>
+
+</RelativeLayout>
