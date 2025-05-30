@@ -20,7 +20,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="#1C2A39"
             app:title="Olá, nome do usuário"
-            app:titleTextColor="@android:color/white" />
+            app:titleTextColor="@android:color/white"/>
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- Layout principal -->
@@ -74,7 +74,7 @@
                             android:text="1"
                             android:textColor="#FFFFFF"
                             android:textSize="20sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -82,7 +82,7 @@
                             android:text="Progresso de pilares e ações"
                             android:textColor="#FFFFFF"
                             android:textSize="16sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"/>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -112,7 +112,7 @@
                             android:text="2"
                             android:textColor="#FFFFFF"
                             android:textSize="20sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -120,7 +120,7 @@
                             android:text="Progresso de atividades"
                             android:textColor="#FFFFFF"
                             android:textSize="16sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"/>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -150,7 +150,7 @@
                             android:text="3"
                             android:textColor="#FFFFFF"
                             android:textSize="20sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -158,7 +158,7 @@
                             android:text="Prazos de conclusão"
                             android:textColor="#FFFFFF"
                             android:textSize="16sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"/>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -166,58 +166,10 @@
         </ScrollView>
     </LinearLayout>
 
-    <!-- Caixa flutuante para edição -->
-
-    <!-- Rodapé com botões -->
-    <LinearLayout
-        android:id="@+id/rodape_com_botoes"
+    <!-- Footer incluído corretamente -->
+    <include
+        layout="@layout/footer_menu"
         android:layout_width="match_parent"
         android:layout_height="81dp"
-        android:layout_gravity="bottom"
-        android:orientation="horizontal"
-        android:background="#1C2A39"
-        android:padding="8dp"
-        android:gravity="center">
-
-        <ImageView
-            android:id="@+id/btnGraficos"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/graficos"
-            android:contentDescription="Gráficos"
-            android:layout_gravity="center"
-            android:padding="8dp" />
-
-        <ImageView
-            android:id="@+id/btnHome"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/home"
-            android:contentDescription="Home"
-            android:layout_gravity="center"
-            android:padding="8dp" />
-
-        <ImageView
-            android:id="@+id/btnAcoes"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/acoes"
-            android:contentDescription="Ações"
-            android:layout_gravity="center"
-            android:padding="8dp" />
-
-        <ImageView
-            android:id="@+id/btnNotificacoes"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/notificacao"
-            android:contentDescription="Notificações"
-            android:layout_gravity="center"
-            android:padding="8dp" />
-    </LinearLayout>
-
+        android:layout_gravity="bottom"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -28,7 +28,7 @@
                 android:src="@drawable/plus_circle"
                 android:layout_gravity="end|center_vertical"
                 android:layout_marginEnd="16dp"
-                android:contentDescription="Adicionar Notificação" />
+                android:contentDescription="Adicionar Notificação"/>
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -52,7 +52,7 @@
             android:textAlignment="center"
             android:textStyle="bold"
             android:textSize="16sp"
-            android:padding="10dp" />
+            android:padding="10dp"/>
 
         <!-- Lista de notificações -->
         <androidx.recyclerview.widget.RecyclerView
@@ -63,59 +63,11 @@
             android:padding="8dp"/>
     </LinearLayout>
 
-    <!-- Rodapé -->
-    <LinearLayout
-        android:id="@+id/rodape_com_botoes"
+    <!-- Footer incluído corretamente -->
+    <include
+        layout="@layout/footer_menu"
         android:layout_width="match_parent"
         android:layout_height="81dp"
-        android:layout_gravity="bottom"
-        android:orientation="horizontal"
-        android:background="#1C2A39"
-        android:padding="8dp"
-        android:gravity="center">
-
-        <ImageView
-            android:id="@+id/btnGraficos"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/graficos"
-            android:contentDescription="Gráficos"
-            android:layout_gravity="center"
-            android:padding="8dp" />
-
-        <ImageView
-            android:id="@+id/btnAcoes"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/acoes"
-            android:contentDescription="Ações"
-            android:layout_gravity="center"
-            android:padding="8dp" />
-
-        <ImageView
-            android:id="@+id/btnHome"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/home"
-            android:contentDescription="Home"
-            android:layout_gravity="center"
-            android:padding="8dp" />
-
-
-        <ImageView
-            android:id="@+id/btnNotificacoes"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/notificacao"
-            android:contentDescription="Notificações"
-            android:layout_gravity="center"
-            android:padding="8dp" />
-    </LinearLayout>
+        android:layout_gravity="bottom"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-
