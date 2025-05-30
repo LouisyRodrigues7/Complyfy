@@ -157,6 +157,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <include layout="@layout/footer_layout"/>
+    <include layout="@layout/footer_menu"/>
 
 </LinearLayout>

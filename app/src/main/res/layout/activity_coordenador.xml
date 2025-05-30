@@ -19,7 +19,6 @@
             android:background="#1C2A39"
             app:titleTextColor="@android:color/white">
 
-            <!-- Botão "+" no Toolbar -->
             <ImageView
                 android:id="@+id/btnAddPilar"
                 android:layout_width="34dp"
@@ -31,7 +30,7 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Layout principal abaixo da Toolbar -->
+    <!-- Conteúdo principal -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -46,7 +45,7 @@
             android:background="#BB7535"
             app:tabIndicatorColor="@android:color/white"
             app:tabTextColor="@android:color/white"
-            app:tabSelectedTextColor="@android:color/white" />
+            app:tabSelectedTextColor="@android:color/white"/>
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPager"
@@ -55,7 +54,7 @@
             android:layout_weight="1"/>
     </LinearLayout>
 
-    <!-- Caixa de texto flutuante sobre o Toolbar -->
+    <!-- Caixas flutuantes -->
     <TextView
         android:id="@+id/caixaCriarPilar"
         android:layout_width="wrap_content"
@@ -67,7 +66,7 @@
         android:text="Criar novo pilar"
         android:textColor="#FFFFFF"
         android:background="@drawable/rounded_box"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/caixaEditarPilar"
@@ -75,63 +74,18 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
         android:layout_marginTop="96dp"
-    android:layout_marginEnd="16dp"
-    android:padding="8dp"
-    android:text="Editar pilar"
-    android:textColor="#FFFFFF"
-    android:background="@drawable/rounded_box"
-    android:visibility="gone" />
+        android:layout_marginEnd="16dp"
+        android:padding="8dp"
+        android:text="Editar pilar"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/rounded_box"
+        android:visibility="gone"/>
 
-    <!-- Rodapé com botões -->
-    <LinearLayout
-        android:id="@+id/rodape_com_botoes"
+    <!-- Footer fixado na parte de baixo -->
+    <include
+        layout="@layout/footer_menu"
         android:layout_width="match_parent"
         android:layout_height="81dp"
-        android:layout_gravity="bottom"
-        android:orientation="horizontal"
-        android:background="#1C2A39"
-        android:padding="8dp"
-        android:gravity="center">
-
-        <ImageView
-            android:id="@+id/btnGraficos"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/graficos"
-            android:contentDescription="Gráficos"
-            android:layout_gravity="center"
-            android:padding="8dp" />
-
-        <ImageView
-            android:id="@+id/btnHome"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/home"
-            android:contentDescription="Home"
-            android:layout_gravity="center"
-            android:padding="8dp" />
-
-        <ImageView
-            android:id="@+id/btnAcoes"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/acoes"
-            android:contentDescription="Ações"
-            android:layout_gravity="center"
-            android:padding="8dp" />
-
-        <ImageView
-            android:id="@+id/btnNotificacoes"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/notificacao"
-            android:contentDescription="Notificações"
-            android:layout_gravity="center"
-            android:padding="8dp" />
-    </LinearLayout>
+        android:layout_gravity="bottom"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

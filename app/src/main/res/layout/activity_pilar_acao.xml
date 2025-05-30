@@ -72,6 +72,6 @@
     </LinearLayout>
 
     <!-- Rodapé fixo no fundo -->
-    <include layout="@layout/footer_layout"/>
+    <include layout="@layout/footer_menu"/>
 
 </LinearLayout>
