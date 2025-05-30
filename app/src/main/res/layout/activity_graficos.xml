@@ -52,10 +52,15 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardProgressoPilares"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_height="68dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_gravity="center_horizontal"
                     android:elevation="4dp"
-                    card_view:cardCornerRadius="0dp">
+                    card_view:cardCornerRadius="30dp"
+                    card_view:cardBackgroundColor="@color/azul_escuro"
+                    android:padding="12dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -69,7 +74,7 @@
                             android:layout_width="37dp"
                             android:layout_height="37dp"
                             android:layout_marginEnd="16dp"
-                            android:background="#BB7535"
+                            android:background="@drawable/rounded_orange"
                             android:gravity="center"
                             android:text="1"
                             android:textColor="#FFFFFF"
@@ -90,10 +95,15 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardProgressoAtividades"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
+                    android:layout_height="68dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_gravity="center_horizontal"
                     android:elevation="4dp"
-                    card_view:cardCornerRadius="0dp">
+                    card_view:cardCornerRadius="30dp"
+                    card_view:cardBackgroundColor="@color/azul_escuro"
+                    android:padding="12dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -107,7 +117,7 @@
                             android:layout_width="37dp"
                             android:layout_height="37dp"
                             android:layout_marginEnd="16dp"
-                            android:background="#BB7535"
+                            android:background="@drawable/rounded_orange"
                             android:gravity="center"
                             android:text="2"
                             android:textColor="#FFFFFF"
@@ -128,10 +138,15 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardPrazosConclusao"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
+                    android:layout_height="68dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_gravity="center_horizontal"
                     android:elevation="4dp"
-                    card_view:cardCornerRadius="0dp">
+                    card_view:cardCornerRadius="30dp"
+                    card_view:cardBackgroundColor="@color/azul_escuro"
+                    android:padding="12dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -145,7 +160,7 @@
                             android:layout_width="37dp"
                             android:layout_height="37dp"
                             android:layout_marginEnd="16dp"
-                            android:background="#BB7535"
+                            android:background="@drawable/rounded_orange"
                             android:gravity="center"
                             android:text="3"
                             android:textColor="#FFFFFF"
