@@ -44,6 +44,10 @@ class CoordenadorActivity : AppCompatActivity() {
         val idUsuario = intent.getIntExtra("ID_USUARIO", -1)
         val tipoUsuario = intent.getStringExtra("TIPO_USUARIO")
 
+        Log.d("DASHBOARD", "tipoUsuario=$tipoUsuario, idUsuario=$idUsuario, nomeUsuario=$nomeUsuario")
+
+
+
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.title = "Olá, $nomeUsuario"
         setSupportActionBar(toolbar)
@@ -55,6 +59,10 @@ class CoordenadorActivity : AppCompatActivity() {
         adapter.addFragment(MeusPilaresFragment(), "Meus Pilares")
         adapter.addFragment(TodosPilaresFragment(), "Todos os Pilares")
         viewPager.adapter = adapter
+
+        val paginaHome = intent.getIntExtra("PAGINA_HOME", 0)
+        viewPager.setCurrentItem(paginaHome, false)
+
 
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = adapter.getPageTitle(position)
@@ -83,15 +91,24 @@ class CoordenadorActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val btnHome = findViewById<ImageView>(R.id.btnHome)
+        val btnHome = findViewById<View>(R.id.btnHome)
         btnHome.setOnClickListener {
-            viewPager.setCurrentItem(0, true)
+            Log.d("DASHBOARD", "Home clicado")
+            com.example.senacplanner.util.NavigationUtils.irParaTelaHome(
+                this,
+                tipoUsuario,
+                idUsuario,
+                nomeUsuario
+            )
         }
 
-        val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)  // <-- encontra o botão gráfico
+        val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
         btnGraficos.setOnClickListener {
-            val intent = Intent(this, GraficosActivity::class.java)
-            startActivity(intent)  // <-- inicia a segunda Activity
+            val intent = Intent(this, DashboardGraficoActivity::class.java)
+            intent.putExtra("TIPO_USUARIO", tipoUsuario)
+            intent.putExtra("ID_USUARIO", idUsuario)
+            intent.putExtra("NOME_USUARIO", nomeUsuario)
+            startActivity(intent)
         }
 
         // --- REMOVIDO: botão de notificaçõess
@@ -102,7 +119,19 @@ class CoordenadorActivity : AppCompatActivity() {
        startActivity(intent)
        }
 
+        val btnLogout = findViewById<ImageView>(R.id.btnAcoes)
+        btnLogout.setOnClickListener {
+            realizarLogout()
+        }
 
+
+    }
+
+    private fun realizarLogout() {
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 
     override fun onResume() {

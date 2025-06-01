@@ -17,6 +17,9 @@ import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.github.mikephil.charting.components.Legend
+import android.widget.ImageView
+import android.content.Intent
+import android.widget.Toast
 
 class DashboardGraficoActivity : AppCompatActivity() {
 
@@ -60,6 +63,43 @@ class DashboardGraficoActivity : AppCompatActivity() {
             mostrarGraficoAcoesBarras(lista)
             progressoContainer.visibility = View.GONE
         }
+        val tipoUsuario = intent.getStringExtra("TIPO_USUARIO")
+        val idUsuario = intent.getIntExtra("ID_USUARIO", -1)
+        val nomeUsuario = intent.getStringExtra("NOME_USUARIO")
+
+        val btnHome = findViewById<ImageView>(R.id.btnHome)
+        btnHome.setOnClickListener {
+            com.example.senacplanner.util.NavigationUtils.irParaTelaHome(
+                this,
+                tipoUsuario,
+                idUsuario,
+                nomeUsuario
+            )
+        }
+        val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
+        btnGraficos.setOnClickListener {
+            Toast.makeText(this, "Você já está nos Gráficos!", Toast.LENGTH_SHORT).show()
+        }
+
+        val btnNotificacoes = findViewById<ImageView>(R.id.btnNotificacoes)
+        btnNotificacoes.setOnClickListener {
+            val intent = Intent(this, NotificacoesActivity::class.java)
+            intent.putExtra("ID_USUARIO", idUsuario)
+            startActivity(intent)
+        }
+
+        val btnLogout = findViewById<ImageView>(R.id.btnAcoes)
+        btnLogout.setOnClickListener {
+            realizarLogout()
+        }
+
+    }
+
+    private fun realizarLogout() {
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 
     private fun mostrarGraficoPilares(lista: List<PilarComProgresso>) {
