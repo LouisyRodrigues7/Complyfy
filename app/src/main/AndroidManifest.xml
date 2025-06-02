@@ -13,26 +13,42 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TelaLogin"
         tools:targetApi="31">
+
+        <!-- Edição -->
         <activity
             android:name=".editarpilar.EditarActivity"
             android:exported="false" />
-
         <activity
             android:name=".editarAtividade.EditarAtividadeActivity"
             android:exported="false" />
-        <!-- Tela principal (Login) -->
+
+        <!-- Login e Inicial -->
         <activity
             android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Outras telas -->
+        </activity>
+
+        <!-- Criação -->
         <activity
             android:name=".novopilar.NovoPilarActivity"
             android:exported="true" />
+        <activity
+            android:name=".Acoes.CriarAcaoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Acoes.CriarAtividadeActivity"
+            android:exported="false" />
+
+        <!-- Lista -->
+        <activity
+            android:name=".Acoes.ListaAtividades"
+            android:exported="false" />
+
+        <!-- Perfis -->
         <activity
             android:name=".CoordenadorActivity"
             android:exported="false" />
@@ -42,11 +58,29 @@
         <activity
             android:name=".ApoioActivity"
             android:exported="false" />
-        <activity
-            android:name=".Acoes.ListaAtividades"
-            android:exported="false" />
 
-        <activity android:name=".NotificacoesActivity" />
+        <!-- Gráficos e Progresso -->
+        <activity
+            android:name=".EvolucaoPilarActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PilarAcaoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EvolucaoAcaoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProgressoPilaresActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GraficosActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DashboardGraficoActivity"
+            android:exported="false" />
+         <activity
+            android:name=".NotificacoesActivity"
+            android:exported="false" />
         <activity android:name=".EvolucaoPilarActivity"/>
         <activity android:name=".PilarAcaoActivity" />
         <activity
@@ -57,7 +91,5 @@
         <activity android:name=".DashboardGraficoActivity" />
         <activity android:name=".Acoes.CriarAtividadeActivity" />
 
-
     </application>
-
 </manifest>

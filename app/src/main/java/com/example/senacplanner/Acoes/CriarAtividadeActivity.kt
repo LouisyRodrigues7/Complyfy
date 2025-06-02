@@ -26,11 +26,14 @@ class CriarAtividadeActivity : AppCompatActivity() {
     private lateinit var salvarButton: Button
     private lateinit var spinnerResponsavel: Spinner
     private lateinit var dbHelper: DatabaseHelper
+    private lateinit var cancelarButton: Button
+
 
     private var dataInicio: String = ""
     private var dataConclusao: String = ""
     private var acaoId: Int = -1
     private var usuarioId: Int = -1
+    private var idUsuario: Int = -1
     private var usuarioTipo: String = ""
     private var pilarNome: String = ""
     private var atividadeId: Long = -1
@@ -52,10 +55,9 @@ class CriarAtividadeActivity : AppCompatActivity() {
         dbHelper = DatabaseHelper(this)
 
         acaoId = intent.getIntExtra("ACAO_ID", -1)
-        usuarioId = intent.getIntExtra("USUARIO_ID", -1)
+        usuarioId = intent.getIntExtra("ID_USUARIO", -1)
         pilarNome = intent.getStringExtra("PILAR_NOME").toString()
         usuarioTipo = intent.getStringExtra("TIPO_USUARIO").toString()
-
 
         val tipoUsuario = dbHelper.obterUsuario(usuarioId)
         Log.d("USUARIO ID", (tipoUsuario?.tipo ?: '-').toString())
@@ -134,8 +136,14 @@ class CriarAtividadeActivity : AppCompatActivity() {
                 Toast.makeText(this, "Atividade criada e aprovada com sucesso!", Toast.LENGTH_SHORT).show()
                 finish()
             }
-
         }
+
+        cancelarButton = findViewById(R.id.btnCancelar)
+        
+        cancelarButton.setOnClickListener {
+            finish()  // Fecha a activity e volta para a tela anterior
+        }
+
 
     }
 
