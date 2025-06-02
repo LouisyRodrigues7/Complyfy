@@ -74,19 +74,19 @@
             <Spinner
                 android:id="@+id/spinnerPilar"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/bg_spinner_button"/>
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/btn_dropdown"
+                android:popupBackground="#FFFFFF"/>
 
             <!-- Botão -->
             <Button
                 android:id="@+id/btnBuscar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Buscar"
-                android:background="@drawable/bg_button_verde"
-                android:textColor="#FFFFFF"
-                android:layout_marginTop="24dp"/>
+                android:text="Confirmar"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="#27AE60"
+                android:textColor="#FFFFFF"/>
 
         </LinearLayout>
     </LinearLayout>
