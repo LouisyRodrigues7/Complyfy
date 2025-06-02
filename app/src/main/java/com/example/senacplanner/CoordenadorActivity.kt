@@ -35,6 +35,7 @@ class CoordenadorActivity : AppCompatActivity() {
         val db = DatabaseHelper(this)
         db.verificarPilaresProximosDaConclusao()
         db.verificarAtividadesProximasDaConclusao()
+        db.verificarAtividadesAtrasadas()
 
         // val db = DatabaseHelper(this)
         // db.verificarNotificacoesDePilaresProximos()

@@ -965,6 +965,82 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
                         put("data", System.currentTimeMillis().toString())
                         put("lida", 0)
                         put("atividade_id", atividadeId)
+                        put("tipo_notificacao", "ALERTA")
+                    }
+
+                    db.insert("Notificacao", null, values)
+                }
+            }
+        }
+
+        cursor.close()
+        db.close()
+    }
+
+
+    fun verificarAtividadesAtrasadas() {
+        val db = writableDatabase
+        val cursor = db.rawQuery(
+            """
+        SELECT a.id, a.nome, a.data_conclusao, u.id as responsavel_id, 
+               ac.nome as nome_acao, p.numero as numero_pilar, p.nome as nome_pilar
+        FROM Atividade a
+        JOIN Acao ac ON a.acao_id = ac.id
+        JOIN Pilar p ON ac.pilar_id = p.id
+        JOIN Usuario u ON a.responsavel_id = u.id
+        WHERE a.data_conclusao IS NOT NULL AND a.responsavel_id IS NOT NULL
+        """.trimIndent(), null
+        )
+
+        val hoje = Calendar.getInstance()
+        val formatter = java.text.SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+        while (cursor.moveToNext()) {
+            val atividadeId = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+            val nomeAtividade = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+            val dataConclusaoStr = cursor.getString(cursor.getColumnIndexOrThrow("data_conclusao"))
+            val responsavelId = cursor.getInt(cursor.getColumnIndexOrThrow("responsavel_id"))
+            val numeroPilar = cursor.getInt(cursor.getColumnIndexOrThrow("numero_pilar"))
+            val nomePilar = cursor.getString(cursor.getColumnIndexOrThrow("nome_pilar"))
+
+            val dataConclusao: Long? = try {
+                formatter.parse(dataConclusaoStr)?.time
+            } catch (e: Exception) {
+                null
+            }
+
+            if (dataConclusao == null) continue
+
+            val diasAtraso = ((hoje.timeInMillis - dataConclusao) / (1000 * 60 * 60 * 24)).toInt()
+
+            if (diasAtraso > 0) {
+                val mensagem = "A atividade \"$nomeAtividade\" do Pilar $numeroPilar - $nomePilar está atrasada há $diasAtraso dias."
+
+                val cursorCheck = db.rawQuery(
+                    """
+                SELECT COUNT(*) FROM Notificacao 
+                WHERE usuario_id = ? AND atividade_id = ? AND mensagem = ? AND ABS(CAST(data AS INTEGER) - ?) < 86400000
+                """.trimIndent(),
+                    arrayOf(
+                        responsavelId.toString(),
+                        atividadeId.toString(),
+                        mensagem,
+                        System.currentTimeMillis().toString()
+                    )
+                )
+
+                cursorCheck.moveToFirst()
+                val jaExiste = cursorCheck.getInt(0) > 0
+                cursorCheck.close()
+
+                if (!jaExiste) {
+                    val values = ContentValues().apply {
+                        put("usuario_id", responsavelId)
+                        put("mensagem", mensagem)
+                        put("data", System.currentTimeMillis().toString())
+                        put("lida", 0)
+                        put("atividade_id", atividadeId)
+                        put("tipo_notificacao", "ALERTA")
                     }
 
                     db.insert("Notificacao", null, values)
