@@ -46,7 +46,7 @@ class EvolucaoAcaoActivity : AppCompatActivity() {
         dbHelper = DatabaseHelper(this)
         carregarDetalhesAcao(acaoId)
 
-        // Botão Home
+        // Inicializa botões
         findViewById<ImageView>(R.id.btnHome).setOnClickListener {
             com.example.senacplanner.util.NavigationUtils.irParaTelaHome(
                 this,
@@ -56,7 +56,6 @@ class EvolucaoAcaoActivity : AppCompatActivity() {
             )
         }
 
-        // Botão Gráficos
         findViewById<ImageView>(R.id.btnGraficos).setOnClickListener {
             if (tipoUsuario != null && nomeUsuario != null && idUsuario != -1) {
                 val intent = Intent(this, GraficosActivity::class.java).apply {
@@ -70,7 +69,6 @@ class EvolucaoAcaoActivity : AppCompatActivity() {
             }
         }
 
-        // Botão Notificações
         findViewById<ImageView>(R.id.btnNotificacoes).setOnClickListener {
             val intent = Intent(this, NotificacoesActivity::class.java).apply {
                 putExtra("TIPO_USUARIO", tipoUsuario)
@@ -80,11 +78,9 @@ class EvolucaoAcaoActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        //  Botão Logout
         findViewById<ImageView>(R.id.btnAcoes).setOnClickListener {
             realizarLogout()
         }
-
 
     val btnNotificacoes = findViewById<ImageView>(R.id.btnNotificacoes)
         btnNotificacoes.setOnClickListener {
