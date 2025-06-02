@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dashboardAcaoLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#0D1E2E"
-    android:paddingLeft="24dp"
-    android:paddingRight="24dp"
-    android:paddingTop="16dp"
-    android:paddingBottom="16dp"
-    android:fitsSystemWindows="true">
+    tools:context=".EvolucaoAcaoActivity">
 
+    <!-- Cabeçalho azul escuro -->
+    <TextView
+        android:id="@+id/tvCabecalho"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Detalhes da Ação"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
+        android:background="#1C2A39"
+        android:paddingTop="58dp"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <!-- Nome da Ação -->
     <TextView
@@ -17,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Nome da ação"
-        android:textColor="#FFFFFF"
+        android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -29,6 +38,8 @@
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="20dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:progressDrawable="@drawable/progress_bar_custom"
         android:max="100"
         android:layout_marginBottom="8dp"/>
@@ -38,15 +49,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0% concluído"
-        android:textColor="#FFFFFF"
+        android:textColor="#000000"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="16dp"/>
 
-    <!-- Container para atividades -->
+    <!-- Container de atividades com Scroll -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:padding="16dp">
 
         <LinearLayout
             android:id="@+id/containerAtividades"
@@ -54,4 +66,56 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"/>
     </ScrollView>
+
+    <!-- Rodapé fixo -->
+    <LinearLayout
+        android:id="@+id/rodape_com_botoes"
+        android:layout_width="match_parent"
+        android:layout_height="81dp"
+        android:orientation="horizontal"
+        android:background="#1C2A39"
+        android:padding="8dp"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/btnGraficos"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/graficos"
+            android:contentDescription="Gráficos"
+            android:layout_gravity="center"
+            android:padding="8dp" />
+
+        <ImageView
+            android:id="@+id/btnHome"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/home"
+            android:contentDescription="Home"
+            android:layout_gravity="center"
+            android:padding="8dp" />
+
+        <ImageView
+            android:id="@+id/btnNotificacoes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/notificacao"
+            android:contentDescription="Notificações"
+            android:layout_gravity="center"
+            android:padding="8dp" />
+
+        <ImageView
+            android:id="@+id/btnAcoes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/acoes"
+            android:contentDescription="Ações"
+            android:layout_gravity="center"
+            android:padding="8dp" />
+    </LinearLayout>
+
 </LinearLayout>

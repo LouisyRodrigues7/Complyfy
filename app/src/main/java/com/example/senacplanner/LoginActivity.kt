@@ -57,19 +57,26 @@ class LoginActivity : AppCompatActivity() {
                     val idUsuario = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
                     when (tipoSelecionado) {
                         "Coordenador", "Apoio" -> {
-                            val intent = Intent(this, CoordenadorActivity::class.java)
-                            intent.putExtra("NOME_USUARIO", nomeUsuario)
-                            intent.putExtra("ID_USUARIO", idUsuario)
-                            intent.putExtra("TIPO_USUARIO", tipoSelecionado)
+                            val intent = Intent(this, CoordenadorActivity::class.java).apply {
+                                putExtra("NOME_USUARIO", nomeUsuario)
+                                putExtra("ID_USUARIO", idUsuario)
+                                putExtra("TIPO_USUARIO", tipoSelecionado)
+                            }
                             startActivity(intent)
+                            finish()
                         }
+
                         "Gestor" -> {
-                            val intent = Intent(this, GestorActivity::class.java)
-                            intent.putExtra("NOME_USUARIO", nomeUsuario)
-                            intent.putExtra("ID_USUARIO", idUsuario)
+                            val intent = Intent(this, GestorActivity::class.java).apply {
+                                putExtra("NOME_USUARIO", nomeUsuario)
+                                putExtra("ID_USUARIO", idUsuario)
+                                putExtra("TIPO_USUARIO", tipoSelecionado)
+                            }
                             startActivity(intent)
+                            finish()
                         }
                     }
+
                 } else {
                     Toast.makeText(
                         this,
