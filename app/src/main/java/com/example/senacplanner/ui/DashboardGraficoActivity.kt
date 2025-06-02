@@ -1,4 +1,4 @@
-package com.example.senacplanner
+package com.example.senacplanner.ui
 
 import android.graphics.Color
 import android.os.Bundle
@@ -20,7 +20,9 @@ import com.github.mikephil.charting.components.Legend
 import android.widget.ImageView
 import android.content.Intent
 import android.widget.Toast
-import android.util.Log
+import com.example.senacplanner.data.DatabaseHelper
+import com.example.senacplanner.NotificacoesActivity
+import com.example.senacplanner.R
 
 class DashboardGraficoActivity : AppCompatActivity() {
 

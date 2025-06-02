@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import com.example.senacplanner.DatabaseHelper
+import com.example.senacplanner.data.DatabaseHelper
 import com.example.senacplanner.Acoes.ListaAtividades
 import com.example.senacplanner.R
 

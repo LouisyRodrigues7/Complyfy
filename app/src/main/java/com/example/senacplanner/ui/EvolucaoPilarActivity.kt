@@ -1,7 +1,6 @@
-package com.example.senacplanner
+package com.example.senacplanner.ui
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -11,7 +10,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.content.Intent
 import android.widget.ImageView
-import android.widget.Toast
+import com.example.senacplanner.data.DatabaseHelper
+import com.example.senacplanner.NotificacoesActivity
+import com.example.senacplanner.R
 
 class EvolucaoPilarActivity : AppCompatActivity() {
 

@@ -1,4 +1,4 @@
-package com.example.senacplanner
+package com.example.senacplanner.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +7,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import com.example.senacplanner.NotificacoesActivity
+import com.example.senacplanner.R
 
 class GestorActivity : AppCompatActivity() {
 

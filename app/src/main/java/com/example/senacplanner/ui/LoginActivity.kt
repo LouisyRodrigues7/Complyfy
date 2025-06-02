@@ -1,4 +1,4 @@
-package com.example.senacplanner
+package com.example.senacplanner.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -9,6 +9,8 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.senacplanner.data.DatabaseHelper
+import com.example.senacplanner.R
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var databaseHelper: DatabaseHelper

@@ -19,8 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="#1C2A39"
-            app:title="Olá, nome do usuário"
-            app:titleTextColor="@android:color/white" />
+            app:titleTextColor="@android:color/white"/>
+
 
     </com.google.android.material.appbar.AppBarLayout>
 

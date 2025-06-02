@@ -1,7 +1,6 @@
 package com.example.senacplanner
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +10,9 @@ import com.example.senacplanner.model.Notificacao
 import android.content.Intent
 import android.widget.ImageView
 import android.widget.Toast
+import com.example.senacplanner.data.DatabaseHelper
+import com.example.senacplanner.ui.DashboardGraficoActivity
+import com.example.senacplanner.ui.LoginActivity
 
 class NotificacoesActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView

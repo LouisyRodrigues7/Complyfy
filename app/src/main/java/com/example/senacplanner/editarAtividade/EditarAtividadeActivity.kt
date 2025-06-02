@@ -3,7 +3,6 @@ package com.example.senacplanner.editarAtividade
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -12,7 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.senacplanner.Acoes.Type.Usuario
-import com.example.senacplanner.DatabaseHelper
+import com.example.senacplanner.data.DatabaseHelper
 import com.example.senacplanner.R
 import java.text.SimpleDateFormat
 import java.util.Calendar

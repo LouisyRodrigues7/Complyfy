@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.senacplanner.R
-import com.example.senacplanner.Pilar  // Verifique se o pacote está correto
+import com.example.senacplanner.model.Pilar  // Verifique se o pacote está correto
 
 class PilarAdapter(
     private val pilares: List<Pilar>,

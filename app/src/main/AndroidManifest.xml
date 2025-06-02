@@ -24,7 +24,7 @@
 
         <!-- Login e Inicial -->
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,10 +50,10 @@
 
         <!-- Perfis -->
         <activity
-            android:name=".CoordenadorActivity"
+            android:name=".ui.CoordenadorActivity"
             android:exported="false" />
         <activity
-            android:name=".GestorActivity"
+            android:name=".ui.GestorActivity"
             android:exported="false" />
         <activity
             android:name=".ApoioActivity"
@@ -61,22 +61,22 @@
 
         <!-- Gráficos e Progresso -->
         <activity
-            android:name=".EvolucaoPilarActivity"
+            android:name=".ui.EvolucaoPilarActivity"
             android:exported="false" />
         <activity
-            android:name=".PilarAcaoActivity"
+            android:name=".ui.PilarAcaoActivity"
             android:exported="false" />
         <activity
-            android:name=".EvolucaoAcaoActivity"
+            android:name=".ui.EvolucaoAcaoActivity"
             android:exported="false" />
         <activity
-            android:name=".ProgressoPilaresActivity"
+            android:name=".ui.ProgressoPilaresActivity"
             android:exported="false" />
         <activity
-            android:name=".GraficosActivity"
+            android:name=".ui.GraficosActivity"
             android:exported="false" />
         <activity
-            android:name=".DashboardGraficoActivity"
+            android:name=".ui.DashboardGraficoActivity"
             android:exported="false" />
         <activity
             android:name=".NotificacoesActivity"

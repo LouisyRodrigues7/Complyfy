@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.example.senacplanner.DatabaseHelper
+import com.example.senacplanner.data.DatabaseHelper
 import com.example.senacplanner.R
 import java.text.SimpleDateFormat
 import java.util.*

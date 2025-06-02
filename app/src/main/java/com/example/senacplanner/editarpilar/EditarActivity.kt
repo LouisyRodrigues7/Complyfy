@@ -12,7 +12,7 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.senacplanner.Acoes.Type.PilarType
-import com.example.senacplanner.DatabaseHelper
+import com.example.senacplanner.data.DatabaseHelper
 import com.example.senacplanner.R
 import java.text.SimpleDateFormat
 import java.util.Calendar

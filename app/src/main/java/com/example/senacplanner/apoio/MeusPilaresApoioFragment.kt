@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.senacplanner.R
-import com.example.senacplanner.Pilar  // Verifique o pacote correto do modelo
+import com.example.senacplanner.model.Pilar  // Verifique o pacote correto do modelo
 import com.example.senacplanner.adapter.PilarAdapter
 
 class MeusPilaresApoioFragment : Fragment() {

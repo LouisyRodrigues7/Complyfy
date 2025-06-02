@@ -1,17 +1,13 @@
 package com.example.senacplanner.Acoes
 
-import android.annotation.SuppressLint
 import android.app.DatePickerDialog
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.senacplanner.Acoes.Type.Usuario
-import com.example.senacplanner.DatabaseHelper
-import com.example.senacplanner.NotificacoesActivity
+import com.example.senacplanner.data.DatabaseHelper
 import com.example.senacplanner.R
-import com.example.senacplanner.adapter.NotificacaoAdapter
 import com.example.senacplanner.adapter.TipoNotificacao
 import java.text.SimpleDateFormat
 import java.util.*

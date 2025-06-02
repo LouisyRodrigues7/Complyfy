@@ -9,7 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.example.senacplanner.Acoes.Type.AcaoComAtividades
-import com.example.senacplanner.DatabaseHelper
+import com.example.senacplanner.data.DatabaseHelper
 import com.example.senacplanner.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 

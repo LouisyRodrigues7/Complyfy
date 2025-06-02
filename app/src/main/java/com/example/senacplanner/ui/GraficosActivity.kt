@@ -1,4 +1,4 @@
-package com.example.senacplanner
+package com.example.senacplanner.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import android.widget.ImageView
 import android.widget.Toast
+import com.example.senacplanner.NotificacoesActivity
+import com.example.senacplanner.R
 
 class GraficosActivity : AppCompatActivity() {
 
@@ -17,9 +19,19 @@ class GraficosActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_graficos)
 
+
         nomeUsuario = intent.getStringExtra("NOME_USUARIO")
         tipoUsuario = intent.getStringExtra("TIPO_USUARIO")
         idUsuario = intent.getIntExtra("ID_USUARIO", -1)
+
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        if (!nomeUsuario.isNullOrEmpty()) {
+            supportActionBar?.title = "Olá, $nomeUsuario"
+        } else {
+            supportActionBar?.title = "Olá, usuário"
+        }
 
 
         val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)

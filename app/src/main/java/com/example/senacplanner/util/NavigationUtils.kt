@@ -3,8 +3,8 @@ package com.example.senacplanner.util
 import android.app.Activity
 import android.content.Intent
 import android.util.Log
-import com.example.senacplanner.CoordenadorActivity
-import com.example.senacplanner.GestorActivity
+import com.example.senacplanner.ui.CoordenadorActivity
+import com.example.senacplanner.ui.GestorActivity
 
 object NavigationUtils {
 
