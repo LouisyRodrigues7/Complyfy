@@ -56,7 +56,7 @@ class EvolucaoAcaoActivity : AppCompatActivity() {
         // Botão Gráficos
         findViewById<ImageView>(R.id.btnGraficos).setOnClickListener {
             if (tipoUsuario != null && nomeUsuario != null && idUsuario != -1) {
-                val intent = Intent(this, DashboardGraficoActivity::class.java).apply {
+                val intent = Intent(this, GraficosActivity::class.java).apply {
                     putExtra("TIPO_USUARIO", tipoUsuario)
                     putExtra("ID_USUARIO", idUsuario)
                     putExtra("NOME_USUARIO", nomeUsuario)

@@ -40,7 +40,7 @@ class ProgressoPilaresActivity : AppCompatActivity() {
 
         val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
         btnGraficos.setOnClickListener {
-            val intent = Intent(this, DashboardGraficoActivity::class.java).apply {
+            val intent = Intent(this, GraficosActivity::class.java).apply {
                 putExtra("TIPO_USUARIO", tipoUsuario)
                 putExtra("ID_USUARIO", idUsuario)
                 putExtra("NOME_USUARIO", nomeUsuario)

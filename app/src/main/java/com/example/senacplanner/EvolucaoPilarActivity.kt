@@ -95,7 +95,7 @@ class EvolucaoPilarActivity : AppCompatActivity() {
         }
         val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
         btnGraficos.setOnClickListener {
-            val intent = Intent(this, DashboardGraficoActivity::class.java)
+            val intent = Intent(this, GraficosActivity::class.java)
             intent.putExtra("TIPO_USUARIO", tipoUsuario)
             intent.putExtra("ID_USUARIO", idUsuario)
             intent.putExtra("NOME_USUARIO", nomeUsuario)

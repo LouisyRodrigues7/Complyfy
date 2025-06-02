@@ -19,6 +19,7 @@ import com.example.senacplanner.fragmentpilares.MeusPilaresFragment
 import com.example.senacplanner.fragmentpilares.TodosPilaresFragment
 import com.example.senacplanner.fragmentpilares.ViewPagerAdapter
 import com.example.senacplanner.novopilar.NovoPilarActivity
+import com.example.senacplanner.util.NavigationUtils
 
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -95,7 +96,7 @@ class CoordenadorActivity : AppCompatActivity() {
         val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
         btnGraficos.setOnClickListener {
             if (tipoUsuario != null && nomeUsuario != null && idUsuario != -1) {
-                val intent = Intent(this, DashboardGraficoActivity::class.java).apply {
+                val intent = Intent(this, GraficosActivity::class.java).apply {
                     putExtra("TIPO_USUARIO", tipoUsuario)
                     putExtra("ID_USUARIO", idUsuario)
                     putExtra("NOME_USUARIO", nomeUsuario)
