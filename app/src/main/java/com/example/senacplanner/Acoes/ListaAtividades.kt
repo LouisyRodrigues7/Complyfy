@@ -20,7 +20,6 @@ class ListaAtividades : AppCompatActivity() {
     private var pilarId: Int = -1
     private var pilarNumero: Int = -1
     private var pilarNome: String? = null
-    private var usuarioTipo: String? = ""
     private var idUsuario: Int = -1
     private var idAcao: Int = -1
     private var acoes: List<AcaoComAtividades> = emptyList()
