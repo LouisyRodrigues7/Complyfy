@@ -24,6 +24,7 @@
             app:titleTextColor="@android:color/white" />
     </com.google.android.material.appbar.AppBarLayout>
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -31,12 +32,24 @@
         android:layout_marginTop="?attr/actionBarSize"
         android:background="#FFFFFF">
 
+        <TextView
+            android:id="@+id/tituloNotificacoes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#BB7535"
+            android:text="Progresso de pilares"
+            android:textColor="#FFFFFF"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:padding="10dp" />
+
         <!-- Box azul com Spinner -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="#162E47"
+            android:background="@drawable/box_criar_pilares"
             android:padding="16dp"
             android:layout_margin="16dp"
             android:elevation="2dp">
@@ -64,7 +77,7 @@
                 android:layout_height="wrap_content"
                 android:text="Confirmar"
                 android:layout_marginTop="12dp"
-                android:backgroundTint="#BB7535"
+                android:backgroundTint="#27AE60"
                 android:textColor="#FFFFFF"/>
 
         </LinearLayout>
