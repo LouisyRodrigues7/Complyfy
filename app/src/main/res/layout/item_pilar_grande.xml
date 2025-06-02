@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="18dp"
     android:layout_marginBottom="12dp"
     android:elevation="4dp"
-    android:radius="12dp">
+    card_view:cardCornerRadius="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="#162E47"
-        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="16dp">
 
@@ -21,21 +26,28 @@
             android:layout_height="37dp"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="16dp"
-            android:background="#BB7535"
+            android:background="@drawable/rounded_orange"
             android:gravity="center"
             android:text="@string/__1"
             android:textColor="#FFFFFF"
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <!-- Nome do com.example.senacplanner.Pilar -->
-        <TextView
-            android:id="@+id/textoPilarGrande"
-            android:layout_width="wrap_content"
+        <!-- Nome do Pilar -->
+        <FrameLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/pilar_grande"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/textoPilarGrande"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/pilar_grande"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center" />
+        </FrameLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

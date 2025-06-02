@@ -36,6 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:gravity="center_horizontal"
         android:layout_marginTop="?attr/actionBarSize"
         android:background="#FFFFFF">
 
@@ -113,15 +114,7 @@
             android:layout_gravity="center"
             android:padding="8dp" />
 
-        <ImageView
-            android:id="@+id/btnAcoes"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/acoes"
-            android:contentDescription="Ações"
-            android:layout_gravity="center"
-            android:padding="8dp" />
+
 
         <ImageView
             android:id="@+id/btnNotificacoes"
@@ -130,6 +123,15 @@
             android:layout_weight="1"
             android:src="@drawable/notificacao"
             android:contentDescription="Notificações"
+            android:layout_gravity="center"
+            android:padding="8dp" />
+        <ImageView
+            android:id="@+id/btnAcoes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/acoes"
+            android:contentDescription="Ações"
             android:layout_gravity="center"
             android:padding="8dp" />
     </LinearLayout>
