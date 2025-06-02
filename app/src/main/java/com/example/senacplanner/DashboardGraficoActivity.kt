@@ -20,6 +20,7 @@ import com.github.mikephil.charting.components.Legend
 import android.widget.ImageView
 import android.content.Intent
 import android.widget.Toast
+import android.util.Log
 
 class DashboardGraficoActivity : AppCompatActivity() {
 
@@ -32,10 +33,17 @@ class DashboardGraficoActivity : AppCompatActivity() {
     private lateinit var progressBarTotal: ProgressBar
     private lateinit var tvProgressoTotal: TextView
     private var pilarId: Int = -1
+    private var tipoUsuario: String? = null
+    private var nomeUsuario: String? = null
+    private var idUsuario: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard_grafico)
+
+        nomeUsuario = intent.getStringExtra("NOME_USUARIO")
+        tipoUsuario = intent.getStringExtra("TIPO_USUARIO")
+        idUsuario = intent.getIntExtra("ID_USUARIO", -1)
 
         pieChart = findViewById(R.id.pieChart)
         progressoContainer = findViewById(R.id.progressoContainer)
@@ -44,6 +52,7 @@ class DashboardGraficoActivity : AppCompatActivity() {
         barChart = findViewById(R.id.barChart)
         legendaContainer = findViewById(R.id.barChartLegendContainer)
         legendaScroll = findViewById(R.id.barChartLegendScroll)
+
 
         db = DatabaseHelper(this)
         pilarId = intent.getIntExtra("pilar_id", -1)
@@ -63,9 +72,34 @@ class DashboardGraficoActivity : AppCompatActivity() {
             mostrarGraficoAcoesBarras(lista)
             progressoContainer.visibility = View.GONE
         }
-        val tipoUsuario = intent.getStringExtra("TIPO_USUARIO")
-        val idUsuario = intent.getIntExtra("ID_USUARIO", -1)
-        val nomeUsuario = intent.getStringExtra("NOME_USUARIO")
+        val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
+        btnGraficos.setOnClickListener {
+            if (tipoUsuario != null && nomeUsuario != null && idUsuario != -1) {
+                val intent = Intent(this, DashboardGraficoActivity::class.java).apply {
+                    putExtra("TIPO_USUARIO", tipoUsuario)
+                    putExtra("ID_USUARIO", idUsuario)
+                    putExtra("NOME_USUARIO", nomeUsuario)
+                }
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "Dados do usuário ausentes. Não foi possível abrir os gráficos.", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        val btnNotificacoes = findViewById<ImageView>(R.id.btnNotificacoes)
+        btnNotificacoes.setOnClickListener {
+            val intent = Intent(this, NotificacoesActivity::class.java).apply {
+                putExtra("TIPO_USUARIO", tipoUsuario)
+                putExtra("ID_USUARIO", idUsuario)
+                putExtra("NOME_USUARIO", nomeUsuario)
+            }
+            startActivity(intent)
+        }
+
+        val btnLogout = findViewById<ImageView>(R.id.btnAcoes)
+        btnLogout.setOnClickListener {
+            realizarLogout()
+        }
 
         val btnHome = findViewById<ImageView>(R.id.btnHome)
         btnHome.setOnClickListener {
@@ -75,22 +109,6 @@ class DashboardGraficoActivity : AppCompatActivity() {
                 idUsuario,
                 nomeUsuario
             )
-        }
-        val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
-        btnGraficos.setOnClickListener {
-            Toast.makeText(this, "Você já está nos Gráficos!", Toast.LENGTH_SHORT).show()
-        }
-
-        val btnNotificacoes = findViewById<ImageView>(R.id.btnNotificacoes)
-        btnNotificacoes.setOnClickListener {
-            val intent = Intent(this, NotificacoesActivity::class.java)
-            intent.putExtra("ID_USUARIO", idUsuario)
-            startActivity(intent)
-        }
-
-        val btnLogout = findViewById<ImageView>(R.id.btnAcoes)
-        btnLogout.setOnClickListener {
-            realizarLogout()
         }
 
     }
@@ -139,7 +157,7 @@ class DashboardGraficoActivity : AppCompatActivity() {
 
         pieChart.apply {
             data = PieData(dataSet)
-            setUsePercentValues(false) // mostra valores absolutos (quantidade de atividades)
+            setUsePercentValues(false)
             setEntryLabelColor(Color.DKGRAY)
             setEntryLabelTextSize(12f)
             description.isEnabled = false

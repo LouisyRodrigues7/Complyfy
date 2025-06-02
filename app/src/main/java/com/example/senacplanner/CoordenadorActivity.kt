@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.viewpager2.widget.ViewPager2
@@ -91,9 +92,37 @@ class CoordenadorActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val btnHome = findViewById<View>(R.id.btnHome)
+        val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
+        btnGraficos.setOnClickListener {
+            if (tipoUsuario != null && nomeUsuario != null && idUsuario != -1) {
+                val intent = Intent(this, DashboardGraficoActivity::class.java).apply {
+                    putExtra("TIPO_USUARIO", tipoUsuario)
+                    putExtra("ID_USUARIO", idUsuario)
+                    putExtra("NOME_USUARIO", nomeUsuario)
+                }
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "Dados do usuário ausentes. Não foi possível abrir os gráficos.", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        val btnNotificacoes = findViewById<ImageView>(R.id.btnNotificacoes)
+        btnNotificacoes.setOnClickListener {
+            val intent = Intent(this, NotificacoesActivity::class.java).apply {
+                putExtra("TIPO_USUARIO", tipoUsuario)
+                putExtra("ID_USUARIO", idUsuario)
+                putExtra("NOME_USUARIO", nomeUsuario)
+            }
+            startActivity(intent)
+        }
+
+        val btnLogout = findViewById<ImageView>(R.id.btnAcoes)
+        btnLogout.setOnClickListener {
+            realizarLogout()
+        }
+
+        val btnHome = findViewById<ImageView>(R.id.btnHome)
         btnHome.setOnClickListener {
-            Log.d("DASHBOARD", "Home clicado")
             com.example.senacplanner.util.NavigationUtils.irParaTelaHome(
                 this,
                 tipoUsuario,
@@ -101,29 +130,6 @@ class CoordenadorActivity : AppCompatActivity() {
                 nomeUsuario
             )
         }
-
-        val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
-        btnGraficos.setOnClickListener {
-            val intent = Intent(this, DashboardGraficoActivity::class.java)
-            intent.putExtra("TIPO_USUARIO", tipoUsuario)
-            intent.putExtra("ID_USUARIO", idUsuario)
-            intent.putExtra("NOME_USUARIO", nomeUsuario)
-            startActivity(intent)
-        }
-
-        // --- REMOVIDO: botão de notificaçõess
-        val btnNotificacoes = findViewById<ImageView>(R.id.btnNotificacoes)
-        btnNotificacoes.setOnClickListener {
-        val intent = Intent(this, NotificacoesActivity::class.java)
-        intent.putExtra("ID_USUARIO", idUsuario)
-       startActivity(intent)
-       }
-
-        val btnLogout = findViewById<ImageView>(R.id.btnAcoes)
-        btnLogout.setOnClickListener {
-            realizarLogout()
-        }
-
 
     }
 
