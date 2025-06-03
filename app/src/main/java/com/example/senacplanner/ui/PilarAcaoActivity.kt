@@ -61,7 +61,7 @@ class PilarAcaoActivity : AppCompatActivity() {
         }
 
 
-    val btnNotificacoes = findViewById<ImageView>(R.id.btnNotificacoes)
+        val btnNotificacoes = findViewById<ImageView>(R.id.btnNotificacoes)
         btnNotificacoes.setOnClickListener {
             val intent = Intent(this, NotificacoesActivity::class.java).apply {
                 putExtra("TIPO_USUARIO", tipoUsuario)

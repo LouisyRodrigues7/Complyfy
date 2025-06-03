@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.example.senacplanner.NotificacoesActivity
 import com.example.senacplanner.R
 import com.example.senacplanner.data.DatabaseHelper
 import com.example.senacplanner.model.AcaoEstrategica
@@ -20,6 +21,15 @@ class EvolucaoAtividade : AppCompatActivity() {
 
     private lateinit var dbHelper: DatabaseHelper
 
+    private lateinit var btnHome: ImageView
+    private lateinit var btnGraficos: ImageView
+    private lateinit var btnNotificacoes: ImageView
+    private lateinit var btnLogout: ImageView
+
+    private var tipoUsuario: String? = null
+    private var nomeUsuario: String? = null
+    private var idUsuario: Int = -1
+
     private var listaPilares: List<Pilarspinner> = emptyList()
     private var listaAcoes: List<AcaoEstrategica> = emptyList()
     private var listaAtividades: List<Atividadespinner> = emptyList()
@@ -27,6 +37,55 @@ class EvolucaoAtividade : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_evolucao_atividade)
+
+        nomeUsuario = intent.getStringExtra("NOME_USUARIO")
+        tipoUsuario = intent.getStringExtra("TIPO_USUARIO")
+        idUsuario = intent.getIntExtra("ID_USUARIO", -1)
+
+        btnHome = findViewById(R.id.btnHome)
+        btnGraficos = findViewById(R.id.btnGraficos)
+        btnNotificacoes = findViewById(R.id.btnNotificacoes)
+        btnLogout = findViewById(R.id.btnAcoes)
+
+        val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
+        btnGraficos.setOnClickListener {
+            if (tipoUsuario != null && nomeUsuario != null && idUsuario != -1) {
+                val intent = Intent(this, GraficosActivity::class.java).apply {
+                    putExtra("TIPO_USUARIO", tipoUsuario)
+                    putExtra("ID_USUARIO", idUsuario)
+                    putExtra("NOME_USUARIO", nomeUsuario)
+                }
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "Dados do usuário ausentes. Não foi possível abrir os gráficos.", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        val btnNotificacoes = findViewById<ImageView>(R.id.btnNotificacoes)
+        btnNotificacoes.setOnClickListener {
+            val intent = Intent(this, NotificacoesActivity::class.java).apply {
+                putExtra("TIPO_USUARIO", tipoUsuario)
+                putExtra("ID_USUARIO", idUsuario)
+                putExtra("NOME_USUARIO", nomeUsuario)
+            }
+            startActivity(intent)
+        }
+
+        val btnLogout = findViewById<ImageView>(R.id.btnAcoes)
+        btnLogout.setOnClickListener {
+            realizarLogout()
+        }
+
+        val btnHome = findViewById<ImageView>(R.id.btnHome)
+        btnHome.setOnClickListener {
+            com.example.senacplanner.util.NavigationUtils.irParaTelaHome(
+                this,
+                tipoUsuario,
+                idUsuario,
+                nomeUsuario
+            )
+        }
+
 
         dbHelper = DatabaseHelper(this)
 
@@ -129,5 +188,12 @@ class EvolucaoAtividade : AppCompatActivity() {
 
             startActivity(intent)
         }
+
+    }
+    private fun realizarLogout() {
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 }

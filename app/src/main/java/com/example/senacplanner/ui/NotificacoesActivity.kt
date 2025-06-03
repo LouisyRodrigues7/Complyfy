@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import com.example.senacplanner.data.DatabaseHelper
 import com.example.senacplanner.ui.DashboardGraficoActivity
+import com.example.senacplanner.ui.GraficosActivity
 import com.example.senacplanner.ui.LoginActivity
 
 class NotificacoesActivity : AppCompatActivity() {
@@ -49,7 +50,7 @@ class NotificacoesActivity : AppCompatActivity() {
 
         val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
         btnGraficos.setOnClickListener {
-            val intent = Intent(this, DashboardGraficoActivity::class.java).apply {
+            val intent = Intent(this, GraficosActivity::class.java).apply {
                 putExtra("TIPO_USUARIO", tipoUsuario)
                 putExtra("ID_USUARIO", idUsuario)
                 putExtra("NOME_USUARIO", nomeUsuario)

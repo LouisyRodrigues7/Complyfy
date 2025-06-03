@@ -25,7 +25,6 @@ class ListaAtividades : AppCompatActivity() {
     private var acoes: List<AcaoComAtividades> = emptyList()
     private var visualizacaoGeral: Boolean = false
     private var usuarioTipo: String? = ""
-
     private lateinit var fabAdicionar: FloatingActionButton
 
     private fun atualizarListaDeAcoes() {

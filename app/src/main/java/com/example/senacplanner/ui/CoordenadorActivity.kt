@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.cardview.widget.CardView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.senacplanner.data.DatabaseHelper
 import com.example.senacplanner.NotificacoesActivity

@@ -33,11 +33,16 @@ class GraficosActivity : AppCompatActivity() {
             supportActionBar?.title = "Olá, usuário"
         }
 
+        val cardProgressoAtividades = findViewById<CardView>(R.id.cardProgressoAtividades)
+        cardProgressoAtividades.setOnClickListener {
+            val intent = Intent(this, EvolucaoAtividade::class.java)
+            startActivity(intent)
+        }
 
         val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
         btnGraficos.setOnClickListener {
             if (tipoUsuario != null && nomeUsuario != null && idUsuario != -1) {
-                val intent = Intent(this, DashboardGraficoActivity::class.java).apply {
+                val intent = Intent(this, GraficosActivity::class.java).apply {
                     putExtra("TIPO_USUARIO", tipoUsuario)
                     putExtra("ID_USUARIO", idUsuario)
                     putExtra("NOME_USUARIO", nomeUsuario)
