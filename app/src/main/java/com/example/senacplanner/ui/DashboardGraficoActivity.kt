@@ -253,7 +253,7 @@ class DashboardGraficoActivity : AppCompatActivity() {
             text = "Sigla ➜ Nome da Ação"
             setPadding(24, 24, 24, 24)
             setTextColor(Color.BLACK)
-            textSize = 18f   // 
+            textSize = 18f   //
             setBackgroundColor(Color.LTGRAY)
         }
         legendaContainer.addView(header)
