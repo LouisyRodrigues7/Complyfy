@@ -81,6 +81,7 @@
         <activity
             android:name=".NotificacoesActivity"
             android:exported="false" />
+        <activity android:name=".ui.EvolucaoAtividade" />
 
     </application>
 </manifest>

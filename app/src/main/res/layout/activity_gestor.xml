@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -15,7 +14,6 @@
         android:orientation="vertical"
         android:background="#1C2A39"
         android:paddingTop="20dp">
-
 
         <TextView
             android:id="@+id/textViewSaudacao"
@@ -42,8 +40,6 @@
         android:textStyle="bold"
         android:textSize="16sp"
         android:padding="10dp" />
-
-
 
     <ScrollView
         android:layout_width="match_parent"
@@ -93,7 +89,6 @@
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
-
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -101,16 +96,57 @@
                         android:textColor="#FFFFFF"
                         android:textSize="16sp"
                         android:textStyle="bold" />
-
                 </LinearLayout>
-
             </androidx.cardview.widget.CardView>
-            <!-- Botão 2: Gerar Relatórios -->
+
+            <!-- Botão 2: Progresso de atividades -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardProgresso"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:layout_gravity="center_horizontal"
+                android:elevation="4dp"
+                card_view:cardCornerRadius="30dp"
+                card_view:cardBackgroundColor="@android:color/white"
+                android:padding="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#162E47"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="37dp"
+                        android:layout_height="37dp"
+                        android:layout_marginEnd="16dp"
+                        android:background="@drawable/rounded_orange"
+                        android:gravity="center"
+                        android:text="2"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Progresso de atividades"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Botão 3: Gerar Relatórios -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardRelatorio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:layout_gravity="center_horizontal"
                 android:elevation="4dp"
                 card_view:cardCornerRadius="30dp"
@@ -130,7 +166,7 @@
                         android:layout_marginEnd="16dp"
                         android:background="@drawable/rounded_orange"
                         android:gravity="center"
-                        android:text="2"
+                        android:text="3"
                         android:textColor="#FFFFFF"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -145,11 +181,8 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-
-
         </LinearLayout>
     </ScrollView>
-
 
     <LinearLayout
         android:id="@+id/rodape_com_botoes"
@@ -181,8 +214,6 @@
             android:layout_gravity="center"
             android:padding="8dp" />
 
-
-
         <ImageView
             android:id="@+id/btnNotificacoes"
             android:layout_width="0dp"
@@ -192,6 +223,7 @@
             android:contentDescription="Notificações"
             android:layout_gravity="center"
             android:padding="8dp" />
+
         <ImageView
             android:id="@+id/btnAcoes"
             android:layout_width="0dp"

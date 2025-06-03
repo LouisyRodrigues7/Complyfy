@@ -38,6 +38,16 @@ class GestorActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val cardProgresso = findViewById<CardView>(R.id.cardProgresso)
+        cardProgresso.setOnClickListener {
+            val intent = Intent(this, EvolucaoAtividade::class.java).apply {
+                putExtra("TIPO_USUARIO", tipoUsuario)
+                putExtra("ID_USUARIO", idUsuario)
+                putExtra("NOME_USUARIO", nomeUsuario)
+            }
+            startActivity(intent)
+        }
+
         val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
         btnGraficos.setOnClickListener {
             if (tipoUsuario != null && nomeUsuario != null && idUsuario != -1) {
