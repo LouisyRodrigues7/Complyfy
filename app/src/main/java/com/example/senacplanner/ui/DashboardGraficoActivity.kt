@@ -23,6 +23,8 @@ import android.widget.Toast
 import com.example.senacplanner.data.DatabaseHelper
 import com.example.senacplanner.NotificacoesActivity
 import com.example.senacplanner.R
+import android.widget.ScrollView
+
 
 class DashboardGraficoActivity : AppCompatActivity() {
 
@@ -30,7 +32,7 @@ class DashboardGraficoActivity : AppCompatActivity() {
     private lateinit var barChart: BarChart
     private lateinit var db: DatabaseHelper
     private lateinit var legendaContainer: LinearLayout
-    private lateinit var legendaScroll: HorizontalScrollView
+    private lateinit var legendaScroll: ScrollView
     private lateinit var progressoContainer: LinearLayout
     private lateinit var progressBarTotal: ProgressBar
     private lateinit var tvProgressoTotal: TextView
@@ -53,7 +55,7 @@ class DashboardGraficoActivity : AppCompatActivity() {
         tvProgressoTotal = findViewById(R.id.tvProgressoTotal)
         barChart = findViewById(R.id.barChart)
         legendaContainer = findViewById(R.id.barChartLegendContainer)
-        legendaScroll = findViewById(R.id.barChartLegendScroll)
+        legendaScroll = findViewById(R.id.barChartLegendScroll) as ScrollView
 
 
         db = DatabaseHelper(this)
@@ -84,7 +86,11 @@ class DashboardGraficoActivity : AppCompatActivity() {
                 }
                 startActivity(intent)
             } else {
-                Toast.makeText(this, "Dados do usuário ausentes. Não foi possível abrir os gráficos.", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    this,
+                    "Dados do usuário ausentes. Não foi possível abrir os gráficos.",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
 
@@ -138,7 +144,8 @@ class DashboardGraficoActivity : AppCompatActivity() {
         val percentual = (totalConcluidasGeral * 100f / totalAtividades).toInt()
         progressoContainer.visibility = View.VISIBLE
         progressBarTotal.progress = percentual
-        tvProgressoTotal.text = "Progresso Total: $totalConcluidasGeral de $totalAtividades atividades concluídas ($percentual%)"
+        tvProgressoTotal.text =
+            "Progresso Total: $totalConcluidasGeral de $totalAtividades atividades concluídas ($percentual%)"
 
         val entries = mutableListOf<PieEntry>()
 
@@ -180,16 +187,19 @@ class DashboardGraficoActivity : AppCompatActivity() {
     }
 
 
-
-
     private fun mostrarGraficoAcoesBarras(lista: List<AcaoComProgresso>) {
         val entries = ArrayList<BarEntry>()
-        val labels = ArrayList<String>()
+        val siglas = ArrayList<String>()
+        val legendaMap = mutableMapOf<String, String>()
 
-        for ((index, acao) in lista.withIndex()) {
-            val progresso = if (acao.total > 0) acao.concluidas * 100f / acao.total else 0f
-            entries.add(BarEntry(index.toFloat(), progresso))
-            labels.add(acao.nome)
+        lista.forEachIndexed { index, acao ->
+            val sigla = gerarSigla(acao.nome, legendaMap)
+            val concluido = acao.concluidas.toFloat()
+            val emAndamento = (acao.total - acao.concluidas).coerceAtLeast(0).toFloat()
+
+            entries.add(BarEntry(index.toFloat(), floatArrayOf(concluido, emAndamento)))
+            siglas.add(sigla)
+            legendaMap[sigla] = acao.nome
         }
 
         if (entries.isEmpty()) {
@@ -199,37 +209,35 @@ class DashboardGraficoActivity : AppCompatActivity() {
             return
         }
 
-        val dataSet = BarDataSet(entries, "Progresso das Ações").apply {
-            colors = ColorTemplate.MATERIAL_COLORS.toList()
-            valueTextSize = 12f
+        val dataSet = BarDataSet(entries, "Progresso por Ação").apply {
+            colors = listOf(Color.parseColor("#4CAF50"), Color.parseColor("#2196F3")) // verde, azul
+            setStackLabels(arrayOf("Concluído", "Em andamento"))
             valueTextColor = Color.BLACK
+            valueTextSize = 11f
         }
 
         val data = BarData(dataSet).apply {
-            barWidth = 0.9f
+            barWidth = 0.7f
         }
 
         barChart.apply {
             this.data = data
-
             xAxis.apply {
-                valueFormatter = IndexAxisValueFormatter(labels)
+                valueFormatter = IndexAxisValueFormatter(siglas)
                 position = XAxis.XAxisPosition.BOTTOM
                 setDrawGridLines(false)
                 granularity = 1f
-                labelCount = labels.size
-                labelRotationAngle = 0f
-                textSize = 11f
+                labelCount = siglas.size
+                textSize = 12f
             }
 
-            axisLeft.apply {
-                axisMinimum = 0f
-                axisMaximum = 100f
-            }
-
+            axisLeft.axisMinimum = 0f
             axisRight.isEnabled = false
-
-            legend.isEnabled = false
+            legend.isEnabled = true
+            legend.textSize = 12f
+            legend.form = Legend.LegendForm.SQUARE
+            legend.verticalAlignment = Legend.LegendVerticalAlignment.TOP
+            legend.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
 
             setTouchEnabled(true)
             setScaleEnabled(false)
@@ -238,19 +246,46 @@ class DashboardGraficoActivity : AppCompatActivity() {
             invalidate()
         }
 
+        // Criar o dicionário de siglas com título
         legendaContainer.removeAllViews()
 
-        labels.forEachIndexed { index, nome ->
+        val header = TextView(this).apply {
+            text = "Sigla ➜ Nome da Ação"
+            setPadding(24, 24, 24, 24)
+            setTextColor(Color.BLACK)
+            textSize = 18f   // 
+            setBackgroundColor(Color.LTGRAY)
+        }
+        legendaContainer.addView(header)
+
+        legendaMap.forEach { (sigla, nomeCompleto) ->
             val legendaItem = TextView(this).apply {
-                text = nome
-                setPadding(24, 12, 24, 12)
-                setTextColor(Color.WHITE)
-                setBackgroundColor(ColorTemplate.MATERIAL_COLORS[index % ColorTemplate.MATERIAL_COLORS.size])
-                textSize = 12f
+                text = "$sigla ➜ $nomeCompleto"
+                setPadding(24, 16, 24, 16)
+                setTextColor(Color.BLACK)
+                textSize = 18f
             }
             legendaContainer.addView(legendaItem)
         }
 
         legendaScroll.visibility = View.VISIBLE
+    }
+
+
+    private fun gerarSigla(nome: String, mapa: Map<String, String>): String {
+        val palavras = nome.split(" ")
+            .filter { it.isNotBlank() }
+            .map { it.trim().take(1).uppercase() }
+
+        var sigla = palavras.take(3).joinToString("")
+        if (sigla.isEmpty()) sigla = nome.take(3).uppercase()
+
+        var contador = 1
+        var siglaFinal = sigla
+        while (mapa.containsKey(siglaFinal)) {
+            siglaFinal = "$sigla$contador"
+            contador++
+        }
+        return siglaFinal
     }
 }
