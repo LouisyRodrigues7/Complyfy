@@ -20,6 +20,12 @@ import com.example.senacplanner.model.AtividadeDetalhe
 import com.example.senacplanner.model.PilarItem
 import com.example.senacplanner.model.AcaoComProgresso
 import com.example.senacplanner.model.PilarComProgresso
+import com.example.senacplanner.model.Pilarspinner
+import com.example.senacplanner.model.AcaoEstrategica
+import com.example.senacplanner.model.Atividadespinner
+import com.example.senacplanner.model.StatusAtividade
+import com.example.senacplanner.util.getStringOrNull
+
 
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
@@ -186,6 +192,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
 
 
 
+
     fun getTodosPilares(): List<PilarItem> {
         val pilares = mutableListOf<PilarItem>()
         val db = this.readableDatabase
@@ -276,6 +283,142 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         cursor.close()
         db.close()
     }
+
+    // ✔️ Buscar Pilares para Spinner
+    fun buscarPilaresParaSelecao(): List<Pilarspinner> {
+        val lista = mutableListOf<Pilarspinner>()
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT id, nome FROM Pilar", null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val pilar = Pilarspinner(
+                    id = cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                    nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+                )
+                lista.add(pilar)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return lista
+    }
+
+
+    // ✔️ Buscar Ações por Pilar para Spinner
+    fun buscarAcoesPorPilarParaSelecao(pilarId: Int): List<AcaoEstrategica> {
+        val lista = mutableListOf<AcaoEstrategica>()
+        val db = readableDatabase
+        val cursor = db.rawQuery(
+            "SELECT id, pilar_id, nome, descricao, criado_por, aprovado FROM Acao WHERE pilar_id = ?",
+            arrayOf(pilarId.toString())
+        )
+
+        if (cursor.moveToFirst()) {
+            do {
+                val acao = AcaoEstrategica(
+                    id = cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                    pilarId = cursor.getInt(cursor.getColumnIndexOrThrow("pilar_id")),
+                    nome = cursor.getString(cursor.getColumnIndexOrThrow("nome")),
+                    criadoPor = cursor.getInt(cursor.getColumnIndexOrThrow("criado_por")),
+                    aprovado = cursor.getInt(cursor.getColumnIndexOrThrow("aprovado")) == 1
+                )
+                lista.add(acao)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return lista
+    }
+
+    fun getAtividadePorId(atividadeId: Int): Atividadespinner? {
+        val db = readableDatabase
+        val cursor = db.rawQuery(
+            "SELECT id, acao_id, nome, descricao, status, data_inicio, data_conclusao, criado_por, aprovado, responsavel_id FROM Atividade WHERE id = ?",
+            arrayOf(atividadeId.toString())
+        )
+
+        var atividade: Atividadespinner? = null
+
+        if (cursor.moveToFirst()) {
+            val statusString = cursor.getString(cursor.getColumnIndexOrThrow("status"))
+
+            val dataConclusao = if (cursor.isNull(cursor.getColumnIndexOrThrow("data_conclusao"))) {
+                null
+            } else {
+                cursor.getString(cursor.getColumnIndexOrThrow("data_conclusao"))
+            }
+
+            atividade = Atividadespinner(
+                id = cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                acaoId = cursor.getInt(cursor.getColumnIndexOrThrow("acao_id")),
+                nome = cursor.getString(cursor.getColumnIndexOrThrow("nome")),
+                status = statusString,  // usa direto string aqui
+                dataInicio = cursor.getString(cursor.getColumnIndexOrThrow("data_inicio")),
+                dataConclusao = dataConclusao,
+                criadoPor = cursor.getInt(cursor.getColumnIndexOrThrow("criado_por")),
+                aprovado = cursor.getInt(cursor.getColumnIndexOrThrow("aprovado")) == 1,
+                responsavelId = if (cursor.isNull(cursor.getColumnIndexOrThrow("responsavel_id")))
+                    null else cursor.getInt(cursor.getColumnIndexOrThrow("responsavel_id"))
+            )
+        }
+
+        cursor.close()
+        return atividade
+    }
+
+
+
+
+    fun buscarAtividadesPorAcaoParaSelecao(acaoId: Int): List<Atividadespinner> {
+        val lista = mutableListOf<Atividadespinner>()
+        val db = readableDatabase
+        val cursor = db.rawQuery(
+            "SELECT id, acao_id, nome, descricao, status, data_inicio, data_conclusao, criado_por, aprovado, responsavel_id FROM Atividade WHERE acao_id = ?",
+            arrayOf(acaoId.toString())
+        )
+
+        if (cursor.moveToFirst()) {
+            do {
+                val status = cursor.getString(cursor.getColumnIndexOrThrow("status"))
+
+                val dataConclusao = if (cursor.isNull(cursor.getColumnIndexOrThrow("data_conclusao"))) {
+                    null
+                } else {
+                    cursor.getString(cursor.getColumnIndexOrThrow("data_conclusao"))
+                }
+
+                val atividade = Atividadespinner(
+                    id = cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                    acaoId = cursor.getInt(cursor.getColumnIndexOrThrow("acao_id")),
+                    nome = cursor.getString(cursor.getColumnIndexOrThrow("nome")),
+                    status = status,
+                    dataInicio = cursor.getString(cursor.getColumnIndexOrThrow("data_inicio")),
+                    dataConclusao = dataConclusao,
+                    criadoPor = cursor.getInt(cursor.getColumnIndexOrThrow("criado_por")),
+                    aprovado = cursor.getInt(cursor.getColumnIndexOrThrow("aprovado")) == 1,
+                    responsavelId = if (cursor.isNull(cursor.getColumnIndexOrThrow("responsavel_id")))
+                        null else cursor.getInt(cursor.getColumnIndexOrThrow("responsavel_id"))
+                )
+                lista.add(atividade)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return lista
+    }
+
+
+    fun getNomeDoResponsavel(id: Int): String? {
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT nome FROM Usuario WHERE id = ?", arrayOf(id.toString()))
+        val nome = if (cursor.moveToFirst()) {
+            cursor.getString(cursor.getColumnIndexOrThrow("nome"))
+        } else {
+            null
+        }
+        cursor.close()
+        return nome
+    }
+
+
 
     fun marcarNotificacaoComoLida(idNotificacao: Int) {
         val db = writableDatabase

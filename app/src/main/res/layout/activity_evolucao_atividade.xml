@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <!-- Cabeçalho -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#1C2A39"
+        android:paddingTop="20dp">
+
+        <TextView
+            android:id="@+id/textViewTitulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="48dp"
+            android:paddingBottom="16dp"
+            android:paddingStart="32dp"
+            android:paddingEnd="32dp"
+            android:text="Olá, Gestor"
+            android:textColor="@android:color/white"
+            android:textSize="19sp"
+            android:gravity="start"/>
+    </LinearLayout>
+
+    <!-- Título -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Visualização de Pilar"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:background="#BB7535"
+        android:padding="8dp"
+        android:textColor="#FFFFFF"/>
+
+    <!-- Conteúdo principal -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_box_azul"
+            android:padding="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginHorizontal="8dp"
+            android:elevation="4dp"
+            android:clipToPadding="false">
+
+            <!-- Spinner Pilar -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Selecione um Pilar"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="8dp" />
+
+            <Spinner
+                android:id="@+id/spinnerPilar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/btn_dropdown"
+                android:popupBackground="#FFFFFF"/>
+
+            <!-- Spinner Ações -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Selecione uma Ação"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="16dp" />
+
+            <Spinner
+                android:id="@+id/spinnerAcao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/btn_dropdown"
+                android:popupBackground="#FFFFFF"/>
+
+            <!-- Spinner Atividades -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Selecione uma Atividade"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="16dp" />
+
+            <Spinner
+                android:id="@+id/spinnerAtividade"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/btn_dropdown"
+                android:popupBackground="#FFFFFF"/>
+
+            <!-- Botão Confirmar -->
+            <Button
+                android:id="@+id/btnBuscar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Confirmar"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="#27AE60"
+                android:textColor="#FFFFFF"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Rodapé -->
+    <LinearLayout
+        android:id="@+id/rodape_com_botoes"
+        android:layout_width="match_parent"
+        android:layout_height="81dp"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:background="#1C2A39"
+        android:padding="8dp"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/btnGraficos"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/graficos"
+            android:contentDescription="Gráficos"
+            android:layout_gravity="center"
+            android:padding="8dp" />
+
+        <ImageView
+            android:id="@+id/btnHome"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/home"
+            android:contentDescription="Home"
+            android:layout_gravity="center"
+            android:padding="8dp" />
+
+        <ImageView
+            android:id="@+id/btnNotificacoes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/notificacao"
+            android:contentDescription="Notificações"
+            android:layout_gravity="center"
+            android:padding="8dp" />
+
+        <ImageView
+            android:id="@+id/btnAcoes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/acoes"
+            android:contentDescription="Ações"
+            android:layout_gravity="center"
+            android:padding="8dp" />
+    </LinearLayout>
+</LinearLayout>

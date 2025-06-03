@@ -25,6 +25,9 @@ class GestorActivity : AppCompatActivity() {
         tipoUsuario = intent.getStringExtra("TIPO_USUARIO")
         idUsuario = intent.getIntExtra("ID_USUARIO", -1)
 
+
+
+
         val saudacao = findViewById<TextView>(R.id.textViewSaudacao)
         saudacao.text = "Olá, $nomeUsuario"
 
@@ -35,6 +38,13 @@ class GestorActivity : AppCompatActivity() {
                 putExtra("ID_USUARIO", idUsuario)
                 putExtra("NOME_USUARIO", nomeUsuario)
             }
+            startActivity(intent)
+        }
+
+
+        val cardProgresso = findViewById<CardView>(R.id.cardProgresso)
+        cardProgresso.setOnClickListener {
+            val intent = Intent(this, EvolucaoAtividade::class.java)
             startActivity(intent)
         }
 
