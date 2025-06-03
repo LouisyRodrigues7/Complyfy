@@ -1,6 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layoutGraficoPizzaCompleto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <!-- Cabeçalho fixo -->
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:orientation="vertical"
+        android:background="#1C2A39"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/tvTituloGrafico"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Status da Atividade"
+            android:textColor="#FFFFFF"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingVertical="12dp" />
+    </LinearLayout>
+
+    <!-- Conteúdo principal -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/conteudoPrincipal"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintBottom_toTopOf="@id/rodapeLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="16dp">
+
+        <!-- Gráfico de Pizza -->
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pieChartEvolucao"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:minHeight="250dp"
+            android:minWidth="250dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tvResponsavel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginVertical="16dp" />
+
+        <!-- Texto responsável -->
+        <TextView
+            android:id="@+id/tvResponsavel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Responsável: Não informado"
+            android:textSize="16sp"
+            android:textColor="#333333"
+            android:gravity="center"
+            android:visibility="gone"
+            android:padding="12dp"
+            app:layout_constraintTop_toBottomOf="@id/pieChartEvolucao"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Rodapé fixo com botões -->
+    <LinearLayout
+        android:id="@+id/rodapeLayout"
+        android:layout_width="0dp"
+        android:layout_height="81dp"
+        android:orientation="horizontal"
+        android:background="#1C2A39"
+        android:padding="8dp"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/btnGraficos"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/graficos"
+            android:contentDescription="Gráficos"
+            android:padding="8dp" />
+
+        <ImageView
+            android:id="@+id/btnHome"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/home"
+            android:contentDescription="Home"
+            android:padding="8dp" />
+
+        <ImageView
+            android:id="@+id/btnNotificacoes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/notificacao"
+            android:contentDescription="Notificações"
+            android:padding="8dp" />
+
+        <ImageView
+            android:id="@+id/btnAcoes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/acoes"
+            android:contentDescription="Ações"
+            android:padding="8dp" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

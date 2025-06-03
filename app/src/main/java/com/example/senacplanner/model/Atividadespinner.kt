@@ -10,7 +10,7 @@ data class Atividadespinner(
     val acaoId: Int,
     val nome: String,
     val descricao: String? = null,
-    val status: StatusAtividade = StatusAtividade.EM_ANDAMENTO,
+    val status: String,  // status é String mesmo, sem enum
     val dataInicio: String,
     val dataConclusao: String? = null,
     val criadoPor: Int,

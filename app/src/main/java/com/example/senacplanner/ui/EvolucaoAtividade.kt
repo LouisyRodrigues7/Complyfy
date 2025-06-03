@@ -39,6 +39,7 @@ class EvolucaoAtividade : AppCompatActivity() {
         configurarBotoes()
     }
 
+
     private fun configurarSpinners() {
         carregarPilaresParaSelecao()
 
@@ -64,6 +65,7 @@ class EvolucaoAtividade : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
     }
+
 
     private fun carregarPilaresParaSelecao() {
         listaPilares = dbHelper.buscarPilaresParaSelecao()
@@ -113,15 +115,19 @@ class EvolucaoAtividade : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val mensagem = if (atividadeSelecionada == null) {
-                "Pilar: ${pilarSelecionado.nome}\nAção: ${acaoSelecionada.nome}\nAtividade: Todas"
-            } else {
-                "Pilar: ${pilarSelecionado.nome}\nAção: ${acaoSelecionada.nome}\nAtividade: ${atividadeSelecionada.nome}"
+            // Intent para ir para GraficoEvolucaoAtividade
+            val intent = Intent(this, GraficoEvolucaoAtividade::class.java)
+            intent.putExtra("ACAO_ID", acaoSelecionada.id)
+
+            // Se atividade for selecionada, também envia ID da atividade e do responsável
+            atividadeSelecionada?.let {
+                intent.putExtra("ATIVIDADE_ID", it.id)
+                it.responsavelId?.let { responsavelId ->
+                    intent.putExtra("RESPONSAVEL_ID", responsavelId)
+                }
             }
 
-            Toast.makeText(this, mensagem, Toast.LENGTH_LONG).show()
-
-            // Redirecionar ou processar conforme necessário
+            startActivity(intent)
         }
     }
 }
