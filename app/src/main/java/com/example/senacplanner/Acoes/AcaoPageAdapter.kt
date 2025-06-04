@@ -10,12 +10,13 @@ class AcoesPagerAdapter(
     fragmentActivity: FragmentActivity,
     private val acoes: List<AcaoComAtividades>,
     private val pilarNome: String?,
-    private val idUsuario: Int
+    private val idUsuario: Int,
+    private val idAcao: Int
 ) : FragmentStateAdapter(fragmentActivity) {
 
     override fun getItemCount(): Int = acoes.size
 
     override fun createFragment(position: Int): Fragment {
-        return AcaoPageFragment.newInstance(acoes[position], pilarNome, idUsuario)
+        return AcaoPageFragment.newInstance(acoes[position], pilarNome, idUsuario, idAcao)
     }
 }

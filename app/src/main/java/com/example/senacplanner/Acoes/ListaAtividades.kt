@@ -33,7 +33,7 @@ class ListaAtividades : AppCompatActivity() {
         } else {
             databaseHelper.buscarAcoesEAtividadesDoUsuarioPorPilar(pilarId, idUsuario)
         }
-        viewPager.adapter = AcoesPagerAdapter(this, acoes, pilarNome, idUsuario)
+        viewPager.adapter = AcoesPagerAdapter(this, acoes, pilarNome, idUsuario, idAcao)
         if (acoes.isNotEmpty()) {
            val ultimaPosicao = acoes.size - 1
            viewPager.setCurrentItem(ultimaPosicao, false)
@@ -125,8 +125,13 @@ class ListaAtividades : AppCompatActivity() {
             databaseHelper.buscarAcoesEAtividadesDoUsuarioPorPilar(pilarId, idUsuario)
         }
 
-        val currentItem = if (::viewPager.isInitialized) viewPager.currentItem else 0
-        viewPager.adapter = AcoesPagerAdapter(this, acoes, pilarNome, idUsuario)
+        val currentItem = if (::viewPager.isInitialized) {
+            val pos = viewPager.currentItem
+            if (pos >= acoes.size) acoes.size - 1 else pos
+        } else {
+            0
+        }
+        viewPager.adapter = AcoesPagerAdapter(this, acoes, pilarNome, idUsuario, idAcao)
         viewPager.setCurrentItem(currentItem, false)
 
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
