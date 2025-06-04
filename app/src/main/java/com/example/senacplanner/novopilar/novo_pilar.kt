@@ -15,9 +15,10 @@ class NovoPilarActivity : AppCompatActivity() {
 
     private lateinit var databaseHelper: DatabaseHelper
     private lateinit var editTextNome: EditText
-    private lateinit var editTextDataInicio: EditText
-    private lateinit var editTextDataConclusao: EditText
+    private lateinit var btnDataInicio: Button
+    private lateinit var btnDataConclusao: Button
     private lateinit var btnCriarPilar: Button
+    private lateinit var btnCancelar: Button  // botão Cancelar na tela principal
 
     private val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
@@ -25,29 +26,32 @@ class NovoPilarActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_criar_pilar)
 
-        // Inicializa os componentes da interface
-        editTextNome = findViewById(R.id.editTextNome)
-        editTextDataInicio = findViewById(R.id.editTextDataInicio)
-        editTextDataConclusao = findViewById(R.id.editTextDataConclusao)
-        btnCriarPilar = findViewById(R.id.btnCriarPilar)
-
-        // Inicializa o banco de dados
         databaseHelper = DatabaseHelper(this)
+
+        editTextNome = findViewById(R.id.editTextNome)
+        btnDataInicio = findViewById(R.id.btnDataInicio)
+        btnDataConclusao = findViewById(R.id.btnDataConclusao)
+        btnCriarPilar = findViewById(R.id.btnCriarPilar)
+        btnCancelar = findViewById(R.id.btnCancelar)
 
         btnCriarPilar.setOnClickListener {
             mostrarDialogoConfirmacao()
         }
 
-        editTextDataInicio.setOnClickListener {
-            showDatePicker(editTextDataInicio)
+        btnCancelar.setOnClickListener {
+            finish() // Sai da tela ao clicar em Cancelar
         }
 
-        editTextDataConclusao.setOnClickListener {
-            showDatePicker(editTextDataConclusao)
+        btnDataInicio.setOnClickListener {
+            showDatePicker(btnDataInicio)
+        }
+
+        btnDataConclusao.setOnClickListener {
+            showDatePicker(btnDataConclusao)
         }
     }
 
-    private fun showDatePicker(editText: EditText) {
+    private fun showDatePicker(button: Button) {
         val calendar = Calendar.getInstance()
 
         val datePicker = DatePickerDialog(
@@ -55,7 +59,7 @@ class NovoPilarActivity : AppCompatActivity() {
             { _, year, month, dayOfMonth ->
                 val selectedDate = Calendar.getInstance()
                 selectedDate.set(year, month, dayOfMonth)
-                editText.setText(dateFormatter.format(selectedDate.time))
+                button.text = dateFormatter.format(selectedDate.time)
             },
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
@@ -68,19 +72,19 @@ class NovoPilarActivity : AppCompatActivity() {
     private fun mostrarDialogoConfirmacao() {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.confirmar_pilar, null)
 
-        val btnCancelar = dialogView.findViewById<Button>(R.id.btnCancelar)
-        val btnConfirmar = dialogView.findViewById<Button>(R.id.btnConfirmar)
+        val btnCancelarDialog = dialogView.findViewById<Button>(R.id.btnCancelar)
+        val btnConfirmarDialog = dialogView.findViewById<Button>(R.id.btnConfirmar)
 
         val alertDialog = AlertDialog.Builder(this)
             .setView(dialogView)
             .setCancelable(false)
             .create()
 
-        btnCancelar.setOnClickListener {
+        btnCancelarDialog.setOnClickListener {
             alertDialog.dismiss()
         }
 
-        btnConfirmar.setOnClickListener {
+        btnConfirmarDialog.setOnClickListener {
             cadastrarPilar()
             alertDialog.dismiss()
             finish()
@@ -91,11 +95,11 @@ class NovoPilarActivity : AppCompatActivity() {
 
     private fun cadastrarPilar() {
         val nome = editTextNome.text.toString()
-        val dataInicio = editTextDataInicio.text.toString()
-        val dataConclusao = editTextDataConclusao.text.toString()
+        val dataInicio = btnDataInicio.text.toString()
+        val dataConclusao = btnDataConclusao.text.toString()
         val idUsuario = intent.getIntExtra("ID_USUARIO", -1)
 
-        if (nome.isBlank() || dataInicio.isBlank() || dataConclusao.isBlank()) {
+        if (nome.isBlank() || dataInicio == "Selecionar data" || dataConclusao == "Selecionar data") {
             Toast.makeText(this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show()
             return
         }
@@ -117,7 +121,6 @@ class NovoPilarActivity : AppCompatActivity() {
         }
     }
 
-    // ✅ Converte dd/MM/yyyy -> yyyy-MM-dd
     private fun converterParaDataSql(dataBR: String): String {
         return try {
             val formatoBR = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
