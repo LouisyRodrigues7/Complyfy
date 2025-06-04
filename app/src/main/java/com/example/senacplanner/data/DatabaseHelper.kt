@@ -1,6 +1,5 @@
 package com.example.senacplanner.data
 
-import android.R.attr.id
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
@@ -29,7 +28,7 @@ import com.example.senacplanner.model.Atividadespinner
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     companion object {
-        private const val DB_NAME = "novobanco2.db"
+        private const val DB_NAME = "novobanco_.db"
         private const val DB_VERSION = 1
     }
 
@@ -1334,6 +1333,27 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return id != -1L
     }
 
+    fun notificacaoJaExiste(
+        db: SQLiteDatabase,
+        usuarioId: Int,
+        atividadeId: Int,
+        mensagem: String,
+        timestamp: Long
+    ): Boolean {
+        val cursor = db.rawQuery(
+            """
+        SELECT COUNT(*) FROM Notificacao 
+        WHERE usuario_id = ? AND atividade_id = ? AND mensagem = ? AND ABS(CAST(data AS INTEGER) - ?) < 86400000
+        """.trimIndent(),
+            arrayOf(usuarioId.toString(), atividadeId.toString(), mensagem, timestamp.toString())
+        )
+        cursor.moveToFirst()
+        val exists = cursor.getInt(0) > 0
+        cursor.close()
+        return exists
+    }
+
+
 
     fun verificarAtividadesAtrasadas() {
         val db = writableDatabase
@@ -1380,42 +1400,45 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
                 }
 
                 val mensagem = "A atividade \"$nomeAtividade\" do pilar $numeroPilar - $nomePilar está atrasada há $diasAtraso dias."
+                val dataAtual = System.currentTimeMillis()
 
-                val cursorCheck = db.rawQuery(
-                    """
-                SELECT COUNT(*) FROM Notificacao 
-                WHERE usuario_id = ? AND atividade_id = ? AND mensagem = ? AND ABS(CAST(data AS INTEGER) - ?) < 86400000
-                """.trimIndent(),
-                    arrayOf(
-                        responsavelId.toString(),
-                        atividadeId.toString(),
-                        mensagem,
-                        System.currentTimeMillis().toString()
-                    )
-                )
-
-                cursorCheck.moveToFirst()
-                val jaExiste = cursorCheck.getInt(0) > 0
-                cursorCheck.close()
-
-                if (!jaExiste) {
+                if (!notificacaoJaExiste(db, responsavelId, atividadeId, mensagem, dataAtual)) {
                     val values = ContentValues().apply {
                         put("usuario_id", responsavelId)
                         put("mensagem", mensagem)
-                        put("data", System.currentTimeMillis().toString())
+                        put("data", dataAtual)
                         put("lida", 0)
                         put("atividade_id", atividadeId)
-                        put("tipo_notificacao", "ALERTA")
+                        put("tipo_notificacao", TipoNotificacao.ALERTA.toString())
                     }
-
                     db.insert("Notificacao", null, values)
                 }
+
+                val cursorCoord = db.rawQuery("SELECT id FROM Usuario WHERE tipo = 'Coordenador'", null)
+                if (cursorCoord.moveToFirst()) {
+                    do {
+                        val coordenadorId = cursorCoord.getInt(cursorCoord.getColumnIndexOrThrow("id"))
+                        if (coordenadorId != responsavelId &&
+                            !notificacaoJaExiste(db, coordenadorId, atividadeId, mensagem, dataAtual)
+                        ) {
+                            val values = ContentValues().apply {
+                                put("usuario_id", coordenadorId)
+                                put("mensagem", mensagem)
+                                put("data", dataAtual)
+                                put("lida", 0)
+                                put("atividade_id", atividadeId)
+                                put("tipo_notificacao", TipoNotificacao.ALERTA.toString())
+                            }
+                            db.insert("Notificacao", null, values)
+                        }
+                    } while (cursorCoord.moveToNext())
+                }
+                cursorCoord.close()
             }
         }
 
         cursor.close()
         db.close()
     }
-
 
 }
