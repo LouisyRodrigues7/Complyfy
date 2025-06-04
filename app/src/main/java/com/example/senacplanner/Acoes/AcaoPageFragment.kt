@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -27,14 +28,16 @@ import java.util.Locale
 class AcaoPageFragment : Fragment() {
     private var pilarNome: String? = null
     private var idUsuario: Int? = 0
+    private var acaoId: Int = 0
 
     companion object {
-        fun newInstance(acao: AcaoComAtividades, pilarNome: String?, idUsuario: Int): AcaoPageFragment {
+        fun newInstance(acao: AcaoComAtividades, pilarNome: String?, idUsuario: Int, acaoId: Int): AcaoPageFragment {
             val fragment = AcaoPageFragment()
             val args = Bundle()
             args.putSerializable("acao_dados", acao)
             args.putString("PILAR_NOME", pilarNome)
             args.putInt("ID_USUARIO", idUsuario)
+            args.putInt("ACAO_ID", acaoId)
             fragment.arguments = args
             return fragment
         }
@@ -47,6 +50,7 @@ class AcaoPageFragment : Fragment() {
         acao = arguments?.getSerializable("acao_dados") as AcaoComAtividades
         pilarNome = arguments?.getString("PILAR_NOME")
         idUsuario = arguments?.getInt("ID_USUARIO")
+        acaoId = arguments?.getInt("ACAO_ID") ?: 0
     }
 
     override fun onCreateView(
@@ -55,6 +59,8 @@ class AcaoPageFragment : Fragment() {
     ): View {
         val view = inflater.inflate(R.layout.fragment_acao_page, container, false)
 
+
+        val iconEdit = view.findViewById<ImageView>(R.id.ivEdit)
         val textAcao = view.findViewById<TextView>(R.id.acaoPrincipal)
         val layoutAtividades = view.findViewById<LinearLayout>(R.id.layoutAtividades)
         val databaseHelper = DatabaseHelper(requireContext())
@@ -129,6 +135,15 @@ class AcaoPageFragment : Fragment() {
                 intent.putExtra("nomePilar", pilarNome)
                 startActivity(intent)
             }
+
+        }
+
+        iconEdit.setOnClickListener {
+            val intent = Intent(requireContext(), EditarAcaoActivity::class.java)
+            intent.putExtra("ACAO_ID", acao.acao.id)
+            intent.putExtra("nomeAcao", acao.acao.nome)
+            intent.putExtra("nomePilar", pilarNome)
+            startActivity(intent)
         }
 
         return view
@@ -155,7 +170,6 @@ class AcaoPageFragment : Fragment() {
         val tvResponsavel = dialogView.findViewById<TextView>(R.id.tvNomeResponsavel)
         val tvDataInicio = dialogView.findViewById<TextView>(R.id.tvDataInicio)
         val tvDataConclusao = dialogView.findViewById<TextView>(R.id.tvDataConclusao)
-        val etComentario = dialogView.findViewById<EditText>(R.id.etComentario)
         val btnCancelar = dialogView.findViewById<Button>(R.id.btnCancelar)
         val btnEnviar = dialogView.findViewById<Button>(R.id.btnEnviar)
 
@@ -182,6 +196,7 @@ class AcaoPageFragment : Fragment() {
         dialog.show()
     }
 
+
     fun formatarDataParaBR(dataISO: String): String {
         return try {
             val timestamp = dataISO.toLongOrNull()
@@ -198,5 +213,7 @@ class AcaoPageFragment : Fragment() {
         }
 
     }
+
+
 
 }

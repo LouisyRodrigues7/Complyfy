@@ -22,6 +22,10 @@
             android:name=".editarAtividade.EditarAtividadeActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".Acoes.EditarAcaoActivity"
+            android:exported="false" />
+
         <!-- Login e Inicial -->
         <activity
             android:name=".ui.LoginActivity"

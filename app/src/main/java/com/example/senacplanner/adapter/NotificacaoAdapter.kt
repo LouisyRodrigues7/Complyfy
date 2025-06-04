@@ -53,10 +53,11 @@ class NotificacaoAdapter(private val lista: MutableList<Notificacao>) :
         )
         holder.horario.text = tempoPassado
 
-        val corFundo = if (notificacao.lida)
-            R.color.notificacao_lida
-        else
-            R.color.notificacao_nao_lida
+        val corFundo = when {
+            notificacao.tipo_notificacao == TipoNotificacao.ALERTA -> R.color.notificacao_alerta
+            notificacao.lida -> R.color.notificacao_lida
+            else -> R.color.notificacao_nao_lida
+        }
 
         holder.container.setBackgroundColor(ContextCompat.getColor(context, corFundo))
 
