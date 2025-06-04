@@ -70,10 +70,10 @@ class DashboardGraficoActivity : AppCompatActivity() {
             mostrarGraficoPilares(lista)
         } else {
             // Mostrar gráfico de barras
-            val lista = db.getAcoesComProgressoDoPilar(pilarId)
+            val lista = db.getAcoesComAtrasoDoPilar(pilarId)
             pieChart.visibility = View.GONE
             barChart.visibility = View.VISIBLE
-            mostrarGraficoAcoesBarras(lista)
+            mostrarGraficoAcoesComAtraso(lista)
             progressoContainer.visibility = View.GONE
         }
         val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
@@ -187,17 +187,19 @@ class DashboardGraficoActivity : AppCompatActivity() {
     }
 
 
-    private fun mostrarGraficoAcoesBarras(lista: List<AcaoComProgresso>) {
+    private fun mostrarGraficoAcoesComAtraso(lista: List<AcaoComProgresso>) {
         val entries = ArrayList<BarEntry>()
         val siglas = ArrayList<String>()
         val legendaMap = mutableMapOf<String, String>()
 
         lista.forEachIndexed { index, acao ->
             val sigla = gerarSigla(acao.nome, legendaMap)
-            val concluido = acao.concluidas.toFloat()
-            val emAndamento = (acao.total - acao.concluidas).coerceAtLeast(0).toFloat()
 
-            entries.add(BarEntry(index.toFloat(), floatArrayOf(concluido, emAndamento)))
+            val concluido = acao.concluidas.toFloat()
+            val andamento = acao.andamento.toFloat()
+            val atrasado = acao.atrasadas.toFloat()
+
+            entries.add(BarEntry(index.toFloat(), floatArrayOf(concluido, andamento, atrasado)))
             siglas.add(sigla)
             legendaMap[sigla] = acao.nome
         }
@@ -210,18 +212,18 @@ class DashboardGraficoActivity : AppCompatActivity() {
         }
 
         val dataSet = BarDataSet(entries, "Progresso por Ação").apply {
-            colors = listOf(Color.parseColor("#4CAF50"), Color.parseColor("#2196F3")) // verde, azul
-            setStackLabels(arrayOf("Concluído", "Em andamento"))
+            colors = listOf(
+                Color.parseColor("#4CAF50"), // 🟩 Concluído
+                Color.parseColor("#2196F3"), // 🟦 Em andamento
+                Color.parseColor("#F44336")  // 🟥 Atrasado
+            )
+            setStackLabels(arrayOf("Concluído", "Em andamento", "Atrasado"))
             valueTextColor = Color.BLACK
             valueTextSize = 11f
         }
 
-        val data = BarData(dataSet).apply {
-            barWidth = 0.7f
-        }
-
         barChart.apply {
-            this.data = data
+            data = BarData(dataSet).apply { barWidth = 0.7f }
             xAxis.apply {
                 valueFormatter = IndexAxisValueFormatter(siglas)
                 position = XAxis.XAxisPosition.BOTTOM
@@ -239,37 +241,46 @@ class DashboardGraficoActivity : AppCompatActivity() {
             legend.verticalAlignment = Legend.LegendVerticalAlignment.TOP
             legend.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
 
-            setTouchEnabled(true)
-            setScaleEnabled(false)
             description.isEnabled = false
+            setTouchEnabled(true)
             setFitBars(true)
             invalidate()
         }
 
-        // Criar o dicionário de siglas com título
+        // Atualiza a legenda
         legendaContainer.removeAllViews()
 
-        val header = TextView(this).apply {
-            text = "Sigla ➜ Nome da Ação"
-            setPadding(24, 24, 24, 24)
+        val legendaHeader = TextView(this).apply {
+            text = "Cores: 🟩 Concluído  🟦 Em andamento  🟥 Atrasado"
+            setPadding(24, 24, 24, 8)
             setTextColor(Color.BLACK)
-            textSize = 18f   //
+            textSize = 16f
             setBackgroundColor(Color.LTGRAY)
         }
-        legendaContainer.addView(header)
+        legendaContainer.addView(legendaHeader)
+
+        val legendaTitle = TextView(this).apply {
+            text = "\nSigla ➜ Nome da Ação"
+            setPadding(24, 8, 24, 8)
+            setTextColor(Color.BLACK)
+            textSize = 16f
+        }
+        legendaContainer.addView(legendaTitle)
 
         legendaMap.forEach { (sigla, nomeCompleto) ->
             val legendaItem = TextView(this).apply {
                 text = "$sigla ➜ $nomeCompleto"
                 setPadding(24, 16, 24, 16)
                 setTextColor(Color.BLACK)
-                textSize = 18f
+                textSize = 16f
             }
             legendaContainer.addView(legendaItem)
         }
 
         legendaScroll.visibility = View.VISIBLE
     }
+
+
 
 
     private fun gerarSigla(nome: String, mapa: Map<String, String>): String {

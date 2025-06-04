@@ -137,21 +137,32 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
 
         val cursor = db.rawQuery("""
         SELECT a.nome,
-               COUNT(at.id) as total,
-               SUM(CASE WHEN at.status = 'Finalizada' THEN 1 ELSE 0 END) as concluidas
+               COUNT(at.id) AS total,
+               SUM(CASE WHEN at.status = 'Finalizada' THEN 1 ELSE 0 END) AS concluidas,
+               SUM(CASE 
+                    WHEN at.status != 'Finalizada' 
+                         AND date(at.data_conclusao) < date('now') 
+                    THEN 1 ELSE 0 
+               END) AS atrasadas
         FROM Acao a
         LEFT JOIN Atividade at ON a.id = at.acao_id
         WHERE a.pilar_id = ?
         GROUP BY a.nome
-    """, arrayOf(pilarId.toString()))
+    """.trimIndent(), arrayOf(pilarId.toString()))
 
         if (cursor.moveToFirst()) {
             do {
+                val nome = cursor.getString(0)
+                val total = cursor.getInt(1)
+                val concluidas = cursor.getInt(2)
+                val atrasadas = cursor.getInt(3)
+
                 lista.add(
                     AcaoComProgresso(
-                        nome = cursor.getString(0),
-                        total = cursor.getInt(1),
-                        concluidas = cursor.getInt(2)
+                        nome = nome,
+                        total = total,
+                        concluidas = concluidas,
+                        atrasadas = atrasadas
                     )
                 )
             } while (cursor.moveToNext())
@@ -160,6 +171,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         cursor.close()
         return lista
     }
+
     fun getProgressoTodosPilares(): List<PilarComProgresso> {
         val lista = mutableListOf<PilarComProgresso>()
         val db = readableDatabase
@@ -302,6 +314,58 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         cursor.close()
         return lista
     }
+
+    fun getAcoesComAtrasoDoPilar(pilarId: Int): List<AcaoComProgresso> {
+        val db = readableDatabase
+        val lista = mutableListOf<AcaoComProgresso>()
+
+        val query = """
+        SELECT a.nome,
+               COUNT(ata.id) AS total,
+               SUM(CASE WHEN ata.status = 'concluido' THEN 1 ELSE 0 END) AS concluidas,
+               SUM(CASE 
+                    WHEN ata.status != 'concluido' 
+                         AND date(ata.data_conclusao) < date('now') 
+                    THEN 1 ELSE 0 
+               END) AS atrasadas
+        FROM acao a
+        LEFT JOIN Atividade ata ON a.id = ata.acao_id
+        WHERE a.pilar_id = ?
+        GROUP BY a.nome
+    """.trimIndent()
+
+        val cursor = db.rawQuery(query, arrayOf(pilarId.toString()))
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                val nome = cursor.getString(0) ?: ""
+                val total = cursor.getInt(1)
+                val concluidas = cursor.getInt(2)
+                val atrasadas = cursor.getInt(3)
+
+                val andamento = (total - concluidas - atrasadas).coerceAtLeast(0)
+
+                val acao = AcaoComProgresso(
+                    nome = nome,
+                    total = total,
+                    concluidas = concluidas,
+                    atrasadas = atrasadas,
+                    andamento = andamento
+                )
+
+                lista.add(acao)
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+
+        return lista
+    }
+
+
+
+
 
 
     // ✔️ Buscar Ações por Pilar para Spinner
