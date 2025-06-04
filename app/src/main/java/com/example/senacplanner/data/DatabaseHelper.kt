@@ -1339,7 +1339,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         val db = writableDatabase
         val cursor = db.rawQuery(
             """
-        SELECT a.id, a.nome, a.data_conclusao, u.id as responsavel_id, 
+        SELECT a.id, a.nome, a.data_conclusao, a.status, u.id as responsavel_id, 
                ac.nome as nome_acao, p.numero as numero_pilar, p.nome as nome_pilar
         FROM Atividade a
         JOIN Acao ac ON a.acao_id = ac.id
@@ -1359,6 +1359,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
             val responsavelId = cursor.getInt(cursor.getColumnIndexOrThrow("responsavel_id"))
             val numeroPilar = cursor.getInt(cursor.getColumnIndexOrThrow("numero_pilar"))
             val nomePilar = cursor.getString(cursor.getColumnIndexOrThrow("nome_pilar"))
+            val statusAtual = cursor.getString(cursor.getColumnIndexOrThrow("status"))
 
             val dataConclusao: Long? = try {
                 formatter.parse(dataConclusaoStr)?.time
@@ -1371,6 +1372,13 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
             val diasAtraso = ((hoje.timeInMillis - dataConclusao) / (1000 * 60 * 60 * 24)).toInt()
 
             if (diasAtraso > 0) {
+                if (statusAtual != "Em atraso") {
+                    val updateValues = ContentValues().apply {
+                        put("status", "Em atraso")
+                    }
+                    db.update("Atividade", updateValues, "id = ?", arrayOf(atividadeId.toString()))
+                }
+
                 val mensagem = "A atividade \"$nomeAtividade\" do pilar $numeroPilar - $nomePilar está atrasada há $diasAtraso dias."
 
                 val cursorCheck = db.rawQuery(
@@ -1408,5 +1416,6 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         cursor.close()
         db.close()
     }
+
 
 }
