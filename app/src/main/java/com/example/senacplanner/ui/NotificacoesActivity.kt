@@ -10,6 +10,7 @@ import com.example.senacplanner.model.Notificacao
 import android.content.Intent
 import android.widget.ImageView
 import android.widget.Toast
+import android.widget.Toolbar
 import com.example.senacplanner.data.DatabaseHelper
 import com.example.senacplanner.ui.DashboardGraficoActivity
 import com.example.senacplanner.ui.GraficosActivity
@@ -41,6 +42,14 @@ class NotificacoesActivity : AppCompatActivity() {
 
         db = DatabaseHelper(this)
         recyclerView = findViewById(R.id.recyclerViewNotificacoes)
+
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        if (!nomeUsuario.isNullOrEmpty()) {
+            supportActionBar?.title = "Olá, $nomeUsuario"
+        } else {
+            supportActionBar?.title = "Olá, usuário"
+        }
 
         val notificacoes = buscarNotificacoesDoUsuario(idUsuario).toMutableList()
         adapter = NotificacaoAdapter(notificacoes)
