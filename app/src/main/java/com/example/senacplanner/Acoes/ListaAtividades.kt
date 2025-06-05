@@ -17,6 +17,7 @@ import com.example.senacplanner.ui.CoordenadorActivity
 import com.example.senacplanner.ui.GraficosActivity
 import com.example.senacplanner.ui.LoginActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.core.content.ContextCompat
 
 class ListaAtividades : AppCompatActivity() {
 
@@ -56,6 +57,9 @@ class ListaAtividades : AppCompatActivity() {
         val btnHome = findViewById<ImageView>(R.id.btnHome)
         val btnNotificacoes = findViewById<ImageView>(R.id.btnNotificacoes)
         val btnAcoes = findViewById<ImageView>(R.id.btnAcoes)
+
+        val fab = findViewById<FloatingActionButton>(R.id.fabAdicionar)
+        fab.setColorFilter(ContextCompat.getColor(this, android.R.color.white), android.graphics.PorterDuff.Mode.SRC_IN)
 
         pilarId = intent.getIntExtra("PILAR_ID", -1)
         pilarNumero = intent.getIntExtra("PILAR_NUMERO", -1)
