@@ -4,13 +4,18 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.example.senacplanner.Acoes.Type.AcaoComAtividades
+import com.example.senacplanner.NotificacoesActivity
 import com.example.senacplanner.data.DatabaseHelper
 import com.example.senacplanner.R
+import com.example.senacplanner.ui.CoordenadorActivity
+import com.example.senacplanner.ui.GraficosActivity
+import com.example.senacplanner.ui.LoginActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ListaAtividades : AppCompatActivity() {
@@ -25,6 +30,7 @@ class ListaAtividades : AppCompatActivity() {
     private var acoes: List<AcaoComAtividades> = emptyList()
     private var visualizacaoGeral: Boolean = false
     private var usuarioTipo: String? = ""
+    private var usuarioNome: String = ""
     private lateinit var fabAdicionar: FloatingActionButton
 
     private fun atualizarListaDeAcoes() {
@@ -41,20 +47,50 @@ class ListaAtividades : AppCompatActivity() {
         }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lista_atividades)
         Log.d("ListaAtividades", "onCreate: pilarId=$pilarId, idUsuario=$idUsuario, visualizacaoGeral=$visualizacaoGeral")
 
+        val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
+        val btnHome = findViewById<ImageView>(R.id.btnHome)
+        val btnNotificacoes = findViewById<ImageView>(R.id.btnNotificacoes)
+        val btnAcoes = findViewById<ImageView>(R.id.btnAcoes)
 
-        // Recuperar dados da intent
         pilarId = intent.getIntExtra("PILAR_ID", -1)
         pilarNumero = intent.getIntExtra("PILAR_NUMERO", -1)
         pilarNome = intent.getStringExtra("PILAR_NOME")
         idUsuario = intent.getIntExtra("ID_USUARIO", -1)
         usuarioTipo = intent.getStringExtra("TIPO_USUARIO").toString()
         visualizacaoGeral = intent.getBooleanExtra("VISUALIZACAO_GERAL", false)
+        usuarioNome = intent.getStringExtra("NOME_USUARIO").toString()
+
+        btnGraficos.setOnClickListener {
+            val intent = Intent(this, GraficosActivity::class.java)
+            intent.putExtra("NOME_USUARIO", usuarioNome)
+            intent.putExtra("ID_USUARIO", idUsuario)
+            intent.putExtra("TIPO_USUARIO", usuarioTipo)
+            startActivity(intent)
+        }
+
+        btnHome.setOnClickListener {
+           finish()
+        }
+
+        btnNotificacoes.setOnClickListener {
+            val intent = Intent(this, NotificacoesActivity::class.java)
+            intent.putExtra("ID_USUARIO", idUsuario)
+            intent.putExtra("NOME_USUARIO", usuarioNome)
+            intent.putExtra("TIPO_USUARIO", usuarioTipo)
+            startActivity(intent)
+        }
+
+        btnAcoes.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        }
 
         if (pilarId == -1) return
 
@@ -64,17 +100,24 @@ class ListaAtividades : AppCompatActivity() {
 
         fabAdicionar.setOnClickListener {
             Log.d("ListaAtividades", "Botão adicionar clicado. idAcao = $idAcao, idUsuario = $idUsuario")
-            if (idAcao == -1 || idUsuario == -1) {
-                Toast.makeText(this, "Erro ao obter o contexto da ação ou usuário", Toast.LENGTH_SHORT).show()
+
+            if (idUsuario == -1) {
+                Toast.makeText(this, "Erro ao obter o contexto do usuário", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val options = arrayOf("Criar Atividade", "Criar Ação")
+            val options = mutableListOf<String>()
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Escolha uma opção")
-            builder.setItems(options) { _, which ->
-                when (which) {
-                    0 -> {
+
+            if (idAcao != -1) {
+                options.add("Criar Atividade")
+            }
+            options.add("Criar Ação")
+
+            builder.setItems(options.toTypedArray()) { _, which ->
+                when (options[which]) {
+                    "Criar Atividade" -> {
                         Log.d("ListaAtividades", "Abrindo CriarAtividadeActivity com ACAO_ID=$idAcao e USUARIO_ID=$idUsuario")
                         val intent = Intent(this, CriarAtividadeActivity::class.java)
                         intent.putExtra("ACAO_ID", idAcao)
@@ -82,7 +125,7 @@ class ListaAtividades : AppCompatActivity() {
                         intent.putExtra("TIPO_USUARIO", usuarioTipo)
                         startActivity(intent)
                     }
-                    1 -> {
+                    "Criar Ação" -> {
                         val intent = Intent(this, CriarAcaoActivity::class.java)
                         intent.putExtra("PILAR_ID", pilarId)
                         intent.putExtra("ID_USUARIO", idUsuario)
@@ -147,7 +190,10 @@ class ListaAtividades : AppCompatActivity() {
         if (acoes.isNotEmpty()) {
             val acaoAtual = acoes[currentItem]
             idAcao = acaoAtual.acao.id
-            Log.d("ListaAtividades", "ID da ação atual (inicial): $idAcao")
+        } else {
+            idAcao = -1
         }
+
+
     }
 }
