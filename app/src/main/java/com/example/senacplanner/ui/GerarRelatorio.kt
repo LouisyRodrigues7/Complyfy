@@ -41,6 +41,8 @@ class GerarRelatorio : AppCompatActivity() {
 
         // Ação do botão
         btnConfirmar.setOnClickListener {
+
+            // Verifica se algum item foi selecionado nos dois spinners
             val posPilar = spinnerPilar.selectedItemPosition
             val posPeriodo = spinnerPeriodo.selectedItemPosition
 
@@ -59,6 +61,7 @@ class GerarRelatorio : AppCompatActivity() {
                     return@setOnClickListener
                 }
 
+                // Cria o gerador de relatório e chama metodo para gerar PDF com os pilares selecionados
                 val relatorioGenerator = RelatorioGenerator()
                 relatorioGenerator.gerarRelatorioPDF(
                     context = this,
@@ -72,6 +75,7 @@ class GerarRelatorio : AppCompatActivity() {
         }
     }
 
+    // Metodo que carrega os pilares do banco e enche o spinner de pilares
     private fun carregarSpinnerPilares(db: SQLiteDatabase) {
         pilaresList = dbHelper.buscarPilares(db)
         val nomesPilares = pilaresList.map { it.nome }
@@ -80,6 +84,7 @@ class GerarRelatorio : AppCompatActivity() {
         spinnerPilar.adapter = adapter
     }
 
+    // Metodo que carrega períodos fixos e enche o spinner de períodos
     private fun carregarSpinnerPeriodos() {
         periodosList = dbHelper.buscarPeriodosFixos()
         val descricoes = periodosList.map { it.descricao }
