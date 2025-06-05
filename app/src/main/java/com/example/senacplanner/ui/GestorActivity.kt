@@ -41,6 +41,16 @@ class GestorActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val cardRelatorio = findViewById<CardView>(R.id.cardRelatorio)
+        cardRelatorio.setOnClickListener {
+            val intent = Intent(this, GerarRelatorio::class.java).apply {
+                putExtra("TIPO_USUARIO", tipoUsuario)
+                putExtra("ID_USUARIO", idUsuario)
+                putExtra("NOME_USUARIO", nomeUsuario)
+            }
+            startActivity(intent)
+        }
+
 
         val cardProgresso = findViewById<CardView>(R.id.cardProgresso)
         cardProgresso.setOnClickListener {
@@ -83,7 +93,7 @@ class GestorActivity : AppCompatActivity() {
 
         val btnHome = findViewById<ImageView>(R.id.btnHome)
         btnHome.setOnClickListener {
-            com.example.senacplanner.util.NavigationUtils.irParaTelaHome(
+            com.example.senacplanner.utils.NavigationUtils.irParaTelaHome(
                 this,
                 tipoUsuario,
                 idUsuario,

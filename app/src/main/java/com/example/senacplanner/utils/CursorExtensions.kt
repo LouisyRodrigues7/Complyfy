@@ -1,4 +1,4 @@
-package com.example.senacplanner.util
+package com.example.senacplanner.utils
 
 import android.database.Cursor
 

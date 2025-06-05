@@ -10,9 +10,7 @@ import com.example.senacplanner.model.Notificacao
 import android.content.Intent
 import android.widget.ImageView
 import android.widget.Toast
-import android.widget.Toolbar
 import com.example.senacplanner.data.DatabaseHelper
-import com.example.senacplanner.ui.DashboardGraficoActivity
 import com.example.senacplanner.ui.GraficosActivity
 import com.example.senacplanner.ui.LoginActivity
 
@@ -79,7 +77,7 @@ class NotificacoesActivity : AppCompatActivity() {
 
         val btnHome = findViewById<ImageView>(R.id.btnHome)
         btnHome.setOnClickListener {
-            com.example.senacplanner.util.NavigationUtils.irParaTelaHome(
+            com.example.senacplanner.utils.NavigationUtils.irParaTelaHome(
                 this,
                 tipoUsuario,
                 idUsuario,

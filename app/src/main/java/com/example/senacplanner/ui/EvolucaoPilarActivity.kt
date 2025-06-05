@@ -87,7 +87,7 @@ class EvolucaoPilarActivity : AppCompatActivity() {
         }
         val btnHome = findViewById<ImageView>(R.id.btnHome)
         btnHome.setOnClickListener {
-            com.example.senacplanner.util.NavigationUtils.irParaTelaHome(
+            com.example.senacplanner.utils.NavigationUtils.irParaTelaHome(
                 this,
                 tipoUsuario,
                 idUsuario,
