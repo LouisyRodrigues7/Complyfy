@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.senacplanner">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -89,6 +91,8 @@
         <activity android:name=".ui.EvolucaoAtividade" />
         <activity android:name=".ui.GraficoEvolucaoAtividade" />
         <activity android:name=".ui.GerarRelatorio" />
+
+
 
 
 
