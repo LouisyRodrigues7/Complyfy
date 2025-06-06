@@ -2,10 +2,12 @@ package com.example.senacplanner.Acoes
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.senacplanner.Acoes.Type.Usuario
 import com.example.senacplanner.DatabaseHelper
@@ -88,11 +90,16 @@ class CriarAtividadeActivity : AppCompatActivity() {
         }
 
         dataConclusaoButton.setOnClickListener {
-            showDatePicker { date ->
-                dataConclusao = date
-                dataConclusaoButton.text = formatarDataParaBR(date)
+            if (dataInicio.isBlank()) {
+                Toast.makeText(this, "Selecione a data de início primeiro.", Toast.LENGTH_SHORT).show()
+            } else {
+                mostrarDatePickerSaida(this, dataInicio) { dataValida ->
+                    dataConclusao = dataValida
+                    dataConclusaoButton.text = formatarDataParaBR(dataValida)
+                }
             }
         }
+
 
         salvarButton.setOnClickListener {
             val nome = nomeEditText.text.toString()
@@ -156,8 +163,7 @@ class CriarAtividadeActivity : AppCompatActivity() {
         }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show()
     }
 
-
-    fun formatarDataParaBR(dataISO: String): String {
+    private fun formatarDataParaBR(dataISO: String): String {
         return try {
             val timestamp = dataISO.toLongOrNull()
             val data: Date? = if (timestamp != null) {
@@ -171,6 +177,44 @@ class CriarAtividadeActivity : AppCompatActivity() {
         } catch (e: Exception) {
             ""
         }
-
     }
+
+
+
+    fun mostrarDatePickerSaida(context: Context, dataEntrada: String, onDataValida: (String) -> Unit) {
+        val calendario = Calendar.getInstance()
+
+        val datePicker = DatePickerDialog(context, { _, ano, mes, dia ->
+            val calendarioSaida = Calendar.getInstance()
+            calendarioSaida.set(ano, mes, dia)
+
+            val formatoISO = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val dataSaida = formatoISO.format(calendarioSaida.time)
+
+            try {
+                val dataEntradaDate = formatoISO.parse(dataEntrada)
+                val dataSaidaDate = formatoISO.parse(dataSaida)
+
+                if (dataSaidaDate.before(dataEntradaDate)) {
+                    AlertDialog.Builder(context)
+                        .setTitle("Data inválida")
+                        .setMessage("A data de saída não pode ser anterior à data de entrada.")
+                        .setPositiveButton("OK") { dialog, _ ->
+                            dialog.dismiss()
+                            mostrarDatePickerSaida(context, dataEntrada, onDataValida) // Reabrir para nova escolha
+                        }
+                        .show()
+                } else {
+                    onDataValida(dataSaida)
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+        }, calendario.get(Calendar.YEAR), calendario.get(Calendar.MONTH), calendario.get(Calendar.DAY_OF_MONTH))
+
+        datePicker.show()
+    }
+
 }
