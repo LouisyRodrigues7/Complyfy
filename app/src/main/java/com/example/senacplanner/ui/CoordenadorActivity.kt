@@ -1,6 +1,7 @@
 package com.example.senacplanner.ui
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -11,21 +12,22 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
+import com.example.senacplanner.*
 import com.example.senacplanner.data.DatabaseHelper
-import com.example.senacplanner.NotificacoesActivity
-import com.example.senacplanner.R
-
 import com.example.senacplanner.editarpilar.EditarActivity
 import com.example.senacplanner.fragmentpilares.MeusPilaresFragment
 import com.example.senacplanner.fragmentpilares.TodosPilaresFragment
 import com.example.senacplanner.fragmentpilares.ViewPagerAdapter
 import com.example.senacplanner.novopilar.NovoPilarActivity
-
+import com.getkeepsafe.taptargetview.TapTarget
+import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class CoordenadorActivity : AppCompatActivity() {
+
     private lateinit var caixaCriarPilar: TextView
     private lateinit var caixaEditarPilar: TextView
 
@@ -33,31 +35,18 @@ class CoordenadorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_coordenador)
 
-        val db = DatabaseHelper(this)
-        db.verificarPilaresProximosDaConclusao()
-        db.verificarAtividadesProximasDaConclusao()
-        db.verificarAtividadesAtrasadas()
-        val testeatrasadas = db.buscarAtividadePorStatus()
-        Log.d("atrasdas", testeatrasadas.toString())
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        val btnAjuda = findViewById<ImageView>(R.id.btnAjuda)
+        val btnAddPilar = findViewById<ImageView>(R.id.btnAddPilar)
+        val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
+        val viewPager = findViewById<ViewPager2>(R.id.viewPager)
 
-        // val db = DatabaseHelper(this)
-        // db.verificarNotificacoesDePilaresProximos()
-
-        // Recuperar nome do usuário
         val nomeUsuario = intent.getStringExtra("NOME_USUARIO")
         val idUsuario = intent.getIntExtra("ID_USUARIO", -1)
         val tipoUsuario = intent.getStringExtra("TIPO_USUARIO")
 
-        Log.d("DASHBOARD", "tipoUsuario=$tipoUsuario, idUsuario=$idUsuario, nomeUsuario=$nomeUsuario")
-
-
-
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.title = "Olá, $nomeUsuario"
         setSupportActionBar(toolbar)
-
-        val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
-        val viewPager = findViewById<ViewPager2>(R.id.viewPager)
 
         val adapter = ViewPagerAdapter(this)
         adapter.addFragment(MeusPilaresFragment(), "Meus Pilares")
@@ -67,12 +56,66 @@ class CoordenadorActivity : AppCompatActivity() {
         val paginaHome = intent.getIntExtra("PAGINA_HOME", 0)
         viewPager.setCurrentItem(paginaHome, false)
 
-
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = adapter.getPageTitle(position)
         }.attach()
 
-        val btnAddPilar = findViewById<ImageView>(R.id.btnAddPilar)
+        // Tour interativo com ajuda
+        btnAjuda.setOnClickListener {
+            TapTargetSequence(this)
+                .targets(
+                    TapTarget.forView(
+                        btnAddPilar,
+                        "Criar/Editar Pilar",
+                        "Toque aqui para criar ou editar pilares do seu planejamento."
+                    )
+                        .outerCircleColorInt(ContextCompat.getColor(this, R.color.purple_500))
+                        .targetCircleColorInt(ContextCompat.getColor(this, android.R.color.white))
+                        .titleTextColorInt(ContextCompat.getColor(this, android.R.color.white))
+                        .descriptionTextColorInt(ContextCompat.getColor(this, android.R.color.white))
+                        .textTypeface(Typeface.SANS_SERIF)
+                        .dimColorInt(ContextCompat.getColor(this, android.R.color.black))
+                        .drawShadow(true)
+                        .cancelable(true),
+
+                    TapTarget.forView(
+                        tabLayout.getTabAt(0)?.view,
+                        "Meus Pilares",
+                        "Mostra só os pilares que você tem atividades dentro."
+                    )
+                        .outerCircleColorInt(ContextCompat.getColor(this, R.color.teal_200))
+                        .targetCircleColorInt(ContextCompat.getColor(this, android.R.color.white))
+                        .titleTextColorInt(ContextCompat.getColor(this, android.R.color.white))
+                        .descriptionTextColorInt(ContextCompat.getColor(this, android.R.color.white))
+                        .drawShadow(true)
+                        .cancelable(true),
+
+                    TapTarget.forView(
+                        tabLayout.getTabAt(1)?.view,
+                        "Todos os Pilares",
+                        "Lista de todos os pilares do sistema com todas as atividades."
+                    )
+                        .outerCircleColorInt(ContextCompat.getColor(this, R.color.teal_700))
+                        .targetCircleColorInt(ContextCompat.getColor(this, android.R.color.white))
+                        .titleTextColorInt(ContextCompat.getColor(this, android.R.color.white))
+                        .descriptionTextColorInt(ContextCompat.getColor(this, android.R.color.white))
+                        .drawShadow(true)
+                        .cancelable(true)
+                )
+                .listener(object : TapTargetSequence.Listener {
+                    override fun onSequenceFinish() {
+                        Toast.makeText(this@CoordenadorActivity, "Tour finalizado 🎉", Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onSequenceStep(lastTarget: TapTarget, targetClicked: Boolean) {}
+                    override fun onSequenceCanceled(lastTarget: TapTarget) {
+                        Toast.makeText(this@CoordenadorActivity, "Tour cancelado ❌", Toast.LENGTH_SHORT).show()
+                    }
+                })
+                .start()
+        }
+
+        // Caixa de texto (tooltip de criar e editar)
         caixaCriarPilar = findViewById(R.id.caixaCriarPilar)
         caixaEditarPilar = findViewById(R.id.caixaEditarPilar)
 
@@ -134,6 +177,12 @@ class CoordenadorActivity : AppCompatActivity() {
             )
         }
 
+        val db = DatabaseHelper(this)
+        db.verificarPilaresProximosDaConclusao()
+        db.verificarAtividadesProximasDaConclusao()
+        db.verificarAtividadesAtrasadas()
+        val testeatrasadas = db.buscarAtividadePorStatus()
+        Log.d("atrasdas", testeatrasadas.toString())
     }
 
     private fun realizarLogout() {
@@ -162,7 +211,6 @@ class CoordenadorActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         return true
     }
-
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return super.onOptionsItemSelected(item)

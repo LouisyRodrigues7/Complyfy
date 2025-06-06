@@ -8,5 +8,7 @@
     <color name="notificacao_lida">#E0E0E0</color>
     <color name="notificacao_alerta">#FFCDD2</color>
     <color name="botao_icone">#FF7A00</color>
-
+    <color name="purple_500">#6200EE</color>
+    <color name="teal_700">#018786</color>
+    <color name="teal_800">#9D49C8</color>
 </resources>

@@ -19,6 +19,15 @@
             android:background="#1C2A39"
             app:titleTextColor="@android:color/white">
 
+            <ImageView
+                android:id="@+id/btnAjuda"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="72dp"
+                android:src="@drawable/ic_help_outline"
+                android:contentDescription="Ajuda" />
+
             <!-- Botão "+" no Toolbar -->
             <ImageView
                 android:id="@+id/btnAddPilar"
