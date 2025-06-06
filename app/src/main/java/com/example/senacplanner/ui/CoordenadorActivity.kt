@@ -81,7 +81,7 @@ class CoordenadorActivity : AppCompatActivity() {
                     TapTarget.forView(
                         tabLayout.getTabAt(0)?.view,
                         "Meus Pilares",
-                        "Mostra só os pilares que você tem atividades dentro."
+                        "Mostra só os pilares que você tem atividades como resposável."
                     )
                         .outerCircleColorInt(ContextCompat.getColor(this, R.color.teal_200))
                         .targetCircleColorInt(ContextCompat.getColor(this, android.R.color.white))
@@ -93,7 +93,7 @@ class CoordenadorActivity : AppCompatActivity() {
                     TapTarget.forView(
                         tabLayout.getTabAt(1)?.view,
                         "Todos os Pilares",
-                        "Lista de todos os pilares do sistema com todas as atividades."
+                        "Lista de todos os pilares do sistema com todas as ações e atividades."
                     )
                         .outerCircleColorInt(ContextCompat.getColor(this, R.color.teal_700))
                         .targetCircleColorInt(ContextCompat.getColor(this, android.R.color.white))
