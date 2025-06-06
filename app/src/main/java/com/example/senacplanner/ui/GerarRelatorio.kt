@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.example.senacplanner.NotificacoesActivity
 import com.example.senacplanner.R
 import com.example.senacplanner.data.RelatorioDatabaseHelper
 import com.example.senacplanner.model.RelatorioPilar
@@ -18,6 +19,10 @@ class GerarRelatorio : AppCompatActivity() {
     private lateinit var spinnerPilar: Spinner
     private lateinit var spinnerPeriodo: Spinner
     private lateinit var btnConfirmar: Button
+
+    private var tipoUsuario: String? = null
+    private var nomeUsuario: String? = null
+    private var idUsuario: Int = -1
 
     private lateinit var layoutBotoesPDF: LinearLayout
     private lateinit var btnAbrirPDF: Button
@@ -31,6 +36,11 @@ class GerarRelatorio : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_gerar_relatorio)
+
+
+        nomeUsuario = intent.getStringExtra("NOME_USUARIO")
+        tipoUsuario = intent.getStringExtra("TIPO_USUARIO")
+        idUsuario = intent.getIntExtra("ID_USUARIO", -1)
 
         // Referência dos componentes da interface
         spinnerPilar = findViewById(R.id.spinnerPilar)
@@ -50,6 +60,45 @@ class GerarRelatorio : AppCompatActivity() {
         // Preenche os spinners
         carregarSpinnerPilares(db)
         carregarSpinnerPeriodos()
+
+        val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
+        btnGraficos.setOnClickListener {
+            if (tipoUsuario != null && nomeUsuario != null && idUsuario != -1) {
+                val intent = Intent(this, GraficosActivity::class.java).apply {
+                    putExtra("TIPO_USUARIO", tipoUsuario)
+                    putExtra("ID_USUARIO", idUsuario)
+                    putExtra("NOME_USUARIO", nomeUsuario)
+                }
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "Dados do usuário ausentes. Não foi possível abrir os gráficos.", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        val btnNotificacoes = findViewById<ImageView>(R.id.btnNotificacoes)
+        btnNotificacoes.setOnClickListener {
+            val intent = Intent(this, NotificacoesActivity::class.java).apply {
+                putExtra("TIPO_USUARIO", tipoUsuario)
+                putExtra("ID_USUARIO", idUsuario)
+                putExtra("NOME_USUARIO", nomeUsuario)
+            }
+            startActivity(intent)
+        }
+
+        val btnLogout = findViewById<ImageView>(R.id.btnAcoes)
+        btnLogout.setOnClickListener {
+            realizarLogout()
+        }
+
+        val btnHome = findViewById<ImageView>(R.id.btnHome)
+        btnHome.setOnClickListener {
+            com.example.senacplanner.utils.NavigationUtils.irParaTelaHome(
+                this,
+                tipoUsuario,
+                idUsuario,
+                nomeUsuario
+            )
+        }
 
         // Configura botão de confirmar (gera o PDF)
         btnConfirmar.setOnClickListener {
@@ -134,5 +183,12 @@ class GerarRelatorio : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         dbHelper.close()
+    }
+
+    private fun realizarLogout() {
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 }
