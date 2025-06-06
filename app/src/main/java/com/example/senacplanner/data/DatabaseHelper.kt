@@ -23,6 +23,12 @@ import com.example.senacplanner.model.PilarComProgresso
 import com.example.senacplanner.model.Pilarspinner
 import com.example.senacplanner.model.AcaoEstrategica
 import com.example.senacplanner.model.Atividadespinner
+import com.example.senacplanner.model.RelatorioPilar
+import com.example.senacplanner.model.RelatorioPeriodo
+import com.example.senacplanner.utils.PdfPilar
+import com.example.senacplanner.utils.PdfAcao
+import com.example.senacplanner.utils.PdfAtividade
+import com.example.senacplanner.utils.PdfUsuario
 
 
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
@@ -250,6 +256,10 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return listaAcoes
     }
 
+    // tentando relatório
+
+
+
     fun listarResponsaveis(): List<Usuario> {
         val lista = mutableListOf<Usuario>()
         val db = this.readableDatabase
@@ -362,10 +372,6 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
 
         return lista
     }
-
-
-
-
 
 
     // ✔️ Buscar Ações por Pilar para Spinner

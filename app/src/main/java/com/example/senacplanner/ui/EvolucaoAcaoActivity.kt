@@ -48,7 +48,7 @@ class EvolucaoAcaoActivity : AppCompatActivity() {
 
         // Inicializa botões
         findViewById<ImageView>(R.id.btnHome).setOnClickListener {
-            com.example.senacplanner.util.NavigationUtils.irParaTelaHome(
+            com.example.senacplanner.utils.NavigationUtils.irParaTelaHome(
                 this,
                 tipoUsuario,
                 idUsuario,
@@ -99,7 +99,7 @@ class EvolucaoAcaoActivity : AppCompatActivity() {
 
         val btnHome = findViewById<ImageView>(R.id.btnHome)
         btnHome.setOnClickListener {
-            com.example.senacplanner.util.NavigationUtils.irParaTelaHome(
+            com.example.senacplanner.utils.NavigationUtils.irParaTelaHome(
                 this,
                 tipoUsuario,
                 idUsuario,

@@ -3,7 +3,6 @@ package com.example.senacplanner.ui
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -111,7 +110,7 @@ class DashboardGraficoActivity : AppCompatActivity() {
 
         val btnHome = findViewById<ImageView>(R.id.btnHome)
         btnHome.setOnClickListener {
-            com.example.senacplanner.util.NavigationUtils.irParaTelaHome(
+            com.example.senacplanner.utils.NavigationUtils.irParaTelaHome(
                 this,
                 tipoUsuario,
                 idUsuario,

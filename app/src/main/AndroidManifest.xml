@@ -88,6 +88,9 @@
             android:exported="false" />
         <activity android:name=".ui.EvolucaoAtividade" />
         <activity android:name=".ui.GraficoEvolucaoAtividade" />
+        <activity android:name=".ui.GerarRelatorio" />
+
+
 
     </application>
 </manifest>
