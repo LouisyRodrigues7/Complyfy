@@ -100,6 +100,18 @@ class CoordenadorActivity : AppCompatActivity() {
                         .titleTextColorInt(ContextCompat.getColor(this, android.R.color.white))
                         .descriptionTextColorInt(ContextCompat.getColor(this, android.R.color.white))
                         .drawShadow(true)
+                        .cancelable(true),
+
+                    TapTarget.forView(
+                        viewPager,
+                        "Pilares e Atividades",
+                        "Aqui estão os pilares, que contêm as ações e atividades do seu planejamento."
+                    )
+                        .outerCircleColorInt(ContextCompat.getColor(this, R.color.teal_800))
+                        .targetCircleColorInt(ContextCompat.getColor(this, android.R.color.white))
+                        .titleTextColorInt(ContextCompat.getColor(this, android.R.color.white))
+                        .descriptionTextColorInt(ContextCompat.getColor(this, android.R.color.white))
+                        .drawShadow(true)
                         .cancelable(true)
                 )
                 .listener(object : TapTargetSequence.Listener {
@@ -108,6 +120,7 @@ class CoordenadorActivity : AppCompatActivity() {
                     }
 
                     override fun onSequenceStep(lastTarget: TapTarget, targetClicked: Boolean) {}
+
                     override fun onSequenceCanceled(lastTarget: TapTarget) {
                         Toast.makeText(this@CoordenadorActivity, "Tour cancelado ❌", Toast.LENGTH_SHORT).show()
                     }
@@ -182,7 +195,7 @@ class CoordenadorActivity : AppCompatActivity() {
         db.verificarAtividadesProximasDaConclusao()
         db.verificarAtividadesAtrasadas()
         val testeatrasadas = db.buscarAtividadePorStatus()
-        Log.d("atrasdas", testeatrasadas.toString())
+        Log.d("atrasadas", testeatrasadas.toString())
     }
 
     private fun realizarLogout() {
