@@ -1,11 +1,11 @@
 package com.example.senacplanner.ui
 
+import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
+import android.net.Uri
 import android.os.Bundle
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.Spinner
-import android.widget.Toast
+import android.view.View
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.senacplanner.R
 import com.example.senacplanner.data.RelatorioDatabaseHelper
@@ -18,8 +18,13 @@ class GerarRelatorio : AppCompatActivity() {
     private lateinit var spinnerPilar: Spinner
     private lateinit var spinnerPeriodo: Spinner
     private lateinit var btnConfirmar: Button
-    private lateinit var dbHelper: RelatorioDatabaseHelper
 
+    private lateinit var layoutBotoesPDF: LinearLayout
+    private lateinit var btnAbrirPDF: Button
+    private lateinit var btnCompartilharPDF: Button
+    private var ultimoArquivoPDFUri: Uri? = null
+
+    private lateinit var dbHelper: RelatorioDatabaseHelper
     private var pilaresList = listOf<RelatorioPilar>()
     private var periodosList = listOf<RelatorioPeriodo>()
 
@@ -27,22 +32,27 @@ class GerarRelatorio : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_gerar_relatorio)
 
+        // Referência dos componentes da interface
         spinnerPilar = findViewById(R.id.spinnerPilar)
         spinnerPeriodo = findViewById(R.id.spinnerPeriodo)
         btnConfirmar = findViewById(R.id.btnConfirmar)
+        layoutBotoesPDF = findViewById(R.id.layoutBotoesPDF)
+        btnAbrirPDF = findViewById(R.id.btnAbrirPDF)
+        btnCompartilharPDF = findViewById(R.id.btnCompartilharPDF)
 
-        // Instância do Database Helper
+        // Inicialmente esconde os botões de ação do PDF
+        layoutBotoesPDF.visibility = View.GONE
+
+        // Instancia banco
         dbHelper = RelatorioDatabaseHelper(this)
         val db: SQLiteDatabase = dbHelper.readableDatabase
 
-        // Carregar spinners
+        // Preenche os spinners
         carregarSpinnerPilares(db)
         carregarSpinnerPeriodos()
 
-        // Ação do botão
+        // Configura botão de confirmar (gera o PDF)
         btnConfirmar.setOnClickListener {
-
-            // Verifica se algum item foi selecionado nos dois spinners
             val posPilar = spinnerPilar.selectedItemPosition
             val posPeriodo = spinnerPeriodo.selectedItemPosition
 
@@ -61,21 +71,50 @@ class GerarRelatorio : AppCompatActivity() {
                     return@setOnClickListener
                 }
 
-                // Cria o gerador de relatório e chama metodo para gerar PDF com os pilares selecionados
+                // Gera o PDF
                 val relatorioGenerator = RelatorioGenerator()
                 relatorioGenerator.gerarRelatorioPDF(
                     context = this,
                     pilares = listaDePilares,
                     nomeArquivo = "relatorio_compliance"
-                )
+                ) { uri ->
+                    if (uri != null) {
+                        ultimoArquivoPDFUri = uri
+                        layoutBotoesPDF.visibility = View.VISIBLE
+                    } else {
+                        Toast.makeText(this, "Erro ao gerar o PDF", Toast.LENGTH_SHORT).show()
+                    }
+                }
 
             } else {
                 Toast.makeText(this, "Por favor, selecione Pilar e Período", Toast.LENGTH_SHORT).show()
             }
         }
+
+        // Botão abrir PDF
+        btnAbrirPDF.setOnClickListener {
+            ultimoArquivoPDFUri?.let { uri ->
+                val openIntent = Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(uri, "application/pdf")
+                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                startActivity(Intent.createChooser(openIntent, "Abrir PDF com..."))
+            }
+        }
+
+        // Botão compartilhar PDF
+        btnCompartilharPDF.setOnClickListener {
+            ultimoArquivoPDFUri?.let { uri ->
+                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                    type = "application/pdf"
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                }
+                startActivity(Intent.createChooser(shareIntent, "Compartilhar PDF via"))
+            }
+        }
     }
 
-    // Metodo que carrega os pilares do banco e enche o spinner de pilares
     private fun carregarSpinnerPilares(db: SQLiteDatabase) {
         pilaresList = dbHelper.buscarPilares(db)
         val nomesPilares = pilaresList.map { it.nome }
@@ -84,7 +123,6 @@ class GerarRelatorio : AppCompatActivity() {
         spinnerPilar.adapter = adapter
     }
 
-    // Metodo que carrega períodos fixos e enche o spinner de períodos
     private fun carregarSpinnerPeriodos() {
         periodosList = dbHelper.buscarPeriodosFixos()
         val descricoes = periodosList.map { it.descricao }

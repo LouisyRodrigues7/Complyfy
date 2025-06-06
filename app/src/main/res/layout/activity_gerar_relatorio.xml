@@ -104,6 +104,36 @@
                 android:backgroundTint="#27AE60"
                 android:textColor="#FFFFFF"/>
         </LinearLayout>
+
+        <!-- Botões PDF -->
+        <LinearLayout
+            android:id="@+id/layoutBotoesPDF"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:layout_marginTop="12dp"
+            android:gravity="center_horizontal"
+            android:padding="8dp">
+
+            <Button
+                android:id="@+id/btnAbrirPDF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Abrir PDF"
+                android:layout_marginEnd="16dp"
+                android:backgroundTint="#3498DB"
+                android:textColor="#FFFFFF"/>
+
+            <Button
+                android:id="@+id/btnCompartilharPDF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Compartilhar PDF"
+                android:backgroundTint="#27AE60"
+                android:textColor="#FFFFFF"/>
+        </LinearLayout>
+
     </LinearLayout>
 
     <!-- Rodapé -->
