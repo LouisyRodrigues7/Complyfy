@@ -2,17 +2,22 @@ package com.example.senacplanner.ui
 
 import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.senacplanner.NotificacoesActivity
 import com.example.senacplanner.R
 import com.example.senacplanner.data.RelatorioDatabaseHelper
 import com.example.senacplanner.model.RelatorioPilar
 import com.example.senacplanner.model.RelatorioPeriodo
+import com.example.senacplanner.model.HistoricoRelatorio
+import com.example.senacplanner.utils.HistoricoRelatorioManager
 import com.example.senacplanner.utils.RelatorioGenerator
+import com.example.senacplanner.utils.NavigationUtils
 
 class GerarRelatorio : AppCompatActivity() {
 
@@ -29,6 +34,9 @@ class GerarRelatorio : AppCompatActivity() {
     private lateinit var btnCompartilharPDF: Button
     private var ultimoArquivoPDFUri: Uri? = null
 
+    private lateinit var textRecentes: TextView
+    private lateinit var listaRecentes: LinearLayout
+
     private lateinit var dbHelper: RelatorioDatabaseHelper
     private var pilaresList = listOf<RelatorioPilar>()
     private var periodosList = listOf<RelatorioPeriodo>()
@@ -37,12 +45,9 @@ class GerarRelatorio : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_gerar_relatorio)
 
-
-        nomeUsuario = intent.getStringExtra("NOME_USUARIO")
-        tipoUsuario = intent.getStringExtra("TIPO_USUARIO")
-        idUsuario = intent.getIntExtra("ID_USUARIO", -1)
-
-        // Referência dos componentes da interface
+        // Inicializa os elementos da UI
+        textRecentes = findViewById(R.id.textRecentes)
+        listaRecentes = findViewById(R.id.listaRecentes)
         spinnerPilar = findViewById(R.id.spinnerPilar)
         spinnerPeriodo = findViewById(R.id.spinnerPeriodo)
         btnConfirmar = findViewById(R.id.btnConfirmar)
@@ -50,19 +55,21 @@ class GerarRelatorio : AppCompatActivity() {
         btnAbrirPDF = findViewById(R.id.btnAbrirPDF)
         btnCompartilharPDF = findViewById(R.id.btnCompartilharPDF)
 
-        // Inicialmente esconde os botões de ação do PDF
+        nomeUsuario = intent.getStringExtra("NOME_USUARIO")
+        tipoUsuario = intent.getStringExtra("TIPO_USUARIO")
+        idUsuario = intent.getIntExtra("ID_USUARIO", -1)
+
         layoutBotoesPDF.visibility = View.GONE
 
-        // Instancia banco
         dbHelper = RelatorioDatabaseHelper(this)
         val db: SQLiteDatabase = dbHelper.readableDatabase
 
-        // Preenche os spinners
         carregarSpinnerPilares(db)
         carregarSpinnerPeriodos()
 
-        val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
-        btnGraficos.setOnClickListener {
+        mostrarHistorico()
+
+        findViewById<ImageView>(R.id.btnGraficos).setOnClickListener {
             if (tipoUsuario != null && nomeUsuario != null && idUsuario != -1) {
                 val intent = Intent(this, GraficosActivity::class.java).apply {
                     putExtra("TIPO_USUARIO", tipoUsuario)
@@ -71,12 +78,11 @@ class GerarRelatorio : AppCompatActivity() {
                 }
                 startActivity(intent)
             } else {
-                Toast.makeText(this, "Dados do usuário ausentes. Não foi possível abrir os gráficos.", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Dados do usuário ausentes.", Toast.LENGTH_LONG).show()
             }
         }
 
-        val btnNotificacoes = findViewById<ImageView>(R.id.btnNotificacoes)
-        btnNotificacoes.setOnClickListener {
+        findViewById<ImageView>(R.id.btnNotificacoes).setOnClickListener {
             val intent = Intent(this, NotificacoesActivity::class.java).apply {
                 putExtra("TIPO_USUARIO", tipoUsuario)
                 putExtra("ID_USUARIO", idUsuario)
@@ -85,22 +91,14 @@ class GerarRelatorio : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val btnLogout = findViewById<ImageView>(R.id.btnAcoes)
-        btnLogout.setOnClickListener {
+        findViewById<ImageView>(R.id.btnAcoes).setOnClickListener {
             realizarLogout()
         }
 
-        val btnHome = findViewById<ImageView>(R.id.btnHome)
-        btnHome.setOnClickListener {
-            com.example.senacplanner.utils.NavigationUtils.irParaTelaHome(
-                this,
-                tipoUsuario,
-                idUsuario,
-                nomeUsuario
-            )
+        findViewById<ImageView>(R.id.btnHome).setOnClickListener {
+            NavigationUtils.irParaTelaHome(this, tipoUsuario, idUsuario, nomeUsuario)
         }
 
-        // Configura botão de confirmar (gera o PDF)
         btnConfirmar.setOnClickListener {
             val posPilar = spinnerPilar.selectedItemPosition
             val posPeriodo = spinnerPeriodo.selectedItemPosition
@@ -116,11 +114,10 @@ class GerarRelatorio : AppCompatActivity() {
                 }
 
                 if (listaDePilares.isEmpty()) {
-                    Toast.makeText(this, "Nenhum dado encontrado para gerar o relatório", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Nenhum dado encontrado.", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
 
-                // Gera o PDF
                 val relatorioGenerator = RelatorioGenerator()
                 relatorioGenerator.gerarRelatorioPDF(
                     context = this,
@@ -128,19 +125,23 @@ class GerarRelatorio : AppCompatActivity() {
                     nomeArquivo = "relatorio_compliance"
                 ) { uri ->
                     if (uri != null) {
+                        HistoricoRelatorioManager.salvar(
+                            this,
+                            HistoricoRelatorio("relatorio_compliance", uri.toString(), System.currentTimeMillis())
+                        )
+                        mostrarHistorico()
                         ultimoArquivoPDFUri = uri
                         layoutBotoesPDF.visibility = View.VISIBLE
                     } else {
-                        Toast.makeText(this, "Erro ao gerar o PDF", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Erro ao gerar PDF", Toast.LENGTH_SHORT).show()
                     }
                 }
 
             } else {
-                Toast.makeText(this, "Por favor, selecione Pilar e Período", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Selecione Pilar e Período", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // Botão abrir PDF
         btnAbrirPDF.setOnClickListener {
             ultimoArquivoPDFUri?.let { uri ->
                 val openIntent = Intent(Intent.ACTION_VIEW).apply {
@@ -151,7 +152,6 @@ class GerarRelatorio : AppCompatActivity() {
             }
         }
 
-        // Botão compartilhar PDF
         btnCompartilharPDF.setOnClickListener {
             ultimoArquivoPDFUri?.let { uri ->
                 val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -180,15 +180,49 @@ class GerarRelatorio : AppCompatActivity() {
         spinnerPeriodo.adapter = adapter
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        dbHelper.close()
-    }
-
     private fun realizarLogout() {
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        val intent = Intent(this, LoginActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
         startActivity(intent)
         finish()
+    }
+
+    private fun mostrarHistorico() {
+        val historico = HistoricoRelatorioManager.carregar(this)
+        if (historico.isEmpty()) {
+            textRecentes.visibility = View.GONE
+            listaRecentes.visibility = View.GONE
+            return
+        }
+
+        textRecentes.visibility = View.VISIBLE
+        listaRecentes.visibility = View.VISIBLE
+        listaRecentes.removeAllViews()
+
+        historico.forEach { item ->
+            val btn = Button(this).apply {
+                text = "${item.nome} (${android.text.format.DateFormat.format("dd/MM/yyyy", item.data)})"
+                setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent))
+                setTextColor(Color.WHITE)
+                setOnClickListener {
+                    try {
+                        val openIntent = Intent(Intent.ACTION_VIEW).apply {
+                            setDataAndType(Uri.parse(item.uri), "application/pdf")
+                            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
+                        }
+                        startActivity(Intent.createChooser(openIntent, "Abrir PDF com..."))
+                    } catch (e: Exception) {
+                        Toast.makeText(this@GerarRelatorio, "Erro ao abrir PDF", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            listaRecentes.addView(btn)
+        }
+    }
+
+    override fun onDestroy() {
+        dbHelper.close()
+        super.onDestroy()
     }
 }
