@@ -14,14 +14,28 @@ import com.example.senacplanner.data.DatabaseHelper
 import com.example.senacplanner.ui.GraficosActivity
 import com.example.senacplanner.ui.LoginActivity
 
+/**
+ * Tela que exibe as notificações recebidas por um usuário específico.
+ * As notificações são exibidas em ordem decrescente de data.
+ */
 class NotificacoesActivity : AppCompatActivity() {
+
+    /** RecyclerView que lista as notificações */
     private lateinit var recyclerView: RecyclerView
+
+    /** Adapter responsável por popular a RecyclerView */
     private lateinit var adapter: NotificacaoAdapter
+
+    /** Instância do helper para acessar banco de dados */
     private lateinit var db: DatabaseHelper
+
     private var tipoUsuario: String? = null
     private var nomeUsuario: String? = null
     private var idUsuario: Int = -1
 
+    /**
+     * Inicializa a interface, valida os dados do usuário e popula a lista de notificações.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_notificacoes)
@@ -31,7 +45,7 @@ class NotificacoesActivity : AppCompatActivity() {
         tipoUsuario = intent.getStringExtra("TIPO_USUARIO")
         idUsuario = intent.getIntExtra("ID_USUARIO", -1)
 
-        // para checar problema
+        // Checagem de integridade dos dados
         if (nomeUsuario.isNullOrBlank() || tipoUsuario.isNullOrBlank() || idUsuario == -1) {
             Toast.makeText(this, "Erro: dados do usuário ausentes.", Toast.LENGTH_LONG).show()
             finish()
@@ -41,20 +55,18 @@ class NotificacoesActivity : AppCompatActivity() {
         db = DatabaseHelper(this)
         recyclerView = findViewById(R.id.recyclerViewNotificacoes)
 
+        // Toolbar com saudação
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        if (!nomeUsuario.isNullOrEmpty()) {
-            supportActionBar?.title = "Olá, $nomeUsuario"
-        } else {
-            supportActionBar?.title = "Olá, usuário"
-        }
+        supportActionBar?.title = "Olá, ${nomeUsuario ?: "usuário"}"
 
+        // Busca as notificações do usuário e configura o adapter
         val notificacoes = buscarNotificacoesDoUsuario(idUsuario).toMutableList()
         adapter = NotificacaoAdapter(notificacoes)
-
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
+        // Navegação padrão (já explicada em outros arquivos)
         val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
         btnGraficos.setOnClickListener {
             val intent = Intent(this, GraficosActivity::class.java).apply {
@@ -86,7 +98,7 @@ class NotificacoesActivity : AppCompatActivity() {
         }
     }
 
-
+    // 🔐 Já comentado em arquivos anteriores
     private fun realizarLogout() {
         val intent = Intent(this, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -94,7 +106,11 @@ class NotificacoesActivity : AppCompatActivity() {
         finish()
     }
 
-
+    /**
+     * Realiza a busca das notificações do usuário informado.
+     * @param usuarioId ID do usuário para o qual as notificações serão buscadas
+     * @return Lista de notificações ordenadas pela data (mais recentes primeiro)
+     */
     private fun buscarNotificacoesDoUsuario(usuarioId: Int): List<Notificacao> {
         val lista = mutableListOf<Notificacao>()
         val db = db.getDatabase()
@@ -114,6 +130,8 @@ class NotificacoesActivity : AppCompatActivity() {
                 val mensagem = cursor.getString(cursor.getColumnIndexOrThrow("mensagem"))
                 val data = cursor.getString(cursor.getColumnIndexOrThrow("data")).toLongOrNull() ?: 0L
                 val lida = cursor.getInt(cursor.getColumnIndexOrThrow("lida")) == 1
+
+                // Pode ser nula se for notificação geral
                 val atividadeIdIndex = cursor.getColumnIndex("atividade_id")
                 val atividadeId = if (atividadeIdIndex >= 0 && !cursor.isNull(atividadeIdIndex)) {
                     cursor.getInt(atividadeIdIndex)

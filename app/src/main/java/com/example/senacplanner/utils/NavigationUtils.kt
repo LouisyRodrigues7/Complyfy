@@ -6,8 +6,23 @@ import android.util.Log
 import com.example.senacplanner.ui.CoordenadorActivity
 import com.example.senacplanner.ui.GestorActivity
 
+/**
+ * Utilitário responsável por redirecionar o usuário para a tela inicial correta,
+ * com base no seu tipo (Coordenador, Apoio ou Gestor).
+ */
 object NavigationUtils {
 
+    /**
+     * Redireciona para a tela inicial correspondente ao perfil do usuário.
+     *
+     * @param activity Contexto da activity atual
+     * @param tipoUsuario Tipo do usuário logado (ex: "Coordenador", "Gestor", "Apoio")
+     * @param idUsuario ID do usuário logado
+     * @param nomeUsuario Nome do usuário logado
+     *
+     * A navegação é interrompida caso os dados estejam incompletos.
+     * Evita também recriar a tela se já estiver nela.
+     */
     fun irParaTelaHome(
         activity: Activity,
         tipoUsuario: String?,

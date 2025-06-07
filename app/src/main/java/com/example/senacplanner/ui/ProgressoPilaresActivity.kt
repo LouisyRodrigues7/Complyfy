@@ -12,14 +12,23 @@ import com.example.senacplanner.data.DatabaseHelper
 import com.example.senacplanner.NotificacoesActivity
 import com.example.senacplanner.R
 
+/**
+ * Tela que permite ao usuário selecionar um pilar específico (ou todos)
+ * para visualizar seus dados em gráficos de progresso.
+ */
 class ProgressoPilaresActivity : AppCompatActivity() {
 
+    /** Spinner que lista os pilares disponíveis no banco */
     private lateinit var spinnerPilares: Spinner
 
     private var tipoUsuario: String? = null
     private var nomeUsuario: String? = null
     private var idUsuario: Int = -1
 
+    /**
+     * Inicializa a tela com os botões de navegação e spinner com os pilares cadastrados.
+     * Permite selecionar e ir para a visualização gráfica do progresso dos pilares.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_progresso_pilares)
@@ -29,7 +38,7 @@ class ProgressoPilaresActivity : AppCompatActivity() {
         nomeUsuario = intent.getStringExtra("NOME_USUARIO")
         idUsuario = intent.getIntExtra("ID_USUARIO", -1)
 
-        // Botões
+        // Botões de navegação (documentados em outros arquivos)
         val btnHome = findViewById<ImageView>(R.id.btnHome)
         btnHome.setOnClickListener {
             com.example.senacplanner.utils.NavigationUtils.irParaTelaHome(
@@ -65,11 +74,13 @@ class ProgressoPilaresActivity : AppCompatActivity() {
             realizarLogout()
         }
 
-        // Spinner
+        // Spinner de pilares
         spinnerPilares = findViewById(R.id.spinnerPilares)
 
         val db = DatabaseHelper(this)
         val pilaresDoBanco = db.getTodosPilares().toMutableList()
+
+        // Adiciona uma opção genérica ao topo: "Todos os pilares"
         pilaresDoBanco.add(0, PilarItem(id = -1, numero = 0, nome = "Todos os pilares"))
 
         val adapter = ArrayAdapter(
@@ -80,7 +91,9 @@ class ProgressoPilaresActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerPilares.adapter = adapter
 
-        // Botão Confirmar
+        /**
+         * Ao confirmar, abre a tela `DashboardGraficoActivity` passando o ID do pilar selecionado.
+         */
         val btnConfirmar = findViewById<Button>(R.id.btnConfirmar)
         btnConfirmar.setOnClickListener {
             val itemSelecionado = spinnerPilares.selectedItem as PilarItem
@@ -93,6 +106,7 @@ class ProgressoPilaresActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
 
     private fun realizarLogout() {
         val intent = Intent(this, LoginActivity::class.java)
