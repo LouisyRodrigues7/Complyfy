@@ -18,6 +18,8 @@ import com.example.senacplanner.ui.GraficosActivity
 import com.example.senacplanner.ui.LoginActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.core.content.ContextCompat
+import com.getkeepsafe.taptargetview.TapTarget
+import com.getkeepsafe.taptargetview.TapTargetSequence
 
 class ListaAtividades : AppCompatActivity() {
 
@@ -42,22 +44,19 @@ class ListaAtividades : AppCompatActivity() {
         }
         viewPager.adapter = AcoesPagerAdapter(this, acoes, pilarNome, idUsuario, idAcao)
         if (acoes.isNotEmpty()) {
-           val ultimaPosicao = acoes.size - 1
-           viewPager.setCurrentItem(ultimaPosicao, false)
-           idAcao = acoes[ultimaPosicao].acao.id
+            val ultimaPosicao = acoes.size - 1
+            viewPager.setCurrentItem(ultimaPosicao, false)
+            idAcao = acoes[ultimaPosicao].acao.id
         }
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lista_atividades)
-        Log.d("ListaAtividades", "onCreate: pilarId=$pilarId, idUsuario=$idUsuario, visualizacaoGeral=$visualizacaoGeral")
 
         val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
         val btnHome = findViewById<ImageView>(R.id.btnHome)
         val btnNotificacoes = findViewById<ImageView>(R.id.btnNotificacoes)
         val btnAcoes = findViewById<ImageView>(R.id.btnAcoes)
-
         val fab = findViewById<FloatingActionButton>(R.id.fabAdicionar)
         fab.setColorFilter(ContextCompat.getColor(this, android.R.color.white), android.graphics.PorterDuff.Mode.SRC_IN)
 
@@ -78,7 +77,7 @@ class ListaAtividades : AppCompatActivity() {
         }
 
         btnHome.setOnClickListener {
-           finish()
+            finish()
         }
 
         btnNotificacoes.setOnClickListener {
@@ -100,11 +99,9 @@ class ListaAtividades : AppCompatActivity() {
 
         databaseHelper = DatabaseHelper(this)
         viewPager = findViewById(R.id.viewPager)
-        fabAdicionar = findViewById(R.id.fabAdicionar)
+        fabAdicionar = fab
 
         fabAdicionar.setOnClickListener {
-            Log.d("ListaAtividades", "Botão adicionar clicado. idAcao = $idAcao, idUsuario = $idUsuario")
-
             if (idUsuario == -1) {
                 Toast.makeText(this, "Erro ao obter o contexto do usuário", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -122,7 +119,6 @@ class ListaAtividades : AppCompatActivity() {
             builder.setItems(options.toTypedArray()) { _, which ->
                 when (options[which]) {
                     "Criar Atividade" -> {
-                        Log.d("ListaAtividades", "Abrindo CriarAtividadeActivity com ACAO_ID=$idAcao e USUARIO_ID=$idUsuario")
                         val intent = Intent(this, CriarAtividadeActivity::class.java)
                         intent.putExtra("ACAO_ID", idAcao)
                         intent.putExtra("ID_USUARIO", idUsuario)
@@ -148,14 +144,40 @@ class ListaAtividades : AppCompatActivity() {
             finish()
         }
 
+        // ---------- TOUR GUIADO ----------
+        val btnAjuda = findViewById<ImageView>(R.id.btnAjuda)
+
+        btnAjuda.setOnClickListener {
+            val sequence = TapTargetSequence(this)
+                .targets(
+                    TapTarget.forView(fabAdicionar, "Adicionar", "Clique aqui para criar uma nova ação nesse pilar ou se quiser adicionar uma nova Atividade dentro da ação na tela, caso queira adicionar atividade em outra ação é só navegar até a tela dela e clicar aqui novamente.")
+                        .cancelable(true)
+                        .drawShadow(true)
+                        .id(5)
+                )
+                .listener(object : TapTargetSequence.Listener {
+                    override fun onSequenceFinish() {
+                        Toast.makeText(this@ListaAtividades, "Tour finalizado!", Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onSequenceStep(lastTarget: TapTarget, targetClicked: Boolean) {}
+
+                    override fun onSequenceCanceled(lastTarget: TapTarget) {
+                        Toast.makeText(this@ListaAtividades, "Tour cancelado.", Toast.LENGTH_SHORT).show()
+                    }
+                })
+
+            sequence.start()
+        }
+
+
         carregarDados()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
-            atualizarListaDeAcoes() // função que recarrega os dados do banco
+            atualizarListaDeAcoes()
         }
     }
 
@@ -166,7 +188,6 @@ class ListaAtividades : AppCompatActivity() {
 
     private fun carregarDados() {
         acoes = if (visualizacaoGeral) {
-            Log.d("ListaAtividades", "carregarDados: ações carregadas = ${acoes.size}")
             databaseHelper.buscarAcoesEAtividadesPorPilar(pilarId)
         } else {
             databaseHelper.buscarAcoesEAtividadesDoUsuarioPorPilar(pilarId, idUsuario)
@@ -178,6 +199,7 @@ class ListaAtividades : AppCompatActivity() {
         } else {
             0
         }
+
         viewPager.adapter = AcoesPagerAdapter(this, acoes, pilarNome, idUsuario, idAcao)
         viewPager.setCurrentItem(currentItem, false)
 
@@ -186,18 +208,14 @@ class ListaAtividades : AppCompatActivity() {
                 super.onPageSelected(position)
                 if (position < acoes.size) {
                     idAcao = acoes[position].acao.id
-                    Log.d("ListaAtividades", "ID da ação atual (pelo swipe): $idAcao")
                 }
             }
         })
 
         if (acoes.isNotEmpty()) {
-            val acaoAtual = acoes[currentItem]
-            idAcao = acaoAtual.acao.id
+            idAcao = acoes[currentItem].acao.id
         } else {
             idAcao = -1
         }
-
-
     }
 }
