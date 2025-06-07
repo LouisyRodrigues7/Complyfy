@@ -21,6 +21,13 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/**
+ * Adapter para gerenciar e exibir uma lista de notificações no RecyclerView.
+ * Controla a exibição, interação e atualização visual das notificações,
+ * além de lidar com ações específicas ao clicar em cada item.
+ *
+ * @property lista Lista mutável das notificações exibidas.
+ */
 class NotificacaoAdapter(private val lista: MutableList<Notificacao>) :
     RecyclerView.Adapter<NotificacaoAdapter.ViewHolder>() {
 
@@ -124,6 +131,15 @@ class NotificacaoAdapter(private val lista: MutableList<Notificacao>) :
 
     }
 
+    /**
+     * Abre um diálogo para que o usuário aprove uma atividade pendente.
+     * Exibe informações relevantes da atividade e seus relacionamentos para melhor decisão.
+     *
+     * @param context Contexto da aplicação para inflar layouts e acessar o banco.
+     * @param notificacaoAtual Notificação que originou o diálogo.
+     * @param position Posição da notificação na lista para atualizar após ação.
+     * @param holder ViewHolder da notificação para manipulação visual.
+     */
     @SuppressLint("SetTextI18n")
     private fun abrirDialogAprovacaoAtividade(
         context: Context,
@@ -189,9 +205,25 @@ class NotificacaoAdapter(private val lista: MutableList<Notificacao>) :
 
     }
 
+    /**
+     * Comportamento padrão para notificações gerais.
+     * Atualmente sem implementação.
+     *
+     * @param context Contexto da aplicação.
+     * @param notificacaoAtual Notificação a ser tratada.
+     */
     private fun comportamentoPadrao(context: Context, notificacaoAtual: Notificacao) {}
 
 
+    /**
+     * Abre um diálogo para tratar o pedido de conclusão de uma atividade.
+     * Permite ao usuário confirmar a finalização da atividade e atualizar status.
+     *
+     * @param context Contexto da aplicação para inflar layouts e acessar banco.
+     * @param notificacaoAtual Notificação que gerou o diálogo.
+     * @param position Posição da notificação na lista para atualização.
+     * @param holder ViewHolder da notificação para manipulação visual.
+     */
     @SuppressLint("SetTextI18n")
     private fun abrirDialogConclusaoStatus(
         context: Context,
@@ -252,6 +284,13 @@ class NotificacaoAdapter(private val lista: MutableList<Notificacao>) :
 
     }
 
+    /**
+     * Converte uma data em formato ISO (timestamp ou yyyy-MM-dd) para o formato brasileiro dd/MM/yyyy.
+     * Essa função lida com dois formatos comuns, facilitando exibição para o usuário.
+     *
+     * @param dataISO Data no formato ISO ou timestamp em String.
+     * @return Data formatada em dd/MM/yyyy ou string vazia em caso de erro.
+     */
     fun formatarDataParaBR(dataISO: String): String {
         return try {
             val timestamp = dataISO.toLongOrNull()

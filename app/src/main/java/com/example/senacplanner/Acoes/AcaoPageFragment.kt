@@ -25,12 +25,30 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/**
+ * Fragmento que exibe uma ação e suas atividades relacionadas,
+ * permitindo visualizar, editar e alterar o status das atividades.
+ *
+ * Exibe a lista de atividades, controla permissões de alteração
+ * do status baseado no tipo do usuário (Coordenador ou Apoio)
+ * e abre telas para edição das ações e atividades.
+ */
 class AcaoPageFragment : Fragment() {
     private var pilarNome: String? = null
     private var idUsuario: Int? = 0
     private var acaoId: Int = 0
 
     companion object {
+        /**
+         * Cria uma nova instância do fragmento configurada com os dados da ação,
+         * nome do pilar, ID do usuário e ID da ação.
+         *
+         * @param acao Objeto [AcaoComAtividades] contendo a ação e suas atividades.
+         * @param pilarNome Nome do pilar relacionado (pode ser nulo).
+         * @param idUsuario ID do usuário atual.
+         * @param acaoId ID da ação atual.
+         * @return Nova instância do [AcaoPageFragment].
+         */
         fun newInstance(acao: AcaoComAtividades, pilarNome: String?, idUsuario: Int, acaoId: Int): AcaoPageFragment {
             val fragment = AcaoPageFragment()
             val args = Bundle()
@@ -149,6 +167,11 @@ class AcaoPageFragment : Fragment() {
         return view
     }
 
+    /**
+     * Abre um diálogo para o usuário do tipo Apoio solicitar mudança de status da atividade.
+     *
+     * @param atividadeId ID da atividade que terá o pedido de alteração.
+     */
     @SuppressLint("SetTextI18n")
     private fun abrirDialogPedidoStatus(atividadeId: Int) {
         val db = DatabaseHelper(requireContext())
@@ -196,7 +219,12 @@ class AcaoPageFragment : Fragment() {
         dialog.show()
     }
 
-
+    /**
+     * Formata uma data ISO (timestamp ou yyyy-MM-dd) para o formato brasileiro dd/MM/yyyy.
+     *
+     * @param dataISO Data no formato ISO (timestamp em string ou yyyy-MM-dd).
+     * @return Data formatada para dd/MM/yyyy, ou string vazia se não for possível formatar.
+     */
     fun formatarDataParaBR(dataISO: String): String {
         return try {
             val timestamp = dataISO.toLongOrNull()

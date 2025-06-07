@@ -9,6 +9,12 @@ import android.widget.Toast
 import com.example.senacplanner.data.DatabaseHelper
 import com.example.senacplanner.R
 
+/**
+ * Activity responsável pela criação de uma nova ação vinculada a um pilar.
+ *
+ * Permite ao usuário inserir o nome e a descrição da ação e salvá-la no banco de dados.
+ * Também oferece opção para cancelar a operação.
+ */
 class CriarAcaoActivity : Activity() {
 
     private lateinit var editNome: EditText

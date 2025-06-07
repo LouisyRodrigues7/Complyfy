@@ -12,6 +12,12 @@ import com.example.senacplanner.adapter.TipoNotificacao
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * Activity responsável pela criação de uma nova atividade vinculada a uma ação.
+ *
+ * Permite ao usuário inserir nome, descrição, datas de início e conclusão, selecionar status e responsável,
+ * além de salvar a atividade no banco de dados. Também gerencia notificações para aprovação de atividades.
+ */
 class CriarAtividadeActivity : AppCompatActivity() {
 
     private lateinit var nomeEditText: EditText
@@ -143,6 +149,10 @@ class CriarAtividadeActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Exibe um DatePickerDialog para seleção de data.
+     * @param callback Função de callback que recebe a data selecionada no formato ISO (yyyy-MM-dd).
+     */
     private fun showDatePicker(callback: (String) -> Unit) {
         val c = Calendar.getInstance()
         DatePickerDialog(this, { _, year, month, day ->

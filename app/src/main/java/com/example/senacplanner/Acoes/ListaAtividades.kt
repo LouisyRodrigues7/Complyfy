@@ -21,6 +21,14 @@ import androidx.core.content.ContextCompat
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 
+/**
+
+Activity que exibe a lista de ações e suas respectivas atividades vinculadas a um pilar.
+
+Permite navegação entre ações usando ViewPager2, criação de novas ações e atividades,
+
+e acesso a funcionalidades auxiliares como gráficos, notificações e logout.
+ */
 class ListaAtividades : AppCompatActivity() {
 
     private lateinit var viewPager: ViewPager2
@@ -35,6 +43,13 @@ class ListaAtividades : AppCompatActivity() {
     private var usuarioTipo: String? = ""
     private var usuarioNome: String = ""
     private lateinit var fabAdicionar: FloatingActionButton
+
+    /**
+     * Atualiza a lista de ações e atividades exibidas no ViewPager.
+     * Se estiver em visualização geral, carrega todas as ações do pilar,
+     * caso contrário, carrega somente as ações vinculadas ao usuário.
+     * Após atualizar a lista, posiciona o ViewPager na última ação.
+     */
 
     private fun atualizarListaDeAcoes() {
         acoes = if (visualizacaoGeral) {
@@ -174,6 +189,10 @@ class ListaAtividades : AppCompatActivity() {
         carregarDados()
     }
 
+    /**
+     * Recebe o resultado de outras Activities (ex: criação de ação) e atualiza a lista
+     * para refletir novas ações criadas.
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
@@ -186,6 +205,11 @@ class ListaAtividades : AppCompatActivity() {
         carregarDados()
     }
 
+
+    /**
+     * Carrega as ações e atividades do banco conforme o modo de visualização atual.
+     * Atualiza o adapter do ViewPager e mantém a posição atual da página exibida.
+     */
     private fun carregarDados() {
         acoes = if (visualizacaoGeral) {
             databaseHelper.buscarAcoesEAtividadesPorPilar(pilarId)
