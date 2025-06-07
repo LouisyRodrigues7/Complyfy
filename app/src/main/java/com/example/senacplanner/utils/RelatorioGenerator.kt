@@ -18,7 +18,6 @@ import java.text.Normalizer
 
 class RelatorioGenerator {
 
-    // ✅ Função auxiliar para normalizar acentos e letras
     private fun normalizarStatus(status: String?): String {
         if (status.isNullOrBlank()) return ""
         return Normalizer.normalize(status, Normalizer.Form.NFD)
@@ -134,14 +133,21 @@ class RelatorioGenerator {
                 canvas.restore()
                 y += acaoLayout.height + 10f
 
-                // Cabeçalho da tabela
+                // Cabeçalho
                 cellPaint.color = Color.parseColor("#2874A6")
                 columnX.forEachIndexed { index, x ->
                     canvas.drawRect(x, y, x + columnWidths[index], y + rowHeightMin, cellPaint)
                     canvas.drawText(columnTitles[index], x + padding, y + 16f, tableHeaderPaint)
                 }
 
-                canvas.drawLine(40f, y, 555f, y, linePaint)
+                // Linhas verticais do cabeçalho
+                canvas.drawLine(40f, y, 40f, y + rowHeightMin, linePaint) // esquerda
+                for (i in columnX.indices) {
+                    val x = columnX[i] + columnWidths[i]
+                    canvas.drawLine(x, y, x, y + rowHeightMin, linePaint)
+                }
+                canvas.drawLine(40f, y + rowHeightMin, 555f, y + rowHeightMin, linePaint) // base
+
                 y += rowHeightMin + rowPadding
 
                 val statusContagem = mutableMapOf("finalizada" to 0, "em andamento" to 0, "em atraso" to 0)
@@ -203,8 +209,17 @@ class RelatorioGenerator {
                     paint.color = statusColor
                     canvas.drawText(atividade.status ?: "", columnX[4] + padding, y + 16f, paint)
 
+                    // Linhas verticais da linha
+                    canvas.drawLine(40f, y - rowPadding, 40f, y + cellHeight, linePaint) // esquerda
+                    for (i in columnX.indices) {
+                        val x = columnX[i] + columnWidths[i]
+                        canvas.drawLine(x, y - rowPadding, x, y + cellHeight, linePaint)
+                    }
+
+                    // Linha inferior
+                    canvas.drawLine(40f, y + cellHeight, 555f, y + cellHeight, linePaint)
+
                     y += cellHeight + rowPadding
-                    canvas.drawLine(40f, y, 555f, y, linePaint)
 
                     // Contabilização
                     statusContagem[statusNormalizado] = (statusContagem[statusNormalizado] ?: 0) + 1
