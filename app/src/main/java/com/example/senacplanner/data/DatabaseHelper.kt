@@ -330,19 +330,17 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         val lista = mutableListOf<AcaoComProgresso>()
 
         val query = """
-        SELECT a.nome,
-               COUNT(ata.id) AS total,
-               SUM(CASE WHEN ata.status = 'concluido' THEN 1 ELSE 0 END) AS concluidas,
-               SUM(CASE 
-                    WHEN ata.status != 'concluido' 
-                         AND date(ata.data_conclusao) < date('now') 
-                    THEN 1 ELSE 0 
-               END) AS atrasadas
-        FROM acao a
-        LEFT JOIN Atividade ata ON a.id = ata.acao_id
-        WHERE a.pilar_id = ?
-        GROUP BY a.nome
-    """.trimIndent()
+    SELECT a.nome,
+           COUNT(ata.id) AS total,
+           COALESCE(SUM(CASE WHEN LOWER(TRIM(ata.status)) = 'finalizada' THEN 1 ELSE 0 END), 0) AS concluidas,
+           COALESCE(SUM(CASE WHEN LOWER(TRIM(ata.status)) = 'em andamento' THEN 1 ELSE 0 END), 0) AS andamento,
+           COALESCE(SUM(CASE WHEN LOWER(TRIM(ata.status)) = 'em atraso' THEN 1 ELSE 0 END), 0) AS atrasadas
+    FROM acao a
+    LEFT JOIN Atividade ata ON a.id = ata.acao_id
+    WHERE a.pilar_id = ?
+    GROUP BY a.nome
+""".trimIndent()
+
 
         val cursor = db.rawQuery(query, arrayOf(pilarId.toString()))
 
@@ -351,16 +349,15 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
                 val nome = cursor.getString(0) ?: ""
                 val total = cursor.getInt(1)
                 val concluidas = cursor.getInt(2)
-                val atrasadas = cursor.getInt(3)
-
-                val andamento = (total - concluidas - atrasadas).coerceAtLeast(0)
+                val andamento = cursor.getInt(3)
+                val atrasadas = cursor.getInt(4)
 
                 val acao = AcaoComProgresso(
                     nome = nome,
                     total = total,
                     concluidas = concluidas,
-                    atrasadas = atrasadas,
-                    andamento = andamento
+                    andamento = andamento,
+                    atrasadas = atrasadas
                 )
 
                 lista.add(acao)
