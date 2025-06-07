@@ -14,6 +14,13 @@ import com.example.senacplanner.ui.LoginActivity
 import com.example.senacplanner.Acoes.ListaAtividades
 import com.example.senacplanner.R
 
+/**
+ * Fragmento que lista todos os pilares cadastrados no sistema,
+ * independentemente do usuário criador ou responsável.
+ *
+ * Esse fragmento é utilizado principalmente por usuários com
+ * perfil de visualização ampla (como gestores ou coordenadores).
+ */
 class TodosPilaresFragment : Fragment() {
 
     private lateinit var databaseHelper: DatabaseHelper
@@ -22,6 +29,11 @@ class TodosPilaresFragment : Fragment() {
     private var usuarioTipo: String = ""
     private var usuarioNome: String = ""
 
+    /**
+     * Infla a interface do fragmento e recupera os dados do usuário da intent da activity.
+     *
+     * Se o ID do usuário for inválido, redireciona para a tela de login.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -47,11 +59,20 @@ class TodosPilaresFragment : Fragment() {
         return view
     }
 
+    /**
+     * Atualiza a lista de pilares toda vez que o fragmento volta ao foco.
+     */
     override fun onResume() {
         super.onResume()
         carregarPilares()
     }
 
+    /**
+     * Busca todos os pilares do banco e exibe dinamicamente na interface.
+     *
+     * Cada item é clicável e direciona para a `ListaAtividades` do pilar correspondente.
+     * A flag `VISUALIZACAO_GERAL` indica que a navegação é feita a partir de uma visão ampla.
+     */
     private fun carregarPilares() {
         layout.removeAllViews()
         val pilares = databaseHelper.getAllPilares()
@@ -62,14 +83,15 @@ class TodosPilaresFragment : Fragment() {
             item.findViewById<TextView>(R.id.textoPilarGrande).text = pilar.nome
 
             item.setOnClickListener {
-                val intent = Intent(requireContext(), ListaAtividades::class.java)
-                intent.putExtra("PILAR_ID", pilar.id)
-                intent.putExtra("PILAR_NUMERO", pilar.numero)
-                intent.putExtra("PILAR_NOME", pilar.nome)
-                intent.putExtra("VISUALIZACAO_GERAL", true)
-                intent.putExtra("ID_USUARIO", idUsuario)
-                intent.putExtra("TIPO_USUARIO", usuarioTipo)
-                intent.putExtra("NOME_USUARIO", usuarioNome)
+                val intent = Intent(requireContext(), ListaAtividades::class.java).apply {
+                    putExtra("PILAR_ID", pilar.id)
+                    putExtra("PILAR_NUMERO", pilar.numero)
+                    putExtra("PILAR_NOME", pilar.nome)
+                    putExtra("VISUALIZACAO_GERAL", true)
+                    putExtra("ID_USUARIO", idUsuario)
+                    putExtra("TIPO_USUARIO", usuarioTipo)
+                    putExtra("NOME_USUARIO", usuarioNome)
+                }
                 startActivity(intent)
             }
 
@@ -77,4 +99,3 @@ class TodosPilaresFragment : Fragment() {
         }
     }
 }
-

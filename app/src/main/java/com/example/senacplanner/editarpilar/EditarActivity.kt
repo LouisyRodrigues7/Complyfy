@@ -4,22 +4,20 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Spinner
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.senacplanner.Acoes.Type.PilarType
 import com.example.senacplanner.data.DatabaseHelper
 import com.example.senacplanner.R
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
+/**
+ * Activity responsável por editar e excluir pilares existentes.
+ * Permite alterar nome e datas, além de deletar registros.
+ */
 class EditarActivity : AppCompatActivity() {
+
     private lateinit var databaseHelper: DatabaseHelper
     private lateinit var pilares: List<PilarType>
     private val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -28,6 +26,7 @@ class EditarActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.editar_pilar)
+
         databaseHelper = DatabaseHelper(this)
         carregarPilaresNoSpinner()
 
@@ -38,13 +37,14 @@ class EditarActivity : AppCompatActivity() {
         val tvDataInicio = findViewById<EditText>(R.id.tvDataInicio)
         val tvDataConclusao = findViewById<EditText>(R.id.tvDataConclusao)
 
+        // Abre seletor de data para os campos de data
         showDatePicker(tvDataInicio)
         showDatePicker(tvDataConclusao)
 
         btnSalvar.setOnClickListener {
             val nomeEditado = findViewById<EditText>(R.id.etNomePilar).text.toString()
-            val dataInicio = findViewById<EditText>(R.id.tvDataInicio).text.toString()
-            val dataConclusao = findViewById<EditText>(R.id.tvDataConclusao).text.toString()
+            val dataInicio = tvDataInicio.text.toString()
+            val dataConclusao = tvDataConclusao.text.toString()
 
             val dataInicioBanco = converterParaFormatoBanco(dataInicio)
             val dataConclusaoBanco = converterParaFormatoBanco(dataConclusao)
@@ -66,6 +66,9 @@ class EditarActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Exibe um diálogo de confirmação para exclusão do pilar.
+     */
     private fun mostrarDialogoConfirmacao() {
         val dialogView = layoutInflater.inflate(R.layout.confirmar_excluir_pilar, null)
         val dialog = android.app.AlertDialog.Builder(this)
@@ -98,8 +101,13 @@ class EditarActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    /**
+     * Carrega os pilares existentes no banco e popula o spinner.
+     * Também preenche os dados de cada pilar ao selecionar.
+     */
     private fun carregarPilaresNoSpinner() {
         pilares = databaseHelper.getAllPilares()
+
         val adapter = ArrayAdapter(
             this,
             R.layout.spinner_item_branco,
@@ -120,6 +128,9 @@ class EditarActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Preenche os campos de nome e datas com os dados do pilar selecionado.
+     */
     private fun preencherDadosDoPilar(pilar: PilarType) {
         val dados = databaseHelper.getDatasPilarById(pilar.id)
         dados?.let { (nome, dataInicio, dataConclusao) ->
@@ -129,9 +140,11 @@ class EditarActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Associa um DatePickerDialog ao campo de data fornecido.
+     */
     private fun showDatePicker(editText: EditText) {
         val calendar = Calendar.getInstance()
-
         val datePicker = DatePickerDialog(
             this,
             { _, year, month, dayOfMonth ->
@@ -144,16 +157,13 @@ class EditarActivity : AppCompatActivity() {
             calendar.get(Calendar.DAY_OF_MONTH)
         )
 
-        editText.setOnClickListener {
-            datePicker.show()
-        }
-
-        editText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) datePicker.show()
-        }
+        editText.setOnClickListener { datePicker.show() }
+        editText.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) datePicker.show() }
     }
 
-    // Correção aqui: trata timestamp e datas ISO
+    /**
+     * Converte uma data no formato do banco ("yyyy-MM-dd") para o formato brasileiro ("dd/MM/yyyy").
+     */
     fun formatarDataParaBR(dataISO: String): String {
         return try {
             val timestamp = dataISO.toLongOrNull()
@@ -170,6 +180,9 @@ class EditarActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Converte uma data no formato BR ("dd/MM/yyyy") para o formato SQL ("yyyy-MM-dd").
+     */
     fun converterParaFormatoBanco(dataBR: String): String {
         return try {
             val formatoBR = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())

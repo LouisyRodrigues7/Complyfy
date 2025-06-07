@@ -16,8 +16,18 @@ import android.net.Uri
 import android.os.Environment
 import java.text.Normalizer
 
+/**
+ * Responsável por gerar relatórios em PDF contendo dados de pilares, ações e atividades.
+ *
+ * Essa classe utiliza a API `PdfDocument` do Android para desenhar manualmente o conteúdo em páginas.
+ * O relatório é salvo na pasta `Downloads`, compatível com versões abaixo e acima do Android Q (API 29).
+ */
 class RelatorioGenerator {
 
+    /**
+     * Normaliza o texto de status (remove acentos e formata).
+     * Usado para padronizar cores e comparações sem erros causados por acentuação.
+     */
     private fun normalizarStatus(status: String?): String {
         if (status.isNullOrBlank()) return ""
         return Normalizer.normalize(status, Normalizer.Form.NFD)
@@ -26,6 +36,14 @@ class RelatorioGenerator {
             .trim()
     }
 
+    /**
+     * Gera o arquivo PDF com os dados fornecidos de pilares, ações e atividades.
+     *
+     * @param context Contexto Android para salvar e acessar arquivos
+     * @param pilares Lista de pilares com suas ações e atividades
+     * @param nomeArquivo Nome do arquivo PDF (sem extensão)
+     * @param onPdfGenerated Callback com a URI do arquivo gerado (ou null em caso de erro)
+     */
     fun gerarRelatorioPDF(
         context: Context,
         pilares: List<PdfPilar>,
@@ -33,6 +51,8 @@ class RelatorioGenerator {
         onPdfGenerated: ((Uri?) -> Unit)? = null
     ) {
         val pdfDocument = PdfDocument()
+
+        // Inicializa Paints para título, textos, células e linhas
         val paint = Paint()
         val titlePaint = Paint()
         val subtitlePaint = Paint()
@@ -41,29 +61,39 @@ class RelatorioGenerator {
         val cellPaint = Paint()
 
         var pageNumber = 1
-        var y = 100f
+        var y = 100f // coordenada vertical inicial
 
+        // Cria a primeira página
         val pageInfo = PdfDocument.PageInfo.Builder(595, 842, pageNumber).create()
         var page = pdfDocument.startPage(pageInfo)
         var canvas = page.canvas
 
-        titlePaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-        titlePaint.textSize = 22f
-        titlePaint.color = Color.parseColor("#1B2631")
+        // Estilos
+        titlePaint.apply {
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            textSize = 22f
+            color = Color.parseColor("#1B2631")
+        }
 
-        subtitlePaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-        subtitlePaint.textSize = 14f
-        subtitlePaint.color = Color.parseColor("#2874A6")
+        subtitlePaint.apply {
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            textSize = 14f
+            color = Color.parseColor("#2874A6")
+        }
 
-        paint.textSize = 12f
-        paint.color = Color.parseColor("#212F3C")
+        paint.apply {
+            textSize = 12f
+            color = Color.parseColor("#212F3C")
+        }
 
         linePaint.color = Color.parseColor("#AED6F1")
         linePaint.strokeWidth = 2f
 
-        tableHeaderPaint.textSize = 12f
-        tableHeaderPaint.color = Color.WHITE
-        tableHeaderPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+        tableHeaderPaint.apply {
+            textSize = 12f
+            color = Color.WHITE
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+        }
 
         cellPaint.style = Paint.Style.FILL
 
@@ -71,16 +101,18 @@ class RelatorioGenerator {
         val padding = 8f
         val rowPadding = 10f
 
+        // Cabeçalhos das colunas
         val columnTitles = listOf("Atividade", "Responsável", "Início", "Conclusão", "Status")
         val columnWidths = listOf(150f, 110f, 70f, 80f, 100f)
         val columnX = mutableListOf<Float>()
-
         var startX = 40f
+
         columnWidths.forEach {
             columnX.add(startX)
             startX += it
         }
 
+        // Título principal
         val title = "Relatório de Compliance"
         val titleWidth = titlePaint.measureText(title)
         canvas.drawText(title, (pageInfo.pageWidth - titleWidth) / 2, y, titlePaint)
@@ -90,14 +122,15 @@ class RelatorioGenerator {
 
         pilares.forEach { pilar ->
             if (y > 700f) {
+                // Quando o conteúdo passa do limite da página, cria nova página
                 pdfDocument.finishPage(page)
                 pageNumber++
-                val newPageInfo = PdfDocument.PageInfo.Builder(595, 842, pageNumber).create()
-                page = pdfDocument.startPage(newPageInfo)
+                page = pdfDocument.startPage(PdfDocument.PageInfo.Builder(595, 842, pageNumber).create())
                 canvas = page.canvas
                 y = 60f
             }
 
+            // Exibe dados do pilar
             canvas.drawText("Pilar: ${pilar.nome} (Nº ${pilar.numero})", 20f, y, subtitlePaint)
             y += 25f
             canvas.drawText("Período: ${pilar.dataInicio} até ${pilar.dataConclusao ?: "-"}", 25f, y, paint)
@@ -109,17 +142,20 @@ class RelatorioGenerator {
             var concluidas = 0
 
             pilar.acoes.forEach { acao ->
+
+                // Verifica se precisa de nova página
                 if (y > 700f) {
                     pdfDocument.finishPage(page)
                     pageNumber++
-                    val newPageInfo = PdfDocument.PageInfo.Builder(595, 842, pageNumber).create()
-                    page = pdfDocument.startPage(newPageInfo)
+                    page = pdfDocument.startPage(PdfDocument.PageInfo.Builder(595, 842, pageNumber).create())
                     canvas = page.canvas
                     y = 60f
                 }
 
-                val boldPaint = TextPaint(textPaint)
-                boldPaint.typeface = Typeface.DEFAULT_BOLD
+                // Título da ação
+                val boldPaint = TextPaint(textPaint).apply {
+                    typeface = Typeface.DEFAULT_BOLD
+                }
 
                 val acaoLayout = StaticLayout.Builder.obtain("→ Ação: ${acao.nome}", 0, acao.nome.length + 8, boldPaint, 515)
                     .setAlignment(Layout.Alignment.ALIGN_NORMAL)
@@ -133,21 +169,12 @@ class RelatorioGenerator {
                 canvas.restore()
                 y += acaoLayout.height + 10f
 
-                // Cabeçalho
+                // Cabeçalho da tabela de atividades
                 cellPaint.color = Color.parseColor("#2874A6")
                 columnX.forEachIndexed { index, x ->
                     canvas.drawRect(x, y, x + columnWidths[index], y + rowHeightMin, cellPaint)
                     canvas.drawText(columnTitles[index], x + padding, y + 16f, tableHeaderPaint)
                 }
-
-                // Linhas verticais do cabeçalho
-                canvas.drawLine(40f, y, 40f, y + rowHeightMin, linePaint) // esquerda
-                for (i in columnX.indices) {
-                    val x = columnX[i] + columnWidths[i]
-                    canvas.drawLine(x, y, x, y + rowHeightMin, linePaint)
-                }
-                canvas.drawLine(40f, y + rowHeightMin, 555f, y + rowHeightMin, linePaint) // base
-
                 y += rowHeightMin + rowPadding
 
                 val statusContagem = mutableMapOf("finalizada" to 0, "em andamento" to 0, "em atraso" to 0)
@@ -156,37 +183,20 @@ class RelatorioGenerator {
                     if (y > 780f) {
                         pdfDocument.finishPage(page)
                         pageNumber++
-                        val newPageInfo = PdfDocument.PageInfo.Builder(595, 842, pageNumber).create()
-                        page = pdfDocument.startPage(newPageInfo)
+                        page = pdfDocument.startPage(PdfDocument.PageInfo.Builder(595, 842, pageNumber).create())
                         canvas = page.canvas
                         y = 60f
                     }
 
-                    val statusNormalizado = normalizarStatus(atividade.status)
-                    val statusColor = when (statusNormalizado) {
-                        "finalizada" -> Color.parseColor("#229954")
-                        "em andamento" -> Color.parseColor("#D68910")
-                        "em atraso" -> Color.parseColor("#C0392B")
-                        else -> Color.parseColor("#212F3C")
-                    }
-
-                    val atividadeLayout = StaticLayout.Builder.obtain(
-                        atividade.nome ?: "",
-                        0,
-                        atividade.nome.length,
-                        textPaint,
-                        columnWidths[0].toInt()
-                    ).setAlignment(Layout.Alignment.ALIGN_NORMAL)
+                    // Layouts de célula com texto quebrado automaticamente
+                    val atividadeLayout = StaticLayout.Builder.obtain(atividade.nome ?: "", 0, atividade.nome.length, textPaint, columnWidths[0].toInt())
+                        .setAlignment(Layout.Alignment.ALIGN_NORMAL)
                         .setIncludePad(false)
                         .build()
 
-                    val responsavelLayout = StaticLayout.Builder.obtain(
-                        atividade.responsavel?.nome ?: "Não definido",
-                        0,
-                        (atividade.responsavel?.nome ?: "Não definido").length,
-                        textPaint,
-                        columnWidths[1].toInt()
-                    ).setAlignment(Layout.Alignment.ALIGN_NORMAL)
+                    val responsavelNome = atividade.responsavel?.nome ?: "Não definido"
+                    val responsavelLayout = StaticLayout.Builder.obtain(responsavelNome, 0, responsavelNome.length, textPaint, columnWidths[1].toInt())
+                        .setAlignment(Layout.Alignment.ALIGN_NORMAL)
                         .setIncludePad(false)
                         .build()
 
@@ -202,58 +212,49 @@ class RelatorioGenerator {
                     responsavelLayout.draw(canvas)
                     canvas.restore()
 
+                    // Preenche campos simples
                     paint.color = Color.parseColor("#212F3C")
                     canvas.drawText(atividade.dataInicio ?: "-", columnX[2] + padding, y + 16f, paint)
                     canvas.drawText(atividade.dataConclusao ?: "-", columnX[3] + padding, y + 16f, paint)
 
-                    paint.color = statusColor
-                    canvas.drawText(atividade.status ?: "", columnX[4] + padding, y + 16f, paint)
-
-                    // Linhas verticais da linha
-                    canvas.drawLine(40f, y - rowPadding, 40f, y + cellHeight, linePaint) // esquerda
-                    for (i in columnX.indices) {
-                        val x = columnX[i] + columnWidths[i]
-                        canvas.drawLine(x, y - rowPadding, x, y + cellHeight, linePaint)
+                    // Status com cor personalizada
+                    val status = normalizarStatus(atividade.status)
+                    val cor = when (status) {
+                        "finalizada" -> "#229954"
+                        "em andamento" -> "#D68910"
+                        "em atraso" -> "#C0392B"
+                        else -> "#212F3C"
                     }
-
-                    // Linha inferior
-                    canvas.drawLine(40f, y + cellHeight, 555f, y + cellHeight, linePaint)
+                    paint.color = Color.parseColor(cor)
+                    canvas.drawText(atividade.status ?: "", columnX[4] + padding, y + 16f, paint)
 
                     y += cellHeight + rowPadding
 
-                    // Contabilização
-                    statusContagem[statusNormalizado] = (statusContagem[statusNormalizado] ?: 0) + 1
+                    // Contagem para resumo
+                    statusContagem[status] = (statusContagem[status] ?: 0) + 1
                     totalAtividades++
-                    if (statusNormalizado == "finalizada") concluidas++
+                    if (status == "finalizada") concluidas++
                 }
 
                 y += 10f
                 paint.color = Color.parseColor("#2874A6")
-                canvas.drawText(
-                    "Resumo: ${statusContagem["finalizada"]} finalizadas, " +
-                            "${statusContagem["em andamento"]} em andamento, " +
-                            "${statusContagem["em atraso"]} em atraso",
-                    40f, y, paint
-                )
+                canvas.drawText("Resumo: ${statusContagem["finalizada"]} finalizadas, ${statusContagem["em andamento"]} em andamento, ${statusContagem["em atraso"]} em atraso", 40f, y, paint)
                 y += 30f
-                canvas.drawLine(50f, y, 545f, y, linePaint)
-                y += 35f
             }
 
             val percentual = if (totalAtividades > 0) (concluidas * 100) / totalAtividades else 0
             titlePaint.textSize = 14f
             titlePaint.color = Color.parseColor("#196F3D")
             canvas.drawText("Percentual concluído do Pilar: $percentual%", 40f, y, titlePaint)
-            y += 35f
-            canvas.drawLine(20f, y, 575f, y, linePaint)
             y += 50f
         }
 
         pdfDocument.finishPage(page)
 
+        // 📁 Salvar PDF conforme versão do Android
         var finalUri: Uri? = null
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // Android 10+ usa MediaStore para salvar
             val resolver = context.contentResolver
             val contentValues = ContentValues().apply {
                 put(MediaStore.Downloads.DISPLAY_NAME, "$nomeArquivo.pdf")
@@ -271,15 +272,12 @@ class RelatorioGenerator {
                 contentValues.clear()
                 contentValues.put(MediaStore.Downloads.IS_PENDING, 0)
                 resolver.update(uri, contentValues, null, null)
-
                 finalUri = uri
                 Toast.makeText(context, "PDF salvo na pasta Downloads", Toast.LENGTH_LONG).show()
             }
         } else {
-            val file = File(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                "$nomeArquivo.pdf"
-            )
+            // Android 9 ou inferior: salva diretamente
+            val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "$nomeArquivo.pdf")
             pdfDocument.writeTo(FileOutputStream(file))
             finalUri = Uri.fromFile(file)
             Toast.makeText(context, "PDF salvo em: ${file.absolutePath}", Toast.LENGTH_LONG).show()

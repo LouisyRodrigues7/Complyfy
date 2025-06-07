@@ -12,14 +12,26 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.senacplanner.data.DatabaseHelper
 import com.example.senacplanner.R
 
+/**
+ * Tela de login do sistema.
+ * Permite o acesso por tipo de usuário (Coordenador, Apoio ou Gestor),
+ * validando o login com base no e-mail e tipo no banco de dados.
+ */
 class LoginActivity : AppCompatActivity() {
+
+
     private lateinit var databaseHelper: DatabaseHelper
 
+    /**
+     * Inicializa a tela de login, configurando o spinner de tipos de usuário
+     * e o botão para tentar autenticação.
+     */
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        // Aplica padding para evitar sobreposição com barras do sistema (status/nav bar)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -30,6 +42,7 @@ class LoginActivity : AppCompatActivity() {
         val editTextLogin = findViewById<EditText>(R.id.editText_login)
         val botaoEntrar = findViewById<Button>(R.id.button_entrar)
 
+        // Lista fixa com os tipos de usuário disponíveis no sistema
         val opcoes = listOf("Coordenador", "Apoio", "Gestor")
         val adapter = ArrayAdapter(this, R.layout.spinner_item, opcoes)
         adapter.setDropDownViewResource(R.layout.spinner_item)
@@ -37,8 +50,9 @@ class LoginActivity : AppCompatActivity() {
 
         databaseHelper = DatabaseHelper(this)
 
+
         botaoEntrar.setOnClickListener {
-            val tipoSelecionado = spinner.selectedItem.toString();
+            val tipoSelecionado = spinner.selectedItem.toString()
             val login = editTextLogin.text.toString().trim()
 
             if (login.isEmpty()) {
@@ -46,7 +60,7 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 val db = databaseHelper.readableDatabase
 
-                // Alteração: Remover a senha da consulta
+                // Consulta sem senha: valida apenas por e-mail e tipo
                 val cursor: Cursor = db.rawQuery(
                     "SELECT * FROM Usuario WHERE email = ? AND tipo = ?",
                     arrayOf(login, tipoSelecionado)
@@ -57,6 +71,8 @@ class LoginActivity : AppCompatActivity() {
                 if (cursor.moveToFirst()) {
                     val nomeUsuario = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
                     val idUsuario = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+
+                    // Redireciona conforme o tipo de usuário
                     when (tipoSelecionado) {
                         "Coordenador", "Apoio" -> {
                             val intent = Intent(this, CoordenadorActivity::class.java).apply {
@@ -67,7 +83,6 @@ class LoginActivity : AppCompatActivity() {
                             startActivity(intent)
                             finish()
                         }
-
                         "Gestor" -> {
                             val intent = Intent(this, GestorActivity::class.java).apply {
                                 putExtra("NOME_USUARIO", nomeUsuario)
@@ -93,4 +108,3 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 }
-

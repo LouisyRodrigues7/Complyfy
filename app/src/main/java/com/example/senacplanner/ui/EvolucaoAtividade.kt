@@ -221,7 +221,7 @@ class EvolucaoAtividade : AppCompatActivity() {
         }
     }
 
-    // ⚠️ Já documentado em outras telas, sem repetição
+
     private fun realizarLogout() {
         val intent = Intent(this, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
