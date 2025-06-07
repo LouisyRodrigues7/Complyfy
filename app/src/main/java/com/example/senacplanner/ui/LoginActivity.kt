@@ -50,10 +50,7 @@ class LoginActivity : AppCompatActivity() {
 
         databaseHelper = DatabaseHelper(this)
 
-        /**
-         * Evento de clique no botão "Entrar".
-         * Verifica se o login existe no banco de dados e redireciona para a tela correta.
-         */
+
         botaoEntrar.setOnClickListener {
             val tipoSelecionado = spinner.selectedItem.toString()
             val login = editTextLogin.text.toString().trim()

@@ -99,9 +99,7 @@ class PilarAcaoActivity : AppCompatActivity() {
             )
         }
 
-        /**
-         * Abre a tela de evolução do pilar com base na seleção do spinner.
-         */
+
         btnBuscar.setOnClickListener {
             val posicaoSelecionada = spinnerPilar.selectedItemPosition
 

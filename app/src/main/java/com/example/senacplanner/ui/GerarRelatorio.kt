@@ -141,10 +141,7 @@ class GerarRelatorio : AppCompatActivity() {
             NavigationUtils.irParaTelaHome(this, tipoUsuario, idUsuario, nomeUsuario)
         }
 
-        /**
-         * Listener do botão de confirmação. Gera o relatório em PDF
-         * com base nos filtros selecionados e atualiza o histórico.
-         */
+
         btnConfirmar.setOnClickListener {
             val posPilar = spinnerPilar.selectedItemPosition
             val posPeriodo = spinnerPeriodo.selectedItemPosition
