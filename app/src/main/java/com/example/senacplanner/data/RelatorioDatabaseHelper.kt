@@ -11,6 +11,7 @@ import com.example.senacplanner.model.RelatorioPilar
 import com.example.senacplanner.model.RelatorioPeriodo
 import java.io.File
 import java.io.FileOutputStream
+import java.text.Normalizer
 
 // Classe que ajuda a acessar e consultar o banco de dados pré-carregado para geração de relatórios
 class RelatorioDatabaseHelper(private val context: Context) :
@@ -153,6 +154,14 @@ class RelatorioDatabaseHelper(private val context: Context) :
         }
         cursor.close()
         return acoes
+    }
+
+    fun normalizarStatus(status: String?): String {
+        if (status.isNullOrBlank()) return ""
+        return java.text.Normalizer.normalize(status, java.text.Normalizer.Form.NFD)
+            .replace("[\\p{InCombiningDiacriticalMarks}]".toRegex(), "")
+            .lowercase()
+            .trim()
     }
 
     // Busca todas as atividades de uma ação dentro do período definido (ex: últimos 3 meses)

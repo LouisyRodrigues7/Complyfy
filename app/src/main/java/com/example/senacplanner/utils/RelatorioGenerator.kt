@@ -14,8 +14,18 @@ import java.io.File
 import java.io.FileOutputStream
 import android.net.Uri
 import android.os.Environment
+import java.text.Normalizer
 
 class RelatorioGenerator {
+
+    // ✅ Função auxiliar para normalizar acentos e letras
+    private fun normalizarStatus(status: String?): String {
+        if (status.isNullOrBlank()) return ""
+        return Normalizer.normalize(status, Normalizer.Form.NFD)
+            .replace("[\\p{InCombiningDiacriticalMarks}]".toRegex(), "")
+            .lowercase()
+            .trim()
+    }
 
     fun gerarRelatorioPDF(
         context: Context,
@@ -134,7 +144,7 @@ class RelatorioGenerator {
                 canvas.drawLine(40f, y, 555f, y, linePaint)
                 y += rowHeightMin + rowPadding
 
-                val statusContagem = mutableMapOf("Concluída" to 0, "Em andamento" to 0, "Atrasada" to 0)
+                val statusContagem = mutableMapOf("finalizada" to 0, "em andamento" to 0, "em atraso" to 0)
 
                 acao.atividades.forEach { atividade ->
                     if (y > 780f) {
@@ -146,10 +156,11 @@ class RelatorioGenerator {
                         y = 60f
                     }
 
-                    val statusColor = when (atividade.status) {
-                        "Concluída" -> Color.parseColor("#229954")
-                        "Em andamento" -> Color.parseColor("#D68910")
-                        "Atrasada" -> Color.parseColor("#C0392B")
+                    val statusNormalizado = normalizarStatus(atividade.status)
+                    val statusColor = when (statusNormalizado) {
+                        "finalizada" -> Color.parseColor("#229954")
+                        "em andamento" -> Color.parseColor("#D68910")
+                        "em atraso" -> Color.parseColor("#C0392B")
                         else -> Color.parseColor("#212F3C")
                     }
 
@@ -195,17 +206,18 @@ class RelatorioGenerator {
                     y += cellHeight + rowPadding
                     canvas.drawLine(40f, y, 555f, y, linePaint)
 
-                    statusContagem[atividade.status] = (statusContagem[atividade.status] ?: 0) + 1
+                    // Contabilização
+                    statusContagem[statusNormalizado] = (statusContagem[statusNormalizado] ?: 0) + 1
                     totalAtividades++
-                    if (atividade.status == "Concluída") concluidas++
+                    if (statusNormalizado == "finalizada") concluidas++
                 }
 
                 y += 10f
                 paint.color = Color.parseColor("#2874A6")
                 canvas.drawText(
-                    "Resumo: ${statusContagem["Concluída"]} concluídas, " +
-                            "${statusContagem["Em andamento"]} em andamento, " +
-                            "${statusContagem["Atrasada"]} atrasadas",
+                    "Resumo: ${statusContagem["finalizada"]} finalizadas, " +
+                            "${statusContagem["em andamento"]} em andamento, " +
+                            "${statusContagem["em atraso"]} em atraso",
                     40f, y, paint
                 )
                 y += 30f
