@@ -40,122 +40,142 @@
         android:padding="8dp"
         android:textColor="#FFFFFF"/>
 
-    <!-- Conteúdo principal -->
-    <LinearLayout
+    <!-- Conteúdo com Scroll -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"
         android:padding="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/bg_box_azul"
-            android:padding="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:layout_marginHorizontal="8dp"
-            android:elevation="4dp"
-            android:clipToPadding="false">
+            android:orientation="vertical">
 
-            <!-- Spinner Pilar -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Selecionar Pilar"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#FFFFFF"
-                android:layout_marginTop="8dp" />
-
-            <Spinner
-                android:id="@+id/spinnerPilar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:drawable/btn_dropdown"
-                android:popupBackground="#FFFFFF"/>
-
-            <!-- Spinner Período -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Selecionar Período"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#FFFFFF"
-                android:layout_marginTop="16dp" />
-
-            <Spinner
-                android:id="@+id/spinnerPeriodo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:drawable/btn_dropdown"
-                android:popupBackground="#FFFFFF"/>
-
-            <!-- Botão Confirmar -->
-            <Button
-                android:id="@+id/btnConfirmar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Confirmar"
-                android:layout_marginTop="16dp"
-                android:backgroundTint="#27AE60"
-                android:textColor="#FFFFFF"/>
-        </LinearLayout>
-
-        <!-- Botões PDF -->
-        <LinearLayout
-            android:id="@+id/layoutBotoesPDF"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/bg_box_azul"
-            android:padding="16dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginHorizontal="8dp"
-            android:elevation="4dp"
-            android:clipToPadding="false"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Ações com o relatório"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#FFFFFF"
-                android:layout_marginBottom="8dp" />
-
+            <!-- Seção de seleção -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_horizontal">
+                android:orientation="vertical"
+                android:background="@drawable/bg_box_azul"
+                android:padding="16dp"
+                android:layout_marginBottom="16dp"
+                android:elevation="4dp"
+                android:clipToPadding="false">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Selecionar Pilar"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginTop="8dp" />
+
+                <Spinner
+                    android:id="@+id/spinnerPilar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:drawable/btn_dropdown"
+                    android:popupBackground="#FFFFFF"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Selecionar Período"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginTop="16dp" />
+
+                <Spinner
+                    android:id="@+id/spinnerPeriodo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:drawable/btn_dropdown"
+                    android:popupBackground="#FFFFFF"/>
 
                 <Button
-                    android:id="@+id/btnAbrirPDF"
-                    android:layout_width="0dp"
+                    android:id="@+id/btnConfirmar"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Abrir PDF"
-                    android:layout_marginEnd="8dp"
-                    android:backgroundTint="#3498DB"
-                    android:textColor="#FFFFFF"/>
-
-                <Button
-                    android:id="@+id/btnCompartilharPDF"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Compartilhar"
+                    android:text="Confirmar"
+                    android:layout_marginTop="16dp"
                     android:backgroundTint="#27AE60"
                     android:textColor="#FFFFFF"/>
             </LinearLayout>
-        </LinearLayout>
 
-    </LinearLayout>
+            <!-- Botões de Ação PDF + Recentes -->
+            <LinearLayout
+                android:id="@+id/layoutBotoesPDF"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_box_azul"
+                android:padding="16dp"
+                android:layout_marginBottom="16dp"
+                android:elevation="4dp"
+                android:clipToPadding="false"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ações com o relatório"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginBottom="8dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal">
+
+                    <Button
+                        android:id="@+id/btnAbrirPDF"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Abrir PDF"
+                        android:layout_marginEnd="8dp"
+                        android:backgroundTint="#3498DB"
+                        android:textColor="#FFFFFF"/>
+
+                    <Button
+                        android:id="@+id/btnCompartilharPDF"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Compartilhar"
+                        android:backgroundTint="#27AE60"
+                        android:textColor="#FFFFFF"/>
+                </LinearLayout>
+
+                <!-- Histórico Recentes dentro da mesma box -->
+                <TextView
+                    android:id="@+id/textRecentes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Recentes"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+id/listaRecentes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_marginTop="4dp"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
     <!-- Rodapé -->
     <LinearLayout

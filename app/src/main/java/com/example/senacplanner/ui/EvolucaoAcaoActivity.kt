@@ -9,18 +9,39 @@ import com.example.senacplanner.data.DatabaseHelper
 import com.example.senacplanner.NotificacoesActivity
 import com.example.senacplanner.R
 
+/**
+ * Tela de exibição da evolução de uma ação específica, mostrando
+ * a barra de progresso e lista de atividades vinculadas.
+ */
 class EvolucaoAcaoActivity : AppCompatActivity() {
 
+    /** Exibe o nome da ação */
     private lateinit var tvNomeAcao: TextView
+
+    /** Barra de progresso baseada nas atividades finalizadas */
     private lateinit var progressBarAcao: ProgressBar
+
+    /** Exibe o percentual de progresso da ação */
     private lateinit var tvPorcentagemAcao: TextView
+
+    /** Container que lista visualmente todas as atividades da ação */
     private lateinit var containerAtividades: LinearLayout
+
+
     private lateinit var dbHelper: DatabaseHelper
 
+    /** Tipo de usuário logado */
     private var tipoUsuario: String? = null
+
+    /** Nome do usuário logado */
     private var nomeUsuario: String? = null
+
+    /** ID do usuário logado */
     private var idUsuario: Int = -1
 
+    /**
+     * Inicializa a tela e carrega os dados da ação recebida via intent.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_evolucao_acao)
@@ -108,6 +129,10 @@ class EvolucaoAcaoActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Busca os dados da ação (nome, progresso, atividades) e popula a tela.
+     * @param acaoId ID da ação cujos dados serão exibidos
+     */
     private fun carregarDetalhesAcao(acaoId: Int) {
         val nomeAcao = dbHelper.getNomeAcaoById(acaoId)
         tvNomeAcao.text = nomeAcao

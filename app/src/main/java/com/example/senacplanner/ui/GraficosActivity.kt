@@ -9,16 +9,23 @@ import android.widget.Toast
 import com.example.senacplanner.NotificacoesActivity
 import com.example.senacplanner.R
 
+/**
+ * Tela que apresenta opções de navegação para gráficos de progresso,
+ * como atividades e pilares. Também permite acesso a notificações e logout.
+ */
 class GraficosActivity : AppCompatActivity() {
+
 
     private var tipoUsuario: String? = null
     private var nomeUsuario: String? = null
     private var idUsuario: Int = -1
 
+    /**
+     * Inicializa a interface com os cards de gráficos e botões de navegação.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_graficos)
-
 
         nomeUsuario = intent.getStringExtra("NOME_USUARIO")
         tipoUsuario = intent.getStringExtra("TIPO_USUARIO")
@@ -27,18 +34,23 @@ class GraficosActivity : AppCompatActivity() {
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
+        // Atualiza o título da toolbar com saudação
         if (!nomeUsuario.isNullOrEmpty()) {
             supportActionBar?.title = "Olá, $nomeUsuario"
         } else {
             supportActionBar?.title = "Olá, usuário"
         }
 
+        /**
+         * Abre o gráfico de progresso por atividades.
+         */
         val cardProgressoAtividades = findViewById<CardView>(R.id.cardProgressoAtividades)
         cardProgressoAtividades.setOnClickListener {
             val intent = Intent(this, EvolucaoAtividade::class.java)
             startActivity(intent)
         }
 
+        // Botões padrão já documentados em outros arquivos
         val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
         btnGraficos.setOnClickListener {
             if (tipoUsuario != null && nomeUsuario != null && idUsuario != -1) {
@@ -82,11 +94,10 @@ class GraficosActivity : AppCompatActivity() {
             )
         }
 
-
-        // Referência ao CardView
+        /**
+         * Abre o gráfico de progresso por pilares.
+         */
         val cardProgressoPilares = findViewById<CardView>(R.id.cardProgressoPilares)
-
-        // Clique para abrir a nova Activity
         cardProgressoPilares.setOnClickListener {
             val intent = Intent(this, ProgressoPilaresActivity::class.java).apply {
                 putExtra("TIPO_USUARIO", tipoUsuario)

@@ -24,22 +24,52 @@ import com.example.senacplanner.NotificacoesActivity
 import com.example.senacplanner.R
 import android.widget.ScrollView
 
-
+/**
+ * Tela de gráficos que exibe visualizações do progresso dos pilares ou das ações,
+ * dependendo se foi informado um ID de pilar via intent.
+ */
 class DashboardGraficoActivity : AppCompatActivity() {
 
+    /** Gráfico de pizza que mostra progresso geral de todos os pilares */
     private lateinit var pieChart: PieChart
+
+    /** Gráfico de barras que mostra status das ações de um pilar específico */
     private lateinit var barChart: BarChart
+
+    /** Instância de acesso ao banco de dados local */
     private lateinit var db: DatabaseHelper
+
+    /** Container que exibe a legenda explicativa do gráfico de barras */
     private lateinit var legendaContainer: LinearLayout
+
+    /** Scroll da legenda do gráfico de barras */
     private lateinit var legendaScroll: ScrollView
+
+    /** Layout que contém barra de progresso total dos pilares */
     private lateinit var progressoContainer: LinearLayout
+
+    /** Componente visual da barra de progresso total */
     private lateinit var progressBarTotal: ProgressBar
+
+    /** Texto que mostra o percentual e contagem total de progresso */
     private lateinit var tvProgressoTotal: TextView
+
+    /** ID do pilar selecionado (ou -1 para exibir todos os pilares) */
     private var pilarId: Int = -1
+
+    /** Tipo do usuário logado */
     private var tipoUsuario: String? = null
+
+    /** Nome do usuário logado */
     private var nomeUsuario: String? = null
+
+    /** ID do usuário logado */
     private var idUsuario: Int = -1
 
+    /**
+     * Inicializa os componentes da tela e determina se deve exibir gráfico de pizza ou de barras,
+     * com base no ID de pilar recebido via intent.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard_grafico)
@@ -55,7 +85,6 @@ class DashboardGraficoActivity : AppCompatActivity() {
         barChart = findViewById(R.id.barChart)
         legendaContainer = findViewById(R.id.barChartLegendContainer)
         legendaScroll = findViewById(R.id.barChartLegendScroll) as ScrollView
-
 
         db = DatabaseHelper(this)
         pilarId = intent.getIntExtra("pilar_id", -1)
@@ -75,6 +104,7 @@ class DashboardGraficoActivity : AppCompatActivity() {
             mostrarGraficoAcoesComAtraso(lista)
             progressoContainer.visibility = View.GONE
         }
+
         val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
         btnGraficos.setOnClickListener {
             if (tipoUsuario != null && nomeUsuario != null && idUsuario != -1) {
@@ -120,6 +150,9 @@ class DashboardGraficoActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Redireciona para a tela de login e finaliza a sessão atual.
+     */
     private fun realizarLogout() {
         val intent = Intent(this, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -127,6 +160,10 @@ class DashboardGraficoActivity : AppCompatActivity() {
         finish()
     }
 
+    /**
+     * Exibe um gráfico de pizza com o progresso geral de todos os pilares.
+     * @param lista Lista de pilares com contagem de atividades concluídas e totais.
+     */
     private fun mostrarGraficoPilares(lista: List<PilarComProgresso>) {
         val totalConcluidasGeral = lista.sumOf { it.concluidas }
         val totalAtividades = lista.sumOf { it.total }
@@ -150,7 +187,6 @@ class DashboardGraficoActivity : AppCompatActivity() {
 
         for (pilar in lista) {
             if (pilar.concluidas > 0) {
-                // Exibe o nome do pilar com o progresso (ex: "Educação (5/10)")
                 val label = "${pilar.nome} (${pilar.concluidas}/${pilar.total})"
                 entries.add(PieEntry(pilar.concluidas.toFloat(), label))
             }
@@ -185,7 +221,10 @@ class DashboardGraficoActivity : AppCompatActivity() {
         }
     }
 
-
+    /**
+     * Exibe gráfico de barras empilhadas com dados de progresso das ações de um pilar.
+     * @param lista Lista de ações com dados de conclusão, andamento e atraso.
+     */
     private fun mostrarGraficoAcoesComAtraso(lista: List<AcaoComProgresso>) {
         val entries = ArrayList<BarEntry>()
         val siglas = ArrayList<String>()
@@ -212,9 +251,9 @@ class DashboardGraficoActivity : AppCompatActivity() {
 
         val dataSet = BarDataSet(entries, "Progresso por Ação").apply {
             colors = listOf(
-                Color.parseColor("#4CAF50"), // 🟩 Concluído
-                Color.parseColor("#2196F3"), // 🟦 Em andamento
-                Color.parseColor("#F44336")  // 🟥 Atrasado
+                Color.parseColor("#4CAF50"), // Concluído
+                Color.parseColor("#2196F3"), // Em andamento
+                Color.parseColor("#F44336")  // Atrasado
             )
             setStackLabels(arrayOf("Concluído", "Em andamento", "Atrasado"))
             valueTextColor = Color.BLACK
@@ -279,9 +318,12 @@ class DashboardGraficoActivity : AppCompatActivity() {
         legendaScroll.visibility = View.VISIBLE
     }
 
-
-
-
+    /**
+     * Gera uma sigla única a partir do nome de uma ação para ser usada no eixo X do gráfico.
+     * @param nome Nome completo da ação
+     * @param mapa Mapa de siglas já utilizadas para garantir unicidade
+     * @return Sigla resultante
+     */
     private fun gerarSigla(nome: String, mapa: Map<String, String>): String {
         val palavras = nome.split(" ")
             .filter { it.isNotBlank() }

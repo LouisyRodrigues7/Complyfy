@@ -16,10 +16,19 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 
+/**
+ * Tela que exibe um gráfico de pizza com a evolução de atividades,
+ * podendo representar uma única atividade ou o conjunto de uma ação estratégica.
+ */
 class GraficoEvolucaoAtividade : AppCompatActivity() {
 
+    /** Componente gráfico de pizza para visualização do status */
     private lateinit var pieChart: PieChart
+
+    /** Texto que exibe o nome do responsável pela atividade */
     private lateinit var tvResponsavel: TextView
+
+    /** Instância de acesso ao banco de dados */
     private lateinit var db: DatabaseHelper
 
     private lateinit var btnHome: ImageView
@@ -31,7 +40,10 @@ class GraficoEvolucaoAtividade : AppCompatActivity() {
     private var nomeUsuario: String? = null
     private var idUsuario: Int = -1
 
-
+    /**
+     * Inicializa a interface e define qual gráfico será exibido
+     * com base nos dados recebidos via `Intent`.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_grafico_evolucao_atividade)
@@ -85,7 +97,6 @@ class GraficoEvolucaoAtividade : AppCompatActivity() {
             )
         }
 
-
         pieChart = findViewById(R.id.pieChartEvolucao)
         tvResponsavel = findViewById(R.id.tvResponsavel)
         db = DatabaseHelper(this)
@@ -102,6 +113,11 @@ class GraficoEvolucaoAtividade : AppCompatActivity() {
         }
     }
 
+    /**
+     * Exibe um gráfico de pizza com o total de atividades concluídas e em andamento
+     * de uma determinada ação.
+     * @param acaoId ID da ação estratégica
+     */
     private fun mostrarGraficoAtividadesDaAcao(acaoId: Int) {
         val atividades = db.buscarAtividadesPorAcaoParaSelecao(acaoId)
 
@@ -131,17 +147,20 @@ class GraficoEvolucaoAtividade : AppCompatActivity() {
         }
     }
 
+    /**
+     * Exibe um gráfico de pizza com o status de uma única atividade.
+     * Também mostra o nome do responsável, se disponível.
+     * @param atividadeId ID da atividade selecionada
+     */
     private fun mostrarGraficoAtividade(atividadeId: Int) {
         val atividade = db.getAtividadePorId(atividadeId)
 
-        atividade?.let { // só executa esse bloco se atividade NÃO for nula
+        atividade?.let {
             val estaConcluida = it.status == "Finalizada"
             val statusLabel = if (estaConcluida) "Concluída" else "Em andamento"
             val color = if (estaConcluida) "#4CAF50" else "#2196F3"
 
-            val entries = listOf(
-                PieEntry(1f, statusLabel)
-            )
+            val entries = listOf(PieEntry(1f, statusLabel))
 
             val dataSet = PieDataSet(entries, "").apply {
                 colors = listOf(Color.parseColor(color))
@@ -165,12 +184,12 @@ class GraficoEvolucaoAtividade : AppCompatActivity() {
                 visibility = View.VISIBLE
             }
         } ?: run {
-            // Caso atividade seja null, você pode tratar aqui (ex: esconder views ou mostrar mensagem)
             tvResponsavel.text = "Atividade não encontrada"
             tvResponsavel.visibility = View.VISIBLE
-            pieChart.clear() // limpa gráfico
+            pieChart.clear()
         }
     }
+
 
     private fun realizarLogout() {
         val intent = Intent(this, LoginActivity::class.java)
@@ -178,6 +197,4 @@ class GraficoEvolucaoAtividade : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
-
-
 }
