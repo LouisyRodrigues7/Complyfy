@@ -19,28 +19,55 @@ import com.example.senacplanner.utils.HistoricoRelatorioManager
 import com.example.senacplanner.utils.RelatorioGenerator
 import com.example.senacplanner.utils.NavigationUtils
 
+/**
+ * Tela responsável pela geração de relatórios em PDF,
+ * com filtros por pilar e período, e visualização do histórico de relatórios gerados.
+ */
 class GerarRelatorio : AppCompatActivity() {
 
+    /** Spinner para selecionar um pilar estratégico */
     private lateinit var spinnerPilar: Spinner
+
+    /** Spinner para selecionar o período desejado */
     private lateinit var spinnerPeriodo: Spinner
+
+    /** Botão de confirmação para gerar o relatório */
     private lateinit var btnConfirmar: Button
 
     private var tipoUsuario: String? = null
     private var nomeUsuario: String? = null
     private var idUsuario: Int = -1
 
+    /** Layout que contém os botões de abrir e compartilhar PDF */
     private lateinit var layoutBotoesPDF: LinearLayout
+
+    /** Botão que permite abrir o PDF recém-gerado */
     private lateinit var btnAbrirPDF: Button
+
+    /** Botão que permite compartilhar o PDF recém-gerado */
     private lateinit var btnCompartilharPDF: Button
+
+    /** URI do último arquivo PDF gerado */
     private var ultimoArquivoPDFUri: Uri? = null
 
+    /** Título da seção de histórico */
     private lateinit var textRecentes: TextView
+
+    /** Container visual para os botões de histórico */
     private lateinit var listaRecentes: LinearLayout
 
+    /** Helper para banco de dados de relatórios */
     private lateinit var dbHelper: RelatorioDatabaseHelper
+
+    /** Lista de pilares disponíveis para filtro */
     private var pilaresList = listOf<RelatorioPilar>()
+
+    /** Lista de períodos disponíveis para filtro */
     private var periodosList = listOf<RelatorioPeriodo>()
 
+    /**
+     * Inicializa a interface, listeners e popula os spinners.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_gerar_relatorio)
@@ -66,9 +93,9 @@ class GerarRelatorio : AppCompatActivity() {
 
         carregarSpinnerPilares(db)
         carregarSpinnerPeriodos()
-
         mostrarHistorico()
 
+        // Navegação padrão (já documentada em KTs anteriores)
         findViewById<ImageView>(R.id.btnGraficos).setOnClickListener {
             if (tipoUsuario != null && nomeUsuario != null && idUsuario != -1) {
                 val intent = Intent(this, GraficosActivity::class.java).apply {
@@ -99,6 +126,10 @@ class GerarRelatorio : AppCompatActivity() {
             NavigationUtils.irParaTelaHome(this, tipoUsuario, idUsuario, nomeUsuario)
         }
 
+        /**
+         * Listener do botão de confirmação. Gera o relatório em PDF
+         * com base nos filtros selecionados e atualiza o histórico.
+         */
         btnConfirmar.setOnClickListener {
             val posPilar = spinnerPilar.selectedItemPosition
             val posPeriodo = spinnerPeriodo.selectedItemPosition
@@ -164,6 +195,9 @@ class GerarRelatorio : AppCompatActivity() {
         }
     }
 
+    /**
+     * Preenche o spinner de pilares disponíveis para relatório.
+     */
     private fun carregarSpinnerPilares(db: SQLiteDatabase) {
         pilaresList = dbHelper.buscarPilares(db)
         val nomesPilares = pilaresList.map { it.nome }
@@ -172,6 +206,9 @@ class GerarRelatorio : AppCompatActivity() {
         spinnerPilar.adapter = adapter
     }
 
+    /**
+     * Preenche o spinner com os períodos disponíveis.
+     */
     private fun carregarSpinnerPeriodos() {
         periodosList = dbHelper.buscarPeriodosFixos()
         val descricoes = periodosList.map { it.descricao }
@@ -179,6 +216,7 @@ class GerarRelatorio : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerPeriodo.adapter = adapter
     }
+
 
     private fun realizarLogout() {
         val intent = Intent(this, LoginActivity::class.java).apply {
@@ -188,6 +226,10 @@ class GerarRelatorio : AppCompatActivity() {
         finish()
     }
 
+    /**
+     * Exibe os relatórios gerados recentemente na interface.
+     * Permite reabrir qualquer PDF salvo no histórico local.
+     */
     private fun mostrarHistorico() {
         val historico = HistoricoRelatorioManager.carregar(this)
         if (historico.isEmpty()) {
@@ -221,6 +263,9 @@ class GerarRelatorio : AppCompatActivity() {
         }
     }
 
+    /**
+     * Garante que o banco de dados seja fechado ao destruir a activity.
+     */
     override fun onDestroy() {
         dbHelper.close()
         super.onDestroy()

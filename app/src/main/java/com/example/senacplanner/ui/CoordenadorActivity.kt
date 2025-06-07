@@ -26,11 +26,24 @@ import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
+/**
+ * Tela principal exibida para usuários do tipo "Coordenador e Apoio".
+ *
+ * Essa activity gerencia o painel com abas ("Meus Pilares", "Todos os Pilares"),
+ * botões de criação, edição, gráficos e notificações, além de um tour interativo.
+ * Os pilares representam elementos do planejamento estratégico, com ações e atividades vinculadas.
+ */
 class CoordenadorActivity : AppCompatActivity() {
 
+    /** Caixa de texto para criação de novo pilar (tooltip visual) */
     private lateinit var caixaCriarPilar: TextView
+
+    /** Caixa de texto para edição de pilar existente (tooltip visual) */
     private lateinit var caixaEditarPilar: TextView
 
+    /**
+     * Inicializa os elementos da tela, configura o ViewPager, Toolbar e ações dos botões.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_coordenador)
@@ -48,9 +61,10 @@ class CoordenadorActivity : AppCompatActivity() {
         toolbar.title = "Olá, $nomeUsuario"
         setSupportActionBar(toolbar)
 
-        val adapter = ViewPagerAdapter(this)
-        adapter.addFragment(MeusPilaresFragment(), "Meus Pilares")
-        adapter.addFragment(TodosPilaresFragment(), "Todos os Pilares")
+        val adapter = ViewPagerAdapter(this).apply {
+            addFragment(MeusPilaresFragment(), "Meus Pilares")
+            addFragment(TodosPilaresFragment(), "Todos os Pilares")
+        }
         viewPager.adapter = adapter
 
         val paginaHome = intent.getIntExtra("PAGINA_HOME", 0)
@@ -60,15 +74,11 @@ class CoordenadorActivity : AppCompatActivity() {
             tab.text = adapter.getPageTitle(position)
         }.attach()
 
-        // Tour interativo com ajuda
+        // Inicia sequência de tour guiado explicando funcionalidades visuais
         btnAjuda.setOnClickListener {
             TapTargetSequence(this)
                 .targets(
-                    TapTarget.forView(
-                        btnAddPilar,
-                        "Criar/Editar Pilar",
-                        "Toque aqui para criar ou editar pilares do seu planejamento."
-                    )
+                    TapTarget.forView(btnAddPilar, "Criar/Editar Pilar", "Toque aqui para criar ou editar pilares do seu planejamento.")
                         .outerCircleColorInt(ContextCompat.getColor(this, R.color.purple_500))
                         .targetCircleColorInt(ContextCompat.getColor(this, android.R.color.white))
                         .titleTextColorInt(ContextCompat.getColor(this, android.R.color.white))
@@ -78,11 +88,7 @@ class CoordenadorActivity : AppCompatActivity() {
                         .drawShadow(true)
                         .cancelable(true),
 
-                    TapTarget.forView(
-                        tabLayout.getTabAt(0)?.view,
-                        "Meus Pilares",
-                        "Mostra só os pilares que você tem atividades como resposável."
-                    )
+                    TapTarget.forView(tabLayout.getTabAt(0)?.view, "Meus Pilares", "Mostra só os pilares que você tem atividades como responsável.")
                         .outerCircleColorInt(ContextCompat.getColor(this, R.color.teal_200))
                         .targetCircleColorInt(ContextCompat.getColor(this, android.R.color.white))
                         .titleTextColorInt(ContextCompat.getColor(this, android.R.color.white))
@@ -90,11 +96,7 @@ class CoordenadorActivity : AppCompatActivity() {
                         .drawShadow(true)
                         .cancelable(true),
 
-                    TapTarget.forView(
-                        tabLayout.getTabAt(1)?.view,
-                        "Todos os Pilares",
-                        "Lista de todos os pilares do sistema com todas as ações e atividades."
-                    )
+                    TapTarget.forView(tabLayout.getTabAt(1)?.view, "Todos os Pilares", "Lista todos os pilares do sistema com suas ações e atividades.")
                         .outerCircleColorInt(ContextCompat.getColor(this, R.color.teal_700))
                         .targetCircleColorInt(ContextCompat.getColor(this, android.R.color.white))
                         .titleTextColorInt(ContextCompat.getColor(this, android.R.color.white))
@@ -102,11 +104,7 @@ class CoordenadorActivity : AppCompatActivity() {
                         .drawShadow(true)
                         .cancelable(true),
 
-                    TapTarget.forView(
-                        viewPager,
-                        "Pilares e Atividades",
-                        "Aqui estão os pilares, que contêm as ações e atividades do seu planejamento."
-                    )
+                    TapTarget.forView(viewPager, "Pilares e Atividades", "Aqui estão os pilares com ações e atividades do seu planejamento.")
                         .outerCircleColorInt(ContextCompat.getColor(this, R.color.teal_800))
                         .targetCircleColorInt(ContextCompat.getColor(this, android.R.color.white))
                         .titleTextColorInt(ContextCompat.getColor(this, android.R.color.white))
@@ -128,38 +126,37 @@ class CoordenadorActivity : AppCompatActivity() {
                 .start()
         }
 
-        // Caixa de texto (tooltip de criar e editar)
         caixaCriarPilar = findViewById(R.id.caixaCriarPilar)
         caixaEditarPilar = findViewById(R.id.caixaEditarPilar)
 
+        // Se o usuário for "Apoio", ele não pode adicionar pilares
         if (tipoUsuario == "Apoio") {
             btnAddPilar.visibility = View.GONE
         }
 
+        // Alterna visibilidade das opções "Criar" e "Editar" ao clicar no botão "+"
         btnAddPilar.setOnClickListener {
             toggleCaixaCriarPilar()
             toggleCaixaEditarPilar()
         }
 
         caixaCriarPilar.setOnClickListener {
-            val intent = Intent(this, NovoPilarActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, NovoPilarActivity::class.java))
         }
 
         caixaEditarPilar.setOnClickListener {
-            val intent = Intent(this, EditarActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, EditarActivity::class.java))
         }
 
         val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
         btnGraficos.setOnClickListener {
             if (tipoUsuario != null && nomeUsuario != null && idUsuario != -1) {
-                val intent = Intent(this, GraficosActivity::class.java).apply {
+                Intent(this, GraficosActivity::class.java).apply {
                     putExtra("TIPO_USUARIO", tipoUsuario)
                     putExtra("ID_USUARIO", idUsuario)
                     putExtra("NOME_USUARIO", nomeUsuario)
+                    startActivity(this)
                 }
-                startActivity(intent)
             } else {
                 Toast.makeText(this, "Dados do usuário ausentes. Não foi possível abrir os gráficos.", Toast.LENGTH_LONG).show()
             }
@@ -167,12 +164,12 @@ class CoordenadorActivity : AppCompatActivity() {
 
         val btnNotificacoes = findViewById<ImageView>(R.id.btnNotificacoes)
         btnNotificacoes.setOnClickListener {
-            val intent = Intent(this, NotificacoesActivity::class.java).apply {
+            Intent(this, NotificacoesActivity::class.java).apply {
                 putExtra("TIPO_USUARIO", tipoUsuario)
                 putExtra("ID_USUARIO", idUsuario)
                 putExtra("NOME_USUARIO", nomeUsuario)
+                startActivity(this)
             }
-            startActivity(intent)
         }
 
         val btnLogout = findViewById<ImageView>(R.id.btnAcoes)
@@ -190,32 +187,43 @@ class CoordenadorActivity : AppCompatActivity() {
             )
         }
 
+        // Executa verificações automáticas de status dos pilares e atividades
         val db = DatabaseHelper(this)
         db.verificarPilaresProximosDaConclusao()
         db.verificarAtividadesProximasDaConclusao()
         db.verificarAtividadesAtrasadas()
+
         val testeatrasadas = db.buscarAtividadePorStatus()
         Log.d("atrasadas", testeatrasadas.toString())
     }
 
+    /**
+     * Retorna o usuário à tela de login e limpa a pilha de activities.
+     */
     private fun realizarLogout() {
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        val intent = Intent(this, LoginActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
         startActivity(intent)
         finish()
     }
 
+    /**
+     * Sempre que a activity é retomada, as caixas de ação são ocultadas.
+     */
     override fun onResume() {
         super.onResume()
         caixaCriarPilar.visibility = View.GONE
         caixaEditarPilar.visibility = View.GONE
     }
 
+    /** Alterna visibilidade da caixa de criação de pilar */
     private fun toggleCaixaCriarPilar() {
         caixaCriarPilar.visibility =
             if (caixaCriarPilar.visibility == View.GONE) View.VISIBLE else View.GONE
     }
 
+    /** Alterna visibilidade da caixa de edição de pilar */
     private fun toggleCaixaEditarPilar() {
         caixaEditarPilar.visibility =
             if (caixaEditarPilar.visibility == View.GONE) View.VISIBLE else View.GONE

@@ -12,13 +12,25 @@ import com.example.senacplanner.model.AcaoEstrategica
 import com.example.senacplanner.model.Atividadespinner
 import com.example.senacplanner.model.Pilarspinner
 
+/**
+ * Tela que permite ao usuário selecionar um Pilar, Ação e Atividade para visualizar
+ * o progresso específico ou geral através de um gráfico de evolução.
+ */
 class EvolucaoAtividade : AppCompatActivity() {
 
+    /** Spinner de seleção de Pilar estratégico */
     private lateinit var spinnerPilar: Spinner
+
+    /** Spinner de seleção de Ação estratégica vinculada ao pilar */
     private lateinit var spinnerAcao: Spinner
+
+    /** Spinner de seleção de Atividade vinculada à ação */
     private lateinit var spinnerAtividade: Spinner
+
+    /** Botão para confirmar a seleção e abrir o gráfico correspondente */
     private lateinit var btnConfirmar: Button
 
+    /** Acesso ao banco de dados local */
     private lateinit var dbHelper: DatabaseHelper
 
     private lateinit var btnHome: ImageView
@@ -30,8 +42,13 @@ class EvolucaoAtividade : AppCompatActivity() {
     private var nomeUsuario: String? = null
     private var idUsuario: Int = -1
 
+    /** Lista atual de pilares disponíveis para o usuário */
     private var listaPilares: List<Pilarspinner> = emptyList()
+
+    /** Lista de ações carregadas com base no pilar selecionado */
     private var listaAcoes: List<AcaoEstrategica> = emptyList()
+
+    /** Lista de atividades carregadas com base na ação selecionada */
     private var listaAtividades: List<Atividadespinner> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +64,7 @@ class EvolucaoAtividade : AppCompatActivity() {
         btnNotificacoes = findViewById(R.id.btnNotificacoes)
         btnLogout = findViewById(R.id.btnAcoes)
 
+        // Botões de navegação padrão (já explicados em outros arquivos)
         val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
         btnGraficos.setOnClickListener {
             if (tipoUsuario != null && nomeUsuario != null && idUsuario != -1) {
@@ -86,7 +104,6 @@ class EvolucaoAtividade : AppCompatActivity() {
             )
         }
 
-
         dbHelper = DatabaseHelper(this)
 
         spinnerPilar = findViewById(R.id.spinnerPilar)
@@ -98,7 +115,10 @@ class EvolucaoAtividade : AppCompatActivity() {
         configurarBotoes()
     }
 
-
+    /**
+     * Configura os spinners para responderem às seleções do usuário,
+     * carregando ações e atividades de forma dinâmica.
+     */
     private fun configurarSpinners() {
         carregarPilaresParaSelecao()
 
@@ -125,7 +145,9 @@ class EvolucaoAtividade : AppCompatActivity() {
         }
     }
 
-
+    /**
+     * Preenche o spinner de pilares com os dados vindos do banco.
+     */
     private fun carregarPilaresParaSelecao() {
         listaPilares = dbHelper.buscarPilaresParaSelecao()
         val nomesPilares = listaPilares.map { it.nome }
@@ -135,6 +157,9 @@ class EvolucaoAtividade : AppCompatActivity() {
         spinnerPilar.adapter = adapter
     }
 
+    /**
+     * Preenche o spinner de ações com base no pilar selecionado.
+     */
     private fun carregarAcoesPorPilarParaSelecao(pilarId: Int) {
         listaAcoes = dbHelper.buscarAcoesPorPilarParaSelecao(pilarId)
         val nomesAcoes = listaAcoes.map { it.nome }
@@ -146,6 +171,9 @@ class EvolucaoAtividade : AppCompatActivity() {
         spinnerAtividade.adapter = null
     }
 
+    /**
+     * Preenche o spinner de atividades com base na ação selecionada.
+     */
     private fun carregarAtividadesPorAcaoParaSelecao(acaoId: Int) {
         listaAtividades = dbHelper.buscarAtividadesPorAcaoParaSelecao(acaoId)
 
@@ -157,6 +185,9 @@ class EvolucaoAtividade : AppCompatActivity() {
         spinnerAtividade.adapter = adapter
     }
 
+    /**
+     * Configura o botão de confirmação, validando as seleções e abrindo o gráfico correspondente.
+     */
     private fun configurarBotoes() {
         btnConfirmar.setOnClickListener {
             val pilarSelecionado = listaPilares.getOrNull(spinnerPilar.selectedItemPosition)
@@ -188,8 +219,9 @@ class EvolucaoAtividade : AppCompatActivity() {
 
             startActivity(intent)
         }
-
     }
+
+    // ⚠️ Já documentado em outras telas, sem repetição
     private fun realizarLogout() {
         val intent = Intent(this, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

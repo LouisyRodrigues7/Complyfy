@@ -10,12 +10,24 @@ import androidx.cardview.widget.CardView
 import com.example.senacplanner.NotificacoesActivity
 import com.example.senacplanner.R
 
+/**
+ * Tela inicial para usuários do tipo "Gestor".
+ * Exibe opções de consulta, relatório, progresso e navegação por botões de ação.
+ */
 class GestorActivity : AppCompatActivity() {
 
+    /** Tipo do usuário logado (ex: "Gestor") */
     private var tipoUsuario: String? = null
+
+    /** Nome do usuário logado */
     private var nomeUsuario: String? = null
+
+    /** ID do usuário logado */
     private var idUsuario: Int = -1
 
+    /**
+     * Inicializa a interface da tela de gestor, com botões de navegação e saudação.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_gestor)
@@ -25,12 +37,12 @@ class GestorActivity : AppCompatActivity() {
         tipoUsuario = intent.getStringExtra("TIPO_USUARIO")
         idUsuario = intent.getIntExtra("ID_USUARIO", -1)
 
-
-
-
         val saudacao = findViewById<TextView>(R.id.textViewSaudacao)
         saudacao.text = "Olá, $nomeUsuario"
 
+        /**
+         * Acesso à tela de consulta de pilares e ações.
+         */
         val cardConsultar = findViewById<CardView>(R.id.cardConsultar)
         cardConsultar.setOnClickListener {
             val intent = Intent(this, PilarAcaoActivity::class.java).apply {
@@ -41,6 +53,9 @@ class GestorActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        /**
+         * Acesso à tela de geração de relatórios.
+         */
         val cardRelatorio = findViewById<CardView>(R.id.cardRelatorio)
         cardRelatorio.setOnClickListener {
             val intent = Intent(this, GerarRelatorio::class.java).apply {
@@ -51,7 +66,9 @@ class GestorActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-
+        /**
+         * Acesso à visualização de progresso de atividades.
+         */
         val cardProgresso = findViewById<CardView>(R.id.cardProgresso)
         cardProgresso.setOnClickListener {
             val intent = Intent(this, EvolucaoAtividade::class.java).apply {
@@ -61,6 +78,7 @@ class GestorActivity : AppCompatActivity() {
             }
             startActivity(intent)
         }
+
 
         val btnGraficos = findViewById<ImageView>(R.id.btnGraficos)
         btnGraficos.setOnClickListener {
@@ -101,6 +119,7 @@ class GestorActivity : AppCompatActivity() {
             )
         }
     }
+
 
     private fun realizarLogout() {
         val intent = Intent(this, LoginActivity::class.java)
