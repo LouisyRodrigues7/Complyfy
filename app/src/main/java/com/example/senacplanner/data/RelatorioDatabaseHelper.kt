@@ -13,31 +13,42 @@ import java.io.File
 import java.io.FileOutputStream
 import java.text.Normalizer
 
-// Classe que ajuda a acessar e consultar o banco de dados pré-carregado para geração de relatórios
+/**
+ * Helper para gerenciar acesso ao banco de dados pré-carregado usado na geração de relatórios.
+ * Essa classe garante que o banco de dados esteja copiado da pasta assets para o local interno do app
+ * e oferece métodos para consulta estruturada dos pilares, ações e atividades para montar relatórios.
+ */
 class RelatorioDatabaseHelper(private val context: Context) :
     SQLiteOpenHelper(context, "novobanco_.db", null, 1) {
 
-    // Caminho do banco de dados dentro do app
+
+    /**
+     * Caminho absoluto do arquivo do banco de dados na pasta interna do app.
+     */
     private val dbPath: String
         get() = context.getDatabasePath("novobanco_.db").path
 
-    // Retorna o banco no modo leitura/escrita, copiando ele se ainda não estiver na pasta do app
+    /**
+     * Retorna o banco aberto para leitura e escrita, copiando o arquivo do assets caso necessário.
+     * Isso garante que o banco pré-carregado esteja disponível para consultas.
+     */
     override fun getReadableDatabase(): SQLiteDatabase {
         copiarBancoSeNecessario()
         return SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READWRITE)
     }
 
-    // Metodo chamado na criação do banco mas o banco ja vem pronto então fica vazio
+
     override fun onCreate(db: SQLiteDatabase?) {
         // Ignorado: banco é pré-carregado
     }
-
-    // Metodo chamado em upgrades de versão do banco mas tb ignorado
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         // Ignorado: banco é pré-carregado
     }
 
-    // Copia o banco da pasta assets para a pasta interna do app, se ainda não existir (precaução)
+    /**
+     * Copia o arquivo do banco de dados da pasta assets para a pasta interna do app,
+     * somente se o arquivo ainda não existir, para evitar sobrescrever dados.
+     */
     private fun copiarBancoSeNecessario() {
         val dbFile = File(dbPath)
         if (!dbFile.exists()) {
@@ -50,7 +61,14 @@ class RelatorioDatabaseHelper(private val context: Context) :
         }
     }
 
-    // Busca todos os pilares do banco e monta cada um com suas ações e atividades para gerar o PDF
+    /**
+     * Busca todos os pilares no banco e monta objetos PdfPilar completos com suas ações e atividades,
+     * filtrando as atividades pelo período passado (em meses).
+     *
+     * @param db Instância do banco para realizar consultas.
+     * @param periodoMeses Quantidade de meses para filtrar as atividades do relatório.
+     * @return Lista de pilares com dados completos para geração do relatório PDF.
+     */
     fun buscarPilaresParaRelatorio(db: SQLiteDatabase, periodoMeses: Int): List<PdfPilar> {
         val cursor = db.rawQuery("SELECT * FROM Pilar", null)
         val pilares = mutableListOf<PdfPilar>()
@@ -68,13 +86,29 @@ class RelatorioDatabaseHelper(private val context: Context) :
         return pilares
     }
 
-    // Busca um pilar específico por ID, montando ele para o relatório
+    /**
+     * Busca um pilar específico por seu ID e monta o objeto PdfPilar completo para relatório,
+     * incluindo suas ações e atividades filtradas pelo período.
+     *
+     * @param db Instância do banco para consulta.
+     * @param pilarId ID do pilar a ser buscado.
+     * @param periodoMeses Quantidade de meses para filtrar as atividades.
+     * @return Lista contendo o pilar encontrado ou vazia caso não exista.
+     */
     fun buscarPilarPorIdParaRelatorio(db: SQLiteDatabase, pilarId: Int, periodoMeses: Int): List<PdfPilar> {
         val pilar = montarPilarCompletoParaRelatorio(db, pilarId, periodoMeses)
         return if (pilar != null) listOf(pilar) else emptyList()
     }
 
-    // Monta um objeto PdfPilar completo com suas ações e atividades
+    /**
+     * Monta um objeto PdfPilar completo a partir do banco, carregando seus dados básicos,
+     * e suas ações e atividades relacionadas, filtradas pelo período.
+     *
+     * @param db Banco para consulta.
+     * @param pilarId ID do pilar.
+     * @param periodoMeses Quantidade de meses para filtrar atividades.
+     * @return Objeto PdfPilar completo ou null caso pilar não seja encontrado.
+     */
     private fun montarPilarCompletoParaRelatorio(db: SQLiteDatabase, pilarId: Int, periodoMeses: Int): PdfPilar? {
         val cursor = db.rawQuery("SELECT * FROM Pilar WHERE id = ?", arrayOf(pilarId.toString()))
         var pilar: PdfPilar? = null
@@ -103,7 +137,13 @@ class RelatorioDatabaseHelper(private val context: Context) :
         return pilar
     }
 
-    // Lista os pilares para preencher um spinner ou filtro de relatórios, incluindo a opção "Todos"
+    /**
+     * Busca todos os pilares do banco para popular componentes de UI como spinner,
+     * adicionando a opção "Todos" para seleção geral.
+     *
+     * @param db Instância do banco para consulta.
+     * @return Lista de objetos RelatorioPilar para uso em filtro ou seleção.
+     */
     fun buscarPilares(db: SQLiteDatabase): List<RelatorioPilar> {
         val pilares = mutableListOf<RelatorioPilar>()
         pilares.add(RelatorioPilar(id = -1, nome = "Todos"))
@@ -120,7 +160,12 @@ class RelatorioDatabaseHelper(private val context: Context) :
         return pilares
     }
 
-    // Retorna os períodos fixos disponíveis para seleção nos relatórios (últimos 3, 6 ou 12 meses)
+    /**
+     * Retorna uma lista fixa de períodos disponíveis para seleção em relatórios,
+     * representando meses anteriores para filtro temporal.
+     *
+     * @return Lista de períodos pré-definidos (3, 6 e 12 meses).
+     */
     fun buscarPeriodosFixos(): List<RelatorioPeriodo> {
         return listOf(
             RelatorioPeriodo(id = 3, descricao = "Últimos 3 meses"),
@@ -129,7 +174,15 @@ class RelatorioDatabaseHelper(private val context: Context) :
         )
     }
 
-    // Busca todas as ações relacionadas a um pilar específico e suas respectivas atividades
+    /**
+     * Busca todas as ações vinculadas a um pilar, carregando também as atividades
+     * associadas a cada ação, filtradas pelo período.
+     *
+     * @param db Banco para consulta.
+     * @param pilarId ID do pilar cujas ações serão buscadas.
+     * @param periodoMeses Filtro temporal para atividades relacionadas.
+     * @return Lista de objetos PdfAcao com suas atividades associadas.
+     */
     private fun buscarAcoesDoPilarParaRelatorio(db: SQLiteDatabase, pilarId: Int, periodoMeses: Int): List<PdfAcao> {
         val cursor = db.rawQuery("SELECT * FROM Acao WHERE pilar_id = ?", arrayOf(pilarId.toString()))
         val acoes = mutableListOf<PdfAcao>()
@@ -156,6 +209,13 @@ class RelatorioDatabaseHelper(private val context: Context) :
         return acoes
     }
 
+    /**
+     * Normaliza uma string de status para facilitar comparações e filtragens,
+     * removendo acentos, convertendo para minúsculas e eliminando espaços em branco.
+     *
+     * @param status Texto original do status.
+     * @return Status normalizado ou string vazia se nulo ou em branco.
+     */
     fun normalizarStatus(status: String?): String {
         if (status.isNullOrBlank()) return ""
         return java.text.Normalizer.normalize(status, java.text.Normalizer.Form.NFD)
@@ -164,7 +224,16 @@ class RelatorioDatabaseHelper(private val context: Context) :
             .trim()
     }
 
-    // Busca todas as atividades de uma ação dentro do período definido (ex: últimos 3 meses)
+
+    /**
+     * Busca as atividades vinculadas a uma ação, filtrando pela data de início ou conclusão
+     * dentro do período passado. Isso garante que só atividades recentes sejam consideradas.
+     *
+     * @param db Banco para consulta.
+     * @param acaoId ID da ação para buscar as atividades.
+     * @param periodoMeses Quantidade de meses para filtro temporal.
+     * @return Lista de atividades no formato PdfAtividade.
+     */
     private fun buscarAtividadesDaAcaoParaRelatorio(db: SQLiteDatabase, acaoId: Int, periodoMeses: Int): List<PdfAtividade> {
         val atividades = mutableListOf<PdfAtividade>()
 
@@ -209,7 +278,14 @@ class RelatorioDatabaseHelper(private val context: Context) :
         return atividades
     }
 
-    // Busca um usuário pelo ID para associar às atividades no relatório
+    /**
+     * Busca dados básicos de um usuário pelo ID para associar às atividades nos relatórios.
+     * Retorna null caso o ID seja zero (indicando ausência de responsável).
+     *
+     * @param db Banco para consulta.
+     * @param usuarioId ID do usuário buscado.
+     * @return Objeto PdfUsuario com dados do usuário ou null.
+     */
     private fun buscarUsuarioPorIdParaRelatorio(db: SQLiteDatabase, usuarioId: Int): PdfUsuario? {
         if (usuarioId == 0) return null
 

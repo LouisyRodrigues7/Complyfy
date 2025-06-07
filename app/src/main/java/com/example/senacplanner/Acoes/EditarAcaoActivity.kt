@@ -12,7 +12,13 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.senacplanner.R
 import com.example.senacplanner.data.DatabaseHelper
 
-
+/**
+ * Activity responsável por editar e excluir uma ação vinculada a um pilar.
+ *
+ * Recebe o nome do pilar, nome da ação e o ID da ação via Intent.
+ * Permite alterar o nome da ação, salvar a alteração, excluir a ação
+ * ou cancelar a edição.
+ */
 class EditarAcaoActivity: AppCompatActivity() {
 
     private lateinit var databaseHelper: DatabaseHelper
@@ -20,6 +26,10 @@ class EditarAcaoActivity: AppCompatActivity() {
     private var acaoNome: String? = null
     private var acaoId: Int? = 0
 
+    /**
+     * Inicializa a activity, recupera dados da Intent e configura
+     * os botões para salvar, excluir e cancelar edição da ação.
+     */
     @SuppressLint("CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +68,11 @@ class EditarAcaoActivity: AppCompatActivity() {
     }
 
 
+    /**
+     * Exibe um diálogo de confirmação para exclusão da ação.
+     *
+     * @param acaoId ID da ação a ser excluída no banco de dados.
+     */
     @SuppressLint("SetTextI18n")
     private fun abrirDialogConfirmarExclusao(acaoId: Int) {
 

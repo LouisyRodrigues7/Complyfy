@@ -30,7 +30,14 @@ import com.example.senacplanner.utils.PdfAcao
 import com.example.senacplanner.utils.PdfAtividade
 import com.example.senacplanner.utils.PdfUsuario
 
-
+/**
+ * Classe responsável por gerenciar o banco de dados SQLite da aplicação.
+ *
+ * Estende `SQLiteOpenHelper` para lidar com a criação, acesso, cópia e upgrade do banco.
+ * Contém também métodos utilitários para realizar operações de leitura e escrita específicas.
+ *
+ * @param context Contexto da aplicação usado para acessar recursos e diretórios.
+ */
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     companion object {
@@ -45,6 +52,9 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         createDatabase()
     }
 
+    /**
+     * Verifica se o banco já existe e, caso contrário, realiza a cópia do banco de dados da pasta assets.
+     */
     private fun createDatabase() {
         val dbFile = context.getDatabasePath(DB_NAME)
         if (!dbFile.exists()) {
@@ -57,6 +67,11 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         }
     }
 
+    /**
+     * Copia o banco de dados da pasta assets para o diretório de bancos da aplicação.
+     *
+     * Usado apenas na primeira execução ou se o banco for apagado.
+     */
     private fun copyDatabase() {
         val inputStream = context.assets.open(DB_NAME)
         val outputStream = FileOutputStream(dbPath)
@@ -72,20 +87,30 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         inputStream.close()
     }
 
-    override fun onCreate(db: SQLiteDatabase?) {}
+    override fun onCreate(db: SQLiteDatabase?) { } // Implementação não necessária pois o banco já vem pronto dos assets.
 
-    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {}
+    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {} // Lógica de upgrade pode ser implementada futuramente se necessário.
 
-
+    /**
+     * Abre uma instância do banco de dados em modo leitura/escrita.
+     */
     fun openDatabase() {
         myDatabase = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READWRITE)
     }
 
+    /**
+     * Fecha a instância atual do banco de dados, se estiver aberta.
+     */
     override fun close() {
         myDatabase?.close()
         super.close()
     }
 
+    /**
+     * Garante que o banco esteja aberto e o retorna para uso nas operações.
+     *
+     * @return Instância de `SQLiteDatabase` pronta para uso.
+     */
     fun getDatabase(): SQLiteDatabase {
         if (myDatabase == null || !myDatabase!!.isOpen) {
             openDatabase()
@@ -93,6 +118,12 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return myDatabase!!
     }
 
+
+    /**
+     * Retorna todos os pilares disponíveis no banco.
+     *
+     * @return Lista de objetos `PilarType` representando cada pilar cadastrado.
+     */
     fun getAllPilares(): List<PilarType> {
         val pilares = mutableListOf<PilarType>()
         val db = getDatabase()
@@ -112,6 +143,14 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return pilares
     }
 
+    /**
+     * Retorna os pilares associados a um determinado usuário.
+     *
+     * Utilizado para exibir apenas os pilares vinculados ao perfil logado.
+     *
+     * @param usuarioId ID do usuário.
+     * @return Lista de `PilarType` associados ao usuário.
+     */
     fun getPilaresByUsuarioId(usuarioId: Int): List<PilarType> {
         val pilares = mutableListOf<PilarType>()
         val db = getDatabase()
@@ -137,6 +176,15 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return pilares
     }
 
+    /**
+     * Retorna a lista de ações de um pilar com informações de progresso.
+     *
+     * Essa função calcula o total de atividades, quantas foram finalizadas
+     * e quantas estão atrasadas com base na data de conclusão.
+     *
+     * @param pilarId ID do pilar cujas ações devem ser consultadas.
+     * @return Lista de `AcaoComProgresso` com dados agregados por ação.
+     */
     fun getAcoesComProgressoDoPilar(pilarId: Int): List<AcaoComProgresso> {
         val lista = mutableListOf<AcaoComProgresso>()
         val db = readableDatabase
@@ -178,6 +226,14 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return lista
     }
 
+    /**
+     * Retorna o progresso de todas os pilares cadastrados.
+     *
+     * A consulta retorna a quantidade total de atividades e quantas estão finalizadas por pilar.
+     * Útil para exibir progresso geral por pilar em dashboards ou relatórios.
+     *
+     * @return Lista de objetos `PilarComProgresso` contendo nome, total e concluídas.
+     */
     fun getProgressoTodosPilares(): List<PilarComProgresso> {
         val lista = mutableListOf<PilarComProgresso>()
         val db = readableDatabase
@@ -210,7 +266,13 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
 
 
 
-
+    /**
+     * Retorna todos os pilares existentes, ordenados pelo número.
+     *
+     * Usado para preencher listas de seleção ou montar visões hierárquicas.
+     *
+     * @return Lista de `PilarItem` com os campos id, número e nome.
+     */
     fun getTodosPilares(): List<PilarItem> {
         val pilares = mutableListOf<PilarItem>()
         val db = this.readableDatabase
@@ -232,8 +294,14 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return pilares
     }
 
-    // 🔹 Buscar ações de um pilar específico
-
+    /**
+     * Retorna todas as ações pertencentes a um determinado pilar.
+     *
+     * Ideal para navegação hierárquica ou quando se quer detalhar um pilar.
+     *
+     * @param pilarId ID do pilar.
+     * @return Lista de `Acao` associadas ao pilar informado.
+     */
     fun getAcoesByPilarId(pilarId: Int): List<Acao> {
         val listaAcoes = mutableListOf<Acao>()
         val db = getDatabase()
@@ -256,10 +324,14 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return listaAcoes
     }
 
-    // tentando relatório
-
-
-
+    // relatorio
+    /**
+     * Lista todos os usuários com o tipo 'Coordenador' ou 'Apoio'.
+     *
+     * Usado para preencher `Spinner`s ou para atribuir responsáveis às atividades.
+     *
+     * @return Lista de `Usuario` com permissões administrativas.
+     */
     fun listarResponsaveis(): List<Usuario> {
         val lista = mutableListOf<Usuario>()
         val db = this.readableDatabase
@@ -283,6 +355,14 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return lista
     }
 
+    /**
+     * Cria uma notificação para todos os usuários do sistema.
+     *
+     * Utilizado em eventos como atualização ou exclusão de atividades.
+     *
+     * @param mensagem Texto da notificação.
+     * @param atividadeId ID da atividade relacionada (opcional).
+     */
     fun notificarTodosUsuarios(mensagem: String, atividadeId: Int? = null) {
         val db = writableDatabase
         val cursor = db.rawQuery("SELECT id FROM Usuario", null)
@@ -306,7 +386,14 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         db.close()
     }
 
-    // ✔️ Buscar Pilares para Spinner
+    // ✔️
+    /**
+     * Busca todos os pilares do banco para popular um Spinner.
+     *
+     * Ideal para interfaces onde o usuário deve escolher um pilar existente.
+     *
+     * @return Lista de `Pilarspinner` com `id` e `nome` de cada pilar.
+     */
     fun buscarPilaresParaSelecao(): List<Pilarspinner> {
         val lista = mutableListOf<Pilarspinner>()
         val db = readableDatabase
@@ -325,6 +412,16 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return lista
     }
 
+
+    /**
+     * Retorna o progresso de todas as ações de um determinado pilar,
+     * incluindo o total de atividades, finalizadas, em andamento e em atraso.
+     *
+     * Útil para gerar relatórios e visualizar performance geral do pilar.
+     *
+     * @param pilarId ID do pilar cujas ações serão analisadas.
+     * @return Lista de `AcaoComProgresso` com status detalhado de cada ação.
+     */
     fun getAcoesComAtrasoDoPilar(pilarId: Int): List<AcaoComProgresso> {
         val db = readableDatabase
         val lista = mutableListOf<AcaoComProgresso>()
@@ -371,7 +468,14 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     }
 
 
-    // ✔️ Buscar Ações por Pilar para Spinner
+    /**
+     * Retorna todas as ações vinculadas a um pilar específico, com informações detalhadas.
+     *
+     * Normalmente usada para popular interfaces onde o usuário deve escolher ações de um pilar.
+     *
+     * @param pilarId ID do pilar relacionado.
+     * @return Lista de `AcaoEstrategica` com detalhes relevantes de cada ação.
+     */
     fun buscarAcoesPorPilarParaSelecao(pilarId: Int): List<AcaoEstrategica> {
         val lista = mutableListOf<AcaoEstrategica>()
         val db = readableDatabase
@@ -396,6 +500,14 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return lista
     }
 
+    /**
+     * Busca uma atividade específica pelo seu ID, retornando dados essenciais para exibição ou edição.
+     *
+     * Utilizado principalmente em fluxos de atualização de atividade.
+     *
+     * @param atividadeId ID da atividade.
+     * @return Objeto `Atividadespinner` com informações da atividade ou `null` se não encontrada.
+     */
     fun getAtividadePorId(atividadeId: Int): Atividadespinner? {
         val db = readableDatabase
         val cursor = db.rawQuery(
@@ -433,8 +545,14 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     }
 
 
-
-
+    /**
+     * Retorna todas as atividades vinculadas a uma determinada ação.
+     *
+     * Usado em telas onde o usuário precisa selecionar atividades específicas por ação.
+     *
+     * @param acaoId ID da ação cujas atividades devem ser buscadas.
+     * @return Lista de `Atividadespinner` com os dados essenciais para exibição.
+     */
     fun buscarAtividadesPorAcaoParaSelecao(acaoId: Int): List<Atividadespinner> {
         val lista = mutableListOf<Atividadespinner>()
         val db = readableDatabase
@@ -473,6 +591,14 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     }
 
 
+    /**
+     * Retorna o nome de um usuário responsável com base no ID.
+     *
+     * Usado para exibir o nome em interfaces onde só o ID está disponível.
+     *
+     * @param id ID do usuário.
+     * @return Nome do usuário ou `null` se não encontrado.
+     */
     fun getNomeDoResponsavel(id: Int): String? {
         val db = readableDatabase
         val cursor = db.rawQuery("SELECT nome FROM Usuario WHERE id = ?", arrayOf(id.toString()))
@@ -487,6 +613,11 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
 
 
 
+    /**
+     * Marca uma notificação como lida, alterando o valor do campo `lida` para 1.
+     *
+     * @param idNotificacao ID da notificação que deve ser atualizada.
+     */
     fun marcarNotificacaoComoLida(idNotificacao: Int) {
         val db = writableDatabase
         val values = ContentValues().apply {
@@ -496,6 +627,12 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         db.close()
     }
 
+    /**
+     * Verifica se há pilares com datas de conclusão próximas (3 ou 7 dias) e notifica os usuários.
+     *
+     * A função evita notificações duplicadas verificando se já existe uma com a mesma mensagem
+     * e data aproximada no banco de dados.
+     */
     fun verificarPilaresProximosDaConclusao() {
         val db = writableDatabase
         val cursorPilares = db.rawQuery("SELECT id, nome, data_conclusao FROM Pilar", null)
@@ -547,6 +684,19 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     }
 
 
+    /**
+     * Cadastra um novo pilar no banco de dados e dispara notificações aos usuários.
+     *
+     * Após o cadastro, também verifica se há pilares próximos da conclusão para atualizar alertas.
+     *
+     * @param numero Número sequencial do pilar.
+     * @param nome Nome do pilar.
+     * @param descricao Descrição opcional.
+     * @param dataInicio Data de início do pilar (formato: yyyy-MM-dd).
+     * @param dataConclusao Data de término do pilar (formato: yyyy-MM-dd).
+     * @param criadoPorId ID do usuário que está criando o pilar.
+     * @return ID do novo registro inserido ou -1 em caso de falha.
+     */
     fun cadastrarPilar(
         numero: Int,
         nome: String,
@@ -577,6 +727,13 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     }
 
 
+    /**
+     * Obtém o próximo número sequencial para um novo pilar.
+     *
+     * Garante que cada pilar seja numerado corretamente mesmo em múltiplas inserções.
+     *
+     * @return Próximo número inteiro disponível.
+     */
     fun obterProximoNumeroPilar(): Int {
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT MAX(numero) as max_numero FROM Pilar", null)
@@ -589,7 +746,14 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return proximo
     }
 
-
+    /**
+     * Retorna todas as ações e suas respectivas atividades para um pilar específico.
+     *
+     * Usado para compor visões hierárquicas ou detalhadas de um pilar.
+     *
+     * @param pilarId ID do pilar que será analisado.
+     * @return Lista de `AcaoComAtividades`, agrupando atividades por ação.
+     */
     fun buscarAcoesEAtividadesPorPilar(pilarId: Int): List<AcaoComAtividades> {
         val lista = mutableListOf<AcaoComAtividades>()
         val db = this.readableDatabase
@@ -629,6 +793,14 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return lista
     }
 
+    /**
+     * Busca o responsável vinculado a uma determinada atividade.
+     *
+     * Útil para exibir o nome do responsável em telas de visualização ou edição da atividade.
+     *
+     * @param atividadeId ID da atividade que será consultada.
+     * @return Objeto `Usuario` com os dados do responsável ou `null` se não encontrado.
+     */
     fun buscarResponsavelPorAtividade(atividadeId: Int): Usuario? {
         val db = readableDatabase
         val cursor = db.rawQuery(
@@ -651,6 +823,14 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         }
     }
 
+    /**
+     * Retorna o nome e as datas de início e conclusão de um pilar específico.
+     *
+     * Normalmente usado antes de editar ou validar alterações nas datas de um pilar.
+     *
+     * @param id ID do pilar.
+     * @return `Triple` com nome, data de início e data de conclusão ou `null` se não encontrado.
+     */
     fun getDatasPilarById(id: Int): Triple<String, String, String>? {
         val db = getDatabase()
         val cursor = db.rawQuery(
@@ -670,6 +850,16 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return resultado
     }
 
+    /**
+     * Atualiza o nome e datas de um pilar existente.
+     *
+     * Após a atualização, verifica se houve mudanças nas datas e dispara notificações informando a alteração.
+     *
+     * @param id ID do pilar que será atualizado.
+     * @param novoNome Novo nome do pilar.
+     * @param novaDataInicio Nova data de início no formato `yyyy-MM-dd`.
+     * @param novaDataConclusao Nova data de conclusão no formato `yyyy-MM-dd`.
+     */
     fun atualizarPilar(
         id: Int,
         novoNome: String,
@@ -710,7 +900,14 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     }
 
 
-
+    /**
+     * Exclui um pilar do banco de dados com base no ID.
+     *
+     * Também dispara uma notificação informando que o pilar foi excluído, se a operação for bem-sucedida.
+     *
+     * @param id ID do pilar a ser excluído.
+     * @return `true` se o pilar foi excluído com sucesso, `false` caso contrário.
+     */
     fun excluirPilar(id: Int): Boolean {
         val db = writableDatabase
 
@@ -734,7 +931,14 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return rowsDeleted > 0
     }
 
-
+    /**
+     * Atualiza o nome de uma ação existente no banco de dados.
+     *
+     * Após atualizar, verifica se há alterações e dispara notificação informando a mudança.
+     *
+     * @param id ID da ação a ser atualizada.
+     * @param novoNome Novo nome da ação.
+     */
     fun atualizarAcao(
         id: Int,
         novoNome: String,
@@ -761,7 +965,14 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         }
     }
 
-
+    /**
+     * Exclui uma ação do banco de dados.
+     *
+     * Também notifica todos os usuários em caso de exclusão bem-sucedida.
+     *
+     * @param id ID da ação a ser excluída.
+     * @return `true` se a exclusão foi realizada com sucesso, `false` caso contrário.
+     */
     fun excluirAcao(id: Int): Boolean {
         val db = writableDatabase
 
@@ -783,9 +994,20 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     }
 
 
+    /**
+     * DTO representando uma ação estratégica com ID, nome e vínculo com o pilar.
+     */
     data class AcaoDTO(
         val id: Int, val nome: String, val pilar_id: Int
     )
+
+
+    /**
+     * Busca os dados de uma ação específica pelo ID.
+     *
+     * @param id ID da ação.
+     * @return Objeto `AcaoDTO` contendo os dados da ação ou `null` se não encontrada.
+     */
     fun buscarAcaoPorId(id: Int): AcaoDTO? {
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM Acao WHERE id = ?", arrayOf(id.toString()))
@@ -804,11 +1026,22 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return acao
     }
 
-
+    /**
+     * DTO contendo os dados completos de um pilar.
+     */
     data class PilarDTO(
         val id: Int, val numero: Int, val nome: String, val descricao: String,
         val dataInicio: String, val dataConclusao: String, val criadoPor: Int
     )
+
+    /**
+     * Retorna os pilares que possuem atividades atribuídas ao usuário.
+     *
+     * Usado para filtrar pilares relevantes ao perfil do usuário logado.
+     *
+     * @param usuarioId ID do usuário.
+     * @return Lista de `PilarDTO` contendo dados dos pilares com atividades do usuário.
+     */
     fun getPilaresComAtividadesDoUsuario(usuarioId: Int): List<PilarDTO> {
         val pilares = mutableListOf<PilarDTO>()
         val db = readableDatabase
@@ -843,10 +1076,21 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return pilares
     }
 
-
+    /**
+     * DTO com dados mínimos de um pilar (usado em contextos mais simples).
+     */
     data class PilarDTObyId(
         val id: Int, val nome: String
     )
+
+    /**
+     * Busca o nome de um pilar com base no ID.
+     *
+     * Usado em situações onde apenas o nome é necessário (ex: exibição).
+     *
+     * @param id ID do pilar.
+     * @return Objeto `PilarDTObyId` com nome e ID, ou `null` se não encontrado.
+     */
     fun buscarPilarPorId(id: Int): PilarDTObyId? {
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM Pilar WHERE id = ?", arrayOf(id.toString()))
@@ -865,6 +1109,13 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     }
 
 
+    /**
+     * Retorna todas as ações e suas atividades atribuídas a um usuário dentro de um pilar.
+     *
+     * @param pilarId ID do pilar.
+     * @param usuarioId ID do usuário.
+     * @return Lista de `AcaoComAtividades` com ações e suas respectivas atividades do usuário.
+     */
     fun buscarAcoesEAtividadesDoUsuarioPorPilar(
         pilarId: Int,
         usuarioId: Int
@@ -920,6 +1171,13 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return resultado
     }
 
+    /**
+     * Atualiza os dados de uma atividade e notifica o usuário responsável.
+     *
+     * Notificações são disparadas em caso de mudança de responsável ou alterações relevantes.
+     *
+     * @return A nova versão da atividade após a atualização ou `null` se não encontrada.
+     */
     fun atualizarAtividade(
         id: Int,
         novoNome: String,
@@ -978,7 +1236,11 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return atividadeAtualizada
     }
 
-
+    /**
+     * Envia uma notificação para um usuário específico.
+     *
+     * Pode incluir referência a uma atividade e tipo da notificação (alerta, importante, etc.).
+     */
     fun notificarUsuario(
         usuarioId: Int,
         mensagem: String,
@@ -1005,6 +1267,13 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         Log.d("NOTIFICAÇÃO", "Notificação enviada para usuário $usuarioId: $mensagem")
     }
 
+
+    /**
+     * Retorna o nome de uma ação a partir de seu ID.
+     *
+     * @param acaoId ID da ação.
+     * @return Nome da ação, ou "Ação" se não encontrada.
+     */
     fun getNomeAcaoById(acaoId: Int): String {
         val db = readableDatabase
         val cursor = db.rawQuery("SELECT nome FROM Acao WHERE id = ?", arrayOf(acaoId.toString()))
@@ -1018,7 +1287,11 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return nome
     }
 
-
+    /**
+     * Busca todas as atividades associadas a uma ação específica.
+     *
+     * Retorna dados detalhados como responsável e status para cada atividade.
+     */
     fun getAtividadesByAcaoId(acaoId: Int): List<AtividadeDetalhe> {
         val lista = mutableListOf<AtividadeDetalhe>()
         val db = readableDatabase
@@ -1041,7 +1314,12 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return lista
     }
 
-
+    /**
+     * Retorna os dados de uma atividade pelo seu ID.
+     *
+     * @param id ID da atividade.
+     * @return Objeto `AtividadeEdit` ou `null` se não encontrado.
+     */
     fun buscarAtividadePorId(id: Int?): AtividadeEdit? {
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM Atividade WHERE id = ?", arrayOf(id.toString()))
@@ -1064,6 +1342,11 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return atividade
     }
 
+    /**
+     * Busca todas as atividades com status "Em atraso".
+     *
+     * @return Lista de `Triple` com ID, nome e status da atividade.
+     */
     fun buscarAtividadePorStatus(): List<Triple<Int, String, String>> {
         val lista = mutableListOf<Triple<Int, String, String>>()
         val db = this.readableDatabase
@@ -1085,10 +1368,19 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return lista
     }
 
-
+    /**
+     * DTO para representar aprovação de uma atividade.
+     */
     data class AtividadeDTObyId(
         val id: Int, val aprovado: Boolean
     )
+
+    /**
+     * Verifica se uma atividade foi aprovada.
+     *
+     * @param id ID da atividade.
+     * @return Objeto `AtividadeDTObyId` ou `null` se não encontrada.
+     */
     fun buscarAtividadeAprovada(id: Int?): AtividadeDTObyId? {
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM Atividade WHERE id = ?", arrayOf(id.toString()))
@@ -1106,6 +1398,13 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return atividade
     }
 
+    /**
+     * Insere uma nova atividade no banco de dados, com possibilidade de notificar o responsável.
+     *
+     * Caso um responsável seja atribuído, envia uma notificação com o nome da ação e pilar.
+     *
+     * @return ID da atividade inserida ou -1 em caso de falha.
+     */
     fun inserirAtividade(
         acaoId: Int,
         nome: String,
@@ -1184,6 +1483,11 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     }
 
 
+    /**
+     * Verifica atividades próximas da data de conclusão (3 ou 7 dias) e envia notificação ao responsável.
+     *
+     * Evita envio duplicado de notificação no mesmo dia.
+     */
     fun verificarAtividadesProximasDaConclusao() {
         val db = writableDatabase
         val cursor = db.rawQuery(
@@ -1259,8 +1563,12 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     }
 
 
-
-
+    /**
+     * Atualiza o status de uma atividade.
+     *
+     * @param idAtividade ID da atividade.
+     * @param novoStatus Novo status a ser atribuído (ex: "Finalizada", "Em andamento").
+     */
     fun atualizarStatus(idAtividade: Int, novoStatus: String) {
         val db = writableDatabase
         val values = ContentValues().apply {
@@ -1270,6 +1578,12 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         db.close()
     }
 
+    /**
+     * Calcula o progresso percentual de um pilar com base nas atividades concluídas.
+     *
+     * @param pilarId ID do pilar.
+     * @return Progresso percentual (0 a 100).
+     */
     fun calcularProgressoPilar(pilarId: Int): Int {
         val db = this.readableDatabase
 
@@ -1308,7 +1622,16 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return progresso
     }
 
-
+    /**
+     * Cria notificações para todos os usuários do tipo "Coordenador".
+     *
+     * Cada coordenador recebe uma notificação com a mensagem informada, associada a uma atividade (opcional),
+     * e um tipo de notificação.
+     *
+     * @param mensagem Texto da notificação a ser enviada.
+     * @param atividadeId Id da atividade relacionada à notificação (pode ser null).
+     * @param tipoNotificacao Tipo da notificação, utilizado para categorizar a notificação.
+     */
     fun criarNotificacaoParaCoordenador(mensagem: String, atividadeId: Int? = null, tipoNotificacao: TipoNotificacao) {
         val db = writableDatabase
         val dataAtual = System.currentTimeMillis().toString()
@@ -1335,8 +1658,11 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
     }
 
 
-
-
+    /**
+     * Marca uma atividade como aprovada no banco de dados.
+     *
+     * @param id Identificador da atividade a ser aprovada.
+     */
     fun aprovarAtividade(id: Int?) {
         val db = writableDatabase
         val values = ContentValues().apply {
@@ -1345,7 +1671,12 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         db.update("Atividade", values, "id = ?", arrayOf(id.toString()))
     }
 
-
+    /**
+     * Busca um usuário pelo seu id no banco de dados.
+     *
+     * @param id Identificador do usuário.
+     * @return Um objeto [Usuario] preenchido com os dados do usuário, ou null se não encontrado.
+     */
     fun obterUsuario(id: Int): Usuario? {
         val db = this.readableDatabase
 
@@ -1366,7 +1697,14 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return usuario
     }
 
-
+    /**
+     * Exclui uma atividade do banco de dados e notifica todos os usuários sobre a exclusão.
+     *
+     * Se a exclusão for bem-sucedida, envia uma notificação para todos os usuários informando qual atividade foi excluída.
+     *
+     * @param id Identificador da atividade a ser excluída.
+     * @return `true` se a exclusão foi realizada com sucesso, `false` caso contrário.
+     */
     fun excluirAtividade(id: Int): Boolean {
         val db = writableDatabase
         val cursor = db.rawQuery("SELECT nome FROM Atividade WHERE id = ?", arrayOf(id.toString()))
@@ -1386,6 +1724,17 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return rowsDeleted > 0
     }
 
+    /**
+     * Insere uma nova ação associada a um pilar no banco de dados.
+     *
+     * A ação é criada com status inicial de não aprovada (aprovado = 0).
+     *
+     * @param pilarId Identificador do pilar ao qual a ação pertence.
+     * @param nome Nome da ação.
+     * @param descricao Descrição detalhada da ação.
+     * @param criadoPor Id do usuário que criou a ação.
+     * @return `true` se a inserção foi bem-sucedida, `false` caso contrário.
+     */
     fun inserirAcao(pilarId: Int, nome: String, descricao: String, criadoPor: Int): Boolean {
         val db = writableDatabase
         val values = ContentValues().apply {
@@ -1400,6 +1749,19 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return id != -1L
     }
 
+    /**
+     * Verifica se uma notificação semelhante já existe para evitar duplicidade.
+     *
+     * Considera notificações do mesmo usuário, associadas à mesma atividade, com a mesma mensagem,
+     * criadas no intervalo de 24 horas.
+     *
+     * @param db Instância do banco de dados SQLite para consulta.
+     * @param usuarioId Id do usuário destinatário da notificação.
+     * @param atividadeId Id da atividade relacionada à notificação.
+     * @param mensagem Mensagem da notificação.
+     * @param timestamp Timestamp da notificação para comparação.
+     * @return `true` se uma notificação similar já existe, `false` caso contrário.
+     */
     fun notificacaoJaExiste(
         db: SQLiteDatabase,
         usuarioId: Int,
@@ -1420,8 +1782,14 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return exists
     }
 
-
-
+    /**
+     * Verifica no banco de dados as atividades que estão atrasadas em relação à data de conclusão prevista.
+     *
+     * Atualiza o status das atividades para "Em atraso" quando aplicável e gera notificações para os responsáveis
+     * e coordenadores, evitando notificações duplicadas.
+     *
+     * O cálculo de atraso é feito pela diferença entre a data atual e a data de conclusão prevista.
+     */
     fun verificarAtividadesAtrasadas() {
         val db = writableDatabase
         val cursor = db.rawQuery(
