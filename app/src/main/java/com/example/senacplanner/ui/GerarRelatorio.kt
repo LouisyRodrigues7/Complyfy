@@ -109,6 +109,21 @@ class GerarRelatorio : AppCompatActivity() {
             }
         }
 
+        val layoutTituloRecentes = findViewById<LinearLayout>(R.id.layoutTituloRecentes)
+        val layoutRecentes = findViewById<LinearLayout>(R.id.layoutRecentes)
+        val listaRecentes = findViewById<LinearLayout>(R.id.listaRecentes)
+        val setaExpandir = findViewById<ImageView>(R.id.setaExpandir)
+
+// Expansão e recolhimento da seção de históricos
+        layoutTituloRecentes.setOnClickListener {
+            val expandido = listaRecentes.visibility == View.VISIBLE
+            listaRecentes.visibility = if (expandido) View.GONE else View.VISIBLE
+            setaExpandir.setImageResource(
+                if (expandido) R.drawable.ic_arrow_drop_down else R.drawable.ic_arrow_drop_up
+            )
+        }
+
+
         findViewById<ImageView>(R.id.btnNotificacoes).setOnClickListener {
             val intent = Intent(this, NotificacoesActivity::class.java).apply {
                 putExtra("TIPO_USUARIO", tipoUsuario)
@@ -232,21 +247,63 @@ class GerarRelatorio : AppCompatActivity() {
      */
     private fun mostrarHistorico() {
         val historico = HistoricoRelatorioManager.carregar(this)
+        val layoutRecentes = findViewById<LinearLayout>(R.id.layoutRecentes)
+        val layoutTituloRecentes = findViewById<LinearLayout>(R.id.layoutTituloRecentes)
+        val listaRecentes = findViewById<LinearLayout>(R.id.listaRecentes)
+        val textRecentes = findViewById<TextView>(R.id.textRecentes)
+
         if (historico.isEmpty()) {
-            textRecentes.visibility = View.GONE
-            listaRecentes.visibility = View.GONE
+            layoutRecentes.visibility = View.GONE
             return
         }
 
+        layoutRecentes.visibility = View.VISIBLE
+        layoutTituloRecentes.visibility = View.VISIBLE
         textRecentes.visibility = View.VISIBLE
-        listaRecentes.visibility = View.VISIBLE
         listaRecentes.removeAllViews()
 
         historico.forEach { item ->
-            val btn = Button(this).apply {
-                text = "${item.nome} (${android.text.format.DateFormat.format("dd/MM/yyyy", item.data)})"
-                setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent))
+            // Nome amigável (mascarado)
+            val nomeAmigavel = when (item.nome) {
+                "relatorio_compliance" -> "Relatório de Compliance"
+                "relatorio_financeiro" -> "Relatório Financeiro"
+                else -> "Relatório"
+            }
+
+            // Container visual para cada item
+            val itemLayout = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                setPadding(16, 12, 16, 12)
+                background = ContextCompat.getDrawable(context, R.drawable.bg_item_relatorio)
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(0, 0, 0, 12)
+                }
+                elevation = 2f
+            }
+
+            val titulo = TextView(this).apply {
+                text = nomeAmigavel
                 setTextColor(Color.WHITE)
+                textSize = 15f
+                setTypeface(null, android.graphics.Typeface.BOLD)
+            }
+
+            val data = TextView(this).apply {
+                text = "Data: ${android.text.format.DateFormat.format("dd/MM/yyyy", item.data)}"
+                setTextColor(Color.parseColor("#DDDDDD"))
+                textSize = 13f
+                setPadding(0, 4, 0, 4)
+            }
+
+            val btnAbrir = Button(this).apply {
+                text = "Visualizar"
+                textSize = 13f
+                setBackgroundColor(Color.parseColor("#2980B9"))
+                setTextColor(Color.WHITE)
+                setPadding(0, 4, 0, 4)
                 setOnClickListener {
                     try {
                         val openIntent = Intent(Intent.ACTION_VIEW).apply {
@@ -259,9 +316,15 @@ class GerarRelatorio : AppCompatActivity() {
                     }
                 }
             }
-            listaRecentes.addView(btn)
+
+            itemLayout.addView(titulo)
+            itemLayout.addView(data)
+            itemLayout.addView(btnAbrir)
+
+            listaRecentes.addView(itemLayout)
         }
     }
+
 
     /**
      * Garante que o banco de dados seja fechado ao destruir a activity.
