@@ -20,7 +20,8 @@ import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.airbnb.lottie.LottieAnimationView
 import android.view.View
-
+import android.view.LayoutInflater
+import android.widget.Button
 
 /**
 
@@ -154,28 +155,43 @@ class ListaAtividades : AppCompatActivity() {
             }
             options.add("Criar Ação")
 
-            builder.setItems(options.toTypedArray()) { _, which ->
-                when (options[which]) {
-                    "Criar Atividade" -> {
-                        val intent = Intent(this, CriarAtividadeActivity::class.java)
-                        intent.putExtra("ACAO_ID", idAcao)
-                        intent.putExtra("ID_USUARIO", idUsuario)
-                        intent.putExtra("TIPO_USUARIO", usuarioTipo)
-                        startActivity(intent)
-                    }
-                    "Criar Ação" -> {
-                        val intent = Intent(this, CriarAcaoActivity::class.java)
-                        intent.putExtra("PILAR_ID", pilarId)
-                        intent.putExtra("ID_USUARIO", idUsuario)
-                        intent.putExtra("TIPO_USUARIO", usuarioTipo)
-                        startActivityForResult(intent, 100)
-                    }
-                }
+            val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_opcoes, null)
+            val dialog = AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(true)
+                .create()
+
+            val btnCriarAtividade = dialogView.findViewById<Button>(R.id.btnCriarAtividade)
+            val btnCriarAcao = dialogView.findViewById<Button>(R.id.btnCriarAcao)
+
+            if (idAcao == -1) {
+                btnCriarAtividade.isEnabled = false
+                btnCriarAtividade.alpha = 0.5f
             }
-            builder.show()
+
+            btnCriarAtividade.setOnClickListener {
+                val intent = Intent(this, CriarAtividadeActivity::class.java)
+                intent.putExtra("ACAO_ID", idAcao)
+                intent.putExtra("ID_USUARIO", idUsuario)
+                intent.putExtra("TIPO_USUARIO", usuarioTipo)
+                startActivity(intent)
+                dialog.dismiss()
+            }
+
+            btnCriarAcao.setOnClickListener {
+                val intent = Intent(this, CriarAcaoActivity::class.java)
+                intent.putExtra("PILAR_ID", pilarId)
+                intent.putExtra("ID_USUARIO", idUsuario)
+                intent.putExtra("TIPO_USUARIO", usuarioTipo)
+                startActivityForResult(intent, 100)
+                dialog.dismiss()
+            }
+
+            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent) // fundo transparente
+            dialog.show()
+
         }
 
-        // Toolbar
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         toolbar.title = "Pilar $pilarNumero - $pilarNome"
         toolbar.setNavigationOnClickListener {

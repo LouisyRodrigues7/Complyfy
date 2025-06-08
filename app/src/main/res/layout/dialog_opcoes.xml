@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="400dp"
+    android:layout_height="200dp"
+    android:background="#1C2A39"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/titleDialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Escolha uma opção"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:paddingBottom="12dp"
+        android:textStyle="bold"
+        android:gravity="center" />
+
+    <Button
+        android:id="@+id/btnCriarAtividade"
+        android:layout_width="230dp"
+        android:layout_height="48dp"
+        android:backgroundTint="#BB7535"
+        android:text="Criar Atividade"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:layout_marginBottom="12dp" />
+
+    <Button
+        android:id="@+id/btnCriarAcao"
+        android:layout_width="230dp"
+        android:layout_height="48dp"
+        android:backgroundTint="#BB7535"
+        android:text="Criar Ação"
+        android:textColor="@android:color/white"
+        android:textSize="16sp" />
+
+</LinearLayout>
