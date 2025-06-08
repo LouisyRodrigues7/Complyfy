@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.senacplanner"
+    namespace = "com.example.pivot"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.senacplanner"
+        applicationId = "com.example.pivot"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -48,6 +48,7 @@ dependencies {
     implementation("com.github.PhilJay:MPAndroidChart:3.1.0")
     implementation ("com.google.android.flexbox:flexbox:3.0.0")
     implementation ("com.getkeepsafe.taptargetview:taptargetview:1.13.3")
+    implementation ("com.airbnb.android:lottie:6.4.0")
 
 
 

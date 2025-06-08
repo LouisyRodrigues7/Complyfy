@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.senacplanner">
+    package="com.example.pivot">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
 
@@ -19,19 +19,19 @@
 
     <!-- Edição -->
         <activity
-            android:name=".editarpilar.EditarActivity"
+            android:name="com.example.pivot.editarpilar.EditarActivity"
             android:exported="false" />
         <activity
-            android:name=".editarAtividade.EditarAtividadeActivity"
+            android:name="com.example.pivot.editarAtividade.EditarAtividadeActivity"
             android:exported="false" />
 
         <activity
-            android:name=".Acoes.EditarAcaoActivity"
+            android:name="com.example.pivot.Acoes.EditarAcaoActivity"
             android:exported="false" />
 
         <!-- Login e Inicial -->
         <activity
-            android:name=".ui.LoginActivity"
+            android:name="com.example.pivot.ui.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,56 +41,56 @@
 
         <!-- Criação -->
         <activity
-            android:name=".novopilar.NovoPilarActivity"
+            android:name="com.example.pivot.novopilar.NovoPilarActivity"
             android:exported="true" />
         <activity
-            android:name=".Acoes.CriarAcaoActivity"
+            android:name="com.example.pivot.Acoes.CriarAcaoActivity"
             android:exported="false" />
         <activity
-            android:name=".Acoes.CriarAtividadeActivity"
+            android:name="com.example.pivot.Acoes.CriarAtividadeActivity"
             android:exported="false" />
 
         <!-- Lista -->
         <activity
-            android:name=".Acoes.ListaAtividades"
+            android:name="com.example.pivot.Acoes.ListaAtividades"
             android:exported="false" />
 
         <!-- Perfis -->
         <activity
-            android:name=".ui.CoordenadorActivity"
+            android:name="com.example.pivot.ui.CoordenadorActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.GestorActivity"
+            android:name="com.example.pivot.ui.GestorActivity"
             android:exported="false" />
         <activity
-            android:name=".ApoioActivity"
+            android:name="com.example.pivot.ApoioActivity"
             android:exported="false" />
 
         <!-- Gráficos e Progresso -->
         <activity
-            android:name=".ui.EvolucaoPilarActivity"
+            android:name="com.example.pivot.ui.EvolucaoPilarActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.PilarAcaoActivity"
+            android:name="com.example.pivot.ui.PilarAcaoActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.EvolucaoAcaoActivity"
+            android:name="com.example.pivot.ui.EvolucaoAcaoActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.ProgressoPilaresActivity"
+            android:name="com.example.pivot.ui.ProgressoPilaresActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.GraficosActivity"
+            android:name="com.example.pivot.ui.GraficosActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.DashboardGraficoActivity"
+            android:name="com.example.pivot.ui.DashboardGraficoActivity"
             android:exported="false" />
         <activity
-            android:name=".NotificacoesActivity"
+            android:name="com.example.pivot.NotificacoesActivity"
             android:exported="false" />
-        <activity android:name=".ui.EvolucaoAtividade" />
-        <activity android:name=".ui.GraficoEvolucaoAtividade" />
-        <activity android:name=".ui.GerarRelatorio" />
+        <activity android:name="com.example.pivot.ui.EvolucaoAtividade" />
+        <activity android:name="com.example.pivot.ui.GraficoEvolucaoAtividade" />
+        <activity android:name="com.example.pivot.ui.GerarRelatorio" />
 
 
 

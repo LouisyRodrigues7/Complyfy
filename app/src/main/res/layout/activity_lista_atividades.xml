@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context="com.example.senacplanner.Acoes.ListaAtividades">
+    tools:context="com.example.pivot.Acoes.ListaAtividades">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -21,7 +21,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
-
 
     <ImageView
         android:id="@+id/btnAjuda"
@@ -50,16 +49,29 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animationSwipe"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:visibility="gone"
+        android:translationZ="8dp"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_fileName="swipe-left-finger.json"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/rodape_com_botoes"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/atividadesTitle"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@id/atividadesTitle" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAdicionar"
@@ -72,13 +84,7 @@
         app:layout_constraintBottom_toTopOf="@id/rodape_com_botoes"
         app:layout_constraintEnd_toEndOf="parent" />
 
-
-
-
-
-
-
-    <!-- Rodapé com botões asds  -->
+    <!-- Rodapé com botões -->
     <LinearLayout
         android:id="@+id/rodape_com_botoes"
         android:layout_width="match_parent"
@@ -120,6 +126,7 @@
             android:contentDescription="Notificações"
             android:layout_gravity="center"
             android:padding="8dp" />
+
         <ImageView
             android:id="@+id/btnAcoes"
             android:layout_width="0dp"
