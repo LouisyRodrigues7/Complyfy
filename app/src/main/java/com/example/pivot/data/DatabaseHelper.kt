@@ -23,6 +23,8 @@ import com.example.pivot.model.PilarComProgresso
 import com.example.pivot.model.Pilarspinner
 import com.example.pivot.model.AcaoEstrategica
 import com.example.pivot.model.Atividadespinner
+import android.database.Cursor
+
 
 /**
  * Classe responsável por gerenciar o banco de dados SQLite da aplicação.
@@ -1036,6 +1038,10 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
      * @param usuarioId ID do usuário.
      * @return Lista de `PilarDTO` contendo dados dos pilares com atividades do usuário.
      */
+    fun Cursor.getStringOrNull(columnIndex: Int): String? {
+        return if (isNull(columnIndex)) null else getString(columnIndex)
+    }
+
     fun getPilaresComAtividadesDoUsuario(usuarioId: Int): List<PilarDTO> {
         val pilares = mutableListOf<PilarDTO>()
         val db = readableDatabase
@@ -1055,10 +1061,10 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
                 val pilar = PilarDTO(
                     id = cursor.getInt(cursor.getColumnIndexOrThrow("id")),
                     numero = cursor.getInt(cursor.getColumnIndexOrThrow("numero")),
-                    nome = cursor.getString(cursor.getColumnIndexOrThrow("nome")),
-                    descricao = cursor.getString(cursor.getColumnIndexOrThrow("descricao")),
-                    dataInicio = cursor.getString(cursor.getColumnIndexOrThrow("data_inicio")),
-                    dataConclusao = cursor.getString(cursor.getColumnIndexOrThrow("data_conclusao")),
+                    nome = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("nome")) ?: "Sem nome",
+                    descricao = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("descricao")) ?: "",
+                    dataInicio = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("data_inicio")) ?: "",
+                    dataConclusao = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("data_conclusao")) ?: "",
                     criadoPor = cursor.getInt(cursor.getColumnIndexOrThrow("criado_por"))
                 )
                 pilares.add(pilar)
@@ -1069,6 +1075,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         db.close()
         return pilares
     }
+
 
     /**
      * DTO com dados mínimos de um pilar (usado em contextos mais simples).

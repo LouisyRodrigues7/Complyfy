@@ -25,6 +25,8 @@ import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import android.view.ViewGroup
+
 
 /**
  * Tela principal exibida para usuários do tipo "Coordenador e Apoio".
@@ -50,7 +52,7 @@ class CoordenadorActivity : AppCompatActivity() {
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         val btnAjuda = findViewById<ImageView>(R.id.btnAjuda)
-        val btnAddPilar = findViewById<ImageView>(R.id.btnAddPilar)
+        val btnAddPilar = findViewById<ImageView?>(R.id.btnAddPilar)
         val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
         val viewPager = findViewById<ViewPager2>(R.id.viewPager)
 
@@ -76,8 +78,14 @@ class CoordenadorActivity : AppCompatActivity() {
 
         // Inicia sequência de tour guiado explicando funcionalidades visuais
         btnAjuda.setOnClickListener {
-            TapTargetSequence(this)
-                .targets(
+            val tab0View = tabLayout.getTabAt(0)?.view
+            val tab1View = tabLayout.getTabAt(1)?.view
+
+            val targets = mutableListOf<TapTarget>()
+
+            // Só adiciona se btnAddPilar estiver visível (não Apoio)
+            if (btnAddPilar.visibility == View.VISIBLE) {
+                targets.add(
                     TapTarget.forView(btnAddPilar, "Criar/Editar Pilar", "Toque aqui para criar ou editar pilares do seu planejamento.")
                         .outerCircleColorInt(ContextCompat.getColor(this, R.color.purple_500))
                         .targetCircleColorInt(ContextCompat.getColor(this, android.R.color.white))
@@ -86,32 +94,46 @@ class CoordenadorActivity : AppCompatActivity() {
                         .textTypeface(Typeface.SANS_SERIF)
                         .dimColorInt(ContextCompat.getColor(this, android.R.color.black))
                         .drawShadow(true)
-                        .cancelable(true),
+                        .cancelable(true)
+                )
+            }
 
-                    TapTarget.forView(tabLayout.getTabAt(0)?.view, "Meus Pilares", "Mostra só os pilares que você tem atividades como responsável.")
+            if (tab0View != null) {
+                targets.add(
+                    TapTarget.forView(tab0View, "Meus Pilares", "Mostra só os pilares que você tem atividades como responsável.")
                         .outerCircleColorInt(ContextCompat.getColor(this, R.color.teal_200))
-                        .targetCircleColorInt(ContextCompat.getColor(this, android.R.color.white))
-                        .titleTextColorInt(ContextCompat.getColor(this, android.R.color.white))
-                        .descriptionTextColorInt(ContextCompat.getColor(this, android.R.color.white))
-                        .drawShadow(true)
-                        .cancelable(true),
-
-                    TapTarget.forView(tabLayout.getTabAt(1)?.view, "Todos os Pilares", "Lista todos os pilares do sistema com suas ações e atividades.")
-                        .outerCircleColorInt(ContextCompat.getColor(this, R.color.teal_700))
-                        .targetCircleColorInt(ContextCompat.getColor(this, android.R.color.white))
-                        .titleTextColorInt(ContextCompat.getColor(this, android.R.color.white))
-                        .descriptionTextColorInt(ContextCompat.getColor(this, android.R.color.white))
-                        .drawShadow(true)
-                        .cancelable(true),
-
-                    TapTarget.forView(viewPager, "Pilares e Atividades", "Aqui estão os pilares com ações e atividades do seu planejamento.")
-                        .outerCircleColorInt(ContextCompat.getColor(this, R.color.teal_800))
                         .targetCircleColorInt(ContextCompat.getColor(this, android.R.color.white))
                         .titleTextColorInt(ContextCompat.getColor(this, android.R.color.white))
                         .descriptionTextColorInt(ContextCompat.getColor(this, android.R.color.white))
                         .drawShadow(true)
                         .cancelable(true)
                 )
+            }
+
+            if (tab1View != null) {
+                targets.add(
+                    TapTarget.forView(tab1View, "Todos os Pilares", "Lista todos os pilares do sistema com suas ações e atividades.")
+                        .outerCircleColorInt(ContextCompat.getColor(this, R.color.teal_700))
+                        .targetCircleColorInt(ContextCompat.getColor(this, android.R.color.white))
+                        .titleTextColorInt(ContextCompat.getColor(this, android.R.color.white))
+                        .descriptionTextColorInt(ContextCompat.getColor(this, android.R.color.white))
+                        .drawShadow(true)
+                        .cancelable(true)
+                )
+            }
+
+            targets.add(
+                TapTarget.forView(viewPager, "Pilares e Atividades", "Aqui estão os pilares com ações e atividades do seu planejamento.")
+                    .outerCircleColorInt(ContextCompat.getColor(this, R.color.teal_800))
+                    .targetCircleColorInt(ContextCompat.getColor(this, android.R.color.white))
+                    .titleTextColorInt(ContextCompat.getColor(this, android.R.color.white))
+                    .descriptionTextColorInt(ContextCompat.getColor(this, android.R.color.white))
+                    .drawShadow(true)
+                    .cancelable(true)
+            )
+
+            TapTargetSequence(this)
+                .targets(targets)
                 .listener(object : TapTargetSequence.Listener {
                     override fun onSequenceFinish() {
                         Toast.makeText(this@CoordenadorActivity, "Tour finalizado 🎉", Toast.LENGTH_SHORT).show()
@@ -125,6 +147,8 @@ class CoordenadorActivity : AppCompatActivity() {
                 })
                 .start()
         }
+
+
 
         caixaCriarPilar = findViewById(R.id.caixaCriarPilar)
         caixaEditarPilar = findViewById(R.id.caixaEditarPilar)

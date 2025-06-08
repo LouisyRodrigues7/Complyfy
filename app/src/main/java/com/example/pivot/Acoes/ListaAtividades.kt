@@ -18,6 +18,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.core.content.ContextCompat
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
+import com.airbnb.lottie.LottieAnimationView
+import android.view.View
+
 
 /**
 
@@ -89,9 +92,31 @@ class ListaAtividades : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val sharedPrefs = getSharedPreferences("prefs", MODE_PRIVATE)
+
+        val keySwipe = "mostrouSwipe_$usuarioTipo"
+        val primeiraVez = sharedPrefs.getBoolean(keySwipe, false)
+
+        val animationSwipe = findViewById<LottieAnimationView>(R.id.animationSwipe)
+
+        if (!primeiraVez) {
+            animationSwipe.visibility = View.VISIBLE
+            animationSwipe.playAnimation()
+
+            animationSwipe.postDelayed({
+                animationSwipe.cancelAnimation()
+                animationSwipe.visibility = View.GONE
+
+                // Marcar que já mostrou para esse tipo de usuário
+                sharedPrefs.edit().putBoolean(keySwipe, true).apply()
+
+            }, 5000) // 5 segundos
+        }
+
         btnHome.setOnClickListener {
             finish()
         }
+
 
         btnNotificacoes.setOnClickListener {
             val intent = Intent(this, NotificacoesActivity::class.java)
