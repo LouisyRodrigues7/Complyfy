@@ -119,11 +119,28 @@ class AcaoPageFragment : Fragment() {
                 val responsavel = databaseHelper.buscarResponsavelPorAtividade(atividade.id)
 
                 if (tipoUsuario?.tipo == "Coordenador") {
-                    val novoStatus = if (isChecked) "Finalizada" else "Em andamento"
-                    Log.d("ATIVIDADE ID CHECKBOX", atividade.id.toString())
-                    databaseHelper.atualizarStatus(atividade.id, novoStatus)
-                    Log.d("ATIVIDADE STATUS CHECKBOX", atividade.status)
-                } else if (tipoUsuario?.tipo == "Apoio") {
+                    if (isChecked) {
+                        // Mostra o diálogo de confirmação
+                        AlertDialog.Builder(requireContext())
+                            .setTitle("Finalizar atividade")
+                            .setMessage("Deseja realmente marcar esta atividade como finalizada?")
+                            .setPositiveButton("Sim") { _, _ ->
+                                databaseHelper.atualizarStatus(atividade.id, "Finalizada")
+                                checkboxButton.isChecked = true
+                                Toast.makeText(requireContext(), "Atividade finalizada!", Toast.LENGTH_SHORT).show()
+                            }
+                            .setNegativeButton("Não") { _, _ ->
+                                checkboxButton.isChecked = false
+                            }
+                            .setCancelable(false)
+                            .show()
+                    } else {
+                        databaseHelper.atualizarStatus(atividade.id, "Em andamento")
+                        checkboxButton.isChecked = false
+                        Toast.makeText(requireContext(), "Atividade marcada como em andamento", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                else if (tipoUsuario?.tipo == "Apoio") {
                     buttonView.isChecked = !isChecked
 
                     if (usuarioLogadoId != null && responsavel?.id == usuarioLogadoId) {
