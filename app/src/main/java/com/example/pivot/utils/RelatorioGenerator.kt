@@ -72,27 +72,27 @@ class RelatorioGenerator {
         titlePaint.apply {
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
             textSize = 22f
-            color = Color.parseColor("#1B2631")
+            color = Color.parseColor("#1B2631") // 🔵 Cor do **título principal do relatório** (ex: "Relatório de Compliance")
         }
 
         subtitlePaint.apply {
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
             textSize = 14f
-            color = Color.parseColor("#2874A6")
+            color = Color.parseColor("#2874A6")  // 🔵 Cor dos **subtítulos**, como "Pilar: X" ou "Período: de X até Y"
         }
 
         paint.apply {
             textSize = 12f
-            color = Color.parseColor("#212F3C")
+            color = Color.parseColor("#212F3C")  // ⚫ Cor padrão do **texto geral** (descrição do pilar, datas simples, etc)
         }
 
-        linePaint.color = Color.parseColor("#AED6F1")
-        linePaint.strokeWidth = 2f
+        linePaint.color = Color.parseColor("#1C2A39") // 🔷 Cor das **linhas de grade da tabela** (linhas horizontais e verticais)
+        linePaint.strokeWidth = 7f  // Espessura dessas linhas (quanto maior, mais grossas)
 
         tableHeaderPaint.apply {
-            textSize = 12f
-            color = Color.WHITE
-            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            textSize = 12f // Tamanho da fonte do cabeçalho da tabela (ex: "Atividade", "Responsável", etc)
+            color = Color.WHITE // ⚪ Cor do texto no cabeçalho da tabela (costuma ficar sobre fundo azul)
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)  // Negrito no cabeçalho da tabela
         }
 
         cellPaint.style = Paint.Style.FILL
@@ -229,6 +229,22 @@ class RelatorioGenerator {
                     canvas.drawText(atividade.status ?: "", columnX[4] + padding, y + 16f, paint)
 
                     y += cellHeight + rowPadding
+
+
+                    linePaint.color = Color.LTGRAY
+                    linePaint.strokeWidth = 1f
+                    val linhaTopo = y - cellHeight - rowPadding
+                    val linhaBase = y - rowPadding
+
+                    columnX.forEach { x ->
+                        canvas.drawLine(x, linhaTopo, x, linhaBase, linePaint)
+                    }
+
+                    canvas.drawLine(columnX.last() + columnWidths.last(), linhaTopo, columnX.last() + columnWidths.last(), linhaBase, linePaint)
+                    // Linhas horizontais superior e inferior
+                    canvas.drawLine(columnX.first(), linhaTopo, columnX.last() + columnWidths.last(), linhaTopo, linePaint) // topo da linha
+                    canvas.drawLine(columnX.first(), linhaBase, columnX.last() + columnWidths.last(), linhaBase, linePaint) // base da linha
+
 
                     // Contagem para resumo
                     statusContagem[status] = (statusContagem[status] ?: 0) + 1

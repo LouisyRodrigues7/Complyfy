@@ -238,12 +238,15 @@ class RelatorioDatabaseHelper(private val context: Context) :
 
         // Query filtra atividades por data de início ou conclusão dentro do período desejado
         val query = """
-        SELECT * FROM Atividade 
-        WHERE acao_id = ? AND (
-            date(data_inicio) >= date('now', '-$periodoMeses months') 
-            OR (data_conclusao IS NOT NULL AND date(data_conclusao) >= date('now', '-$periodoMeses months'))
-        )
-    """.trimIndent()
+    SELECT * FROM Atividade
+    WHERE acao_id = ?
+      AND (
+        date(data_inicio) >= date('now', '-$periodoMeses months')
+        OR (data_conclusao IS NOT NULL AND date(data_conclusao) >= date('now', '-$periodoMeses months'))
+      )
+""".trimIndent()
+
+
 
         val cursor = db.rawQuery(query, arrayOf(acaoId.toString()))
 
