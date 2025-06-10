@@ -25,6 +25,35 @@ import java.text.Normalizer
  */
 class RelatorioGenerator {
 
+    private fun desenharMarcaDagua(context: Context, canvas: Canvas, pageInfo: PdfDocument.PageInfo) {
+        try {
+            val bgLogoResId = context.resources.getIdentifier("bg_logo", "drawable", context.packageName)
+            if (bgLogoResId != 0) {
+                val bitmap = BitmapFactory.decodeResource(context.resources, bgLogoResId)
+                    ?: return
+
+                val targetWidth = 300
+                val aspectRatio = bitmap.height.toFloat() / bitmap.width
+                val targetHeight = (targetWidth * aspectRatio).toInt()
+
+                val scaled = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true)
+                    ?: return
+
+                val paint = Paint().apply {
+                    alpha = 25
+                    isFilterBitmap = true
+                }
+
+                val x = (pageInfo.pageWidth - targetWidth) / 2f
+                val y = (pageInfo.pageHeight - targetHeight) / 2f
+
+                canvas.drawBitmap(scaled, x, y, paint)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     /**
      * Normaliza o texto de status (remove acentos e formata).
      * Usado para padronizar cores e comparações sem erros causados por acentuação.
@@ -68,6 +97,28 @@ class RelatorioGenerator {
         val pageInfo = PdfDocument.PageInfo.Builder(595, 842, pageNumber).create()
         var page = pdfDocument.startPage(pageInfo)
         var canvas = page.canvas
+
+        // Marca d'água de fundo com transparência - imagem bg_logo
+        val bgLogoResId = context.resources.getIdentifier("bg_logo", "drawable", context.packageName)
+        if (bgLogoResId != 0) {
+            val watermarkBitmap = BitmapFactory.decodeResource(context.resources, bgLogoResId)
+            val targetWidth = 300 // Tamanho da marca d'água
+            val aspectRatio = watermarkBitmap.height.toFloat() / watermarkBitmap.width
+            val targetHeight = (targetWidth * aspectRatio).toInt()
+
+            val scaledWatermark = Bitmap.createScaledBitmap(watermarkBitmap, targetWidth, targetHeight, true)
+
+            val watermarkPaint = Paint().apply {
+                alpha = 25 // Transparência (quanto menor, mais "suave")
+                isFilterBitmap = true
+            }
+
+            val watermarkX = (pageInfo.pageWidth - targetWidth) / 2f
+            val watermarkY = (pageInfo.pageHeight - targetHeight) / 2f
+
+            canvas.drawBitmap(scaledWatermark, watermarkX, watermarkY, watermarkPaint)
+        }
+
 
         // Estilos
         titlePaint.apply {
@@ -180,10 +231,11 @@ class RelatorioGenerator {
                     // Quando o conteúdo passa do limite da página, cria nova página
                     pdfDocument.finishPage(page)
                     pageNumber++
-                    page = pdfDocument.startPage(
-                        PdfDocument.PageInfo.Builder(595, 842, pageNumber).create()
-                    )
+                    val pageInfo = PdfDocument.PageInfo.Builder(595, 842, pageNumber).create()
+                    page = pdfDocument.startPage(pageInfo)
                     canvas = page.canvas
+                    desenharMarcaDagua(context, canvas, pageInfo)
+
                     y = 60f
                 }
 
@@ -209,10 +261,11 @@ class RelatorioGenerator {
                     if (y > 700f) {
                         pdfDocument.finishPage(page)
                         pageNumber++
-                        page = pdfDocument.startPage(
-                            PdfDocument.PageInfo.Builder(595, 842, pageNumber).create()
-                        )
+                        val pageInfo = PdfDocument.PageInfo.Builder(595, 842, pageNumber).create()
+                        page = pdfDocument.startPage(pageInfo)
                         canvas = page.canvas
+                        desenharMarcaDagua(context, canvas, pageInfo)
+
                         y = 60f
                     }
 
@@ -262,6 +315,7 @@ class RelatorioGenerator {
                                 ).create()
                             )
                             canvas = page.canvas
+                            desenharMarcaDagua(context, canvas, pageInfo)
                             y = 60f
                         }
 
@@ -398,6 +452,8 @@ class RelatorioGenerator {
             }
 
             pdfDocument.finishPage(page)
+
+
 
             // 📁 Salvar PDF conforme versão do Android
             var finalUri: Uri? = null
