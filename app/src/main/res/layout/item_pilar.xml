@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -16,7 +15,8 @@
         android:layout_height="wrap_content"
         android:background="#162E47"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:minHeight="64dp">
 
         <!-- Número em quadrado laranja -->
         <TextView
@@ -32,24 +32,22 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-
+        <!-- Nome do Pilar -->
         <FrameLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:foregroundGravity="center">
 
-            <!-- Nome do Pilar -->
             <TextView
                 android:id="@+id/textoPilarGrande"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="@string/pilar_grande"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:gravity="center"
-                android:layout_gravity="center_vertical" />
+                android:gravity="center" />
         </FrameLayout>
-
     </LinearLayout>
 </androidx.cardview.widget.CardView>
