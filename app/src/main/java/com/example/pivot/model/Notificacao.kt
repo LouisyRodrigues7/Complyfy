@@ -23,5 +23,6 @@ data class Notificacao(
     val data: Long,
     val lida: Boolean,
     val atividadeId: Int?,
+    val acaoId: Int?,
     val tipo_notificacao: TipoNotificacao
 )

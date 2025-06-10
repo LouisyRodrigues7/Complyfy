@@ -85,7 +85,12 @@ class NotificacaoAdapter(private val lista: MutableList<Notificacao>) :
                     }
 
                     TipoNotificacao.APROVACAO_ACAO -> {
-                        //abrirDialogAprovacaoAcao(context, notificacaoAtual)
+                        val db = DatabaseHelper(context)
+                        val acao = db.buscarAcaoAprovada(notificacaoAtual.acaoId)
+                        if (acao?.aprovado == true) {
+                            return@setOnClickListener
+                        }
+                        abrirDialogAprovacaoAcao(context, notificacaoAtual, adapterPosition, holder)
                     }
 
                     TipoNotificacao.GERAL -> {
@@ -194,6 +199,70 @@ class NotificacaoAdapter(private val lista: MutableList<Notificacao>) :
 
         btnEnviar.setOnClickListener {
             db.aprovarAtividade(notificacaoAtual.atividadeId)
+            db.marcarNotificacaoComoLida(notificacaoAtual.id)
+
+            lista[position] = notificacaoAtual.copy(lida = true)
+            notifyItemChanged(position)
+
+            dialog.dismiss()
+
+        }
+
+    }
+
+    /**
+     * Abre um diálogo para que o usuário aprove uma atividade pendente.
+     * Exibe informações relevantes da atividade e seus relacionamentos para melhor decisão.
+     *
+     * @param context Contexto da aplicação para inflar layouts e acessar o banco.
+     * @param notificacaoAtual Notificação que originou o diálogo.
+     * @param position Posição da notificação na lista para atualizar após ação.
+     * @param holder ViewHolder da notificação para manipulação visual.
+     */
+    @SuppressLint("SetTextI18n")
+    private fun abrirDialogAprovacaoAcao(
+        context: Context,
+        notificacaoAtual: Notificacao,
+        position: Int,
+        holder: NotificacaoAdapter.ViewHolder
+    ) {
+
+        val db = DatabaseHelper(context)
+
+        val acao = db.buscarAcaoPorId(notificacaoAtual.acaoId)
+        val pilar = db.buscarPilarPorId(acao?.pilar_id ?: 0)
+        val usuarioSolicitante = db.obterUsuario(acao?.criadoPorId ?: 0)
+
+        Log.d("DADOS ACAO", acao.toString())
+
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.autorizar_criacao_acao, null)
+
+        val dialog = AlertDialog.Builder(context)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+
+        val tvPilar = dialogView.findViewById<TextView>(R.id.tvPilar)
+        val tvAcao = dialogView.findViewById<TextView>(R.id.tvAcao)
+        val tvSolicitante = dialogView.findViewById<TextView>(R.id.tvSolicitante)
+        val tvComentario = dialogView.findViewById<TextView>(R.id.tvComentario)
+        val btnCancelar = dialogView.findViewById<Button>(R.id.btnCancelar)
+        val btnEnviar = dialogView.findViewById<Button>(R.id.btnEnviar)
+
+
+        tvPilar.text = pilar?.nome
+        tvAcao.text = acao?.nome
+        tvSolicitante.text = usuarioSolicitante?.nome
+        tvComentario.text = ""
+
+        dialog.show()
+
+        btnCancelar.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnEnviar.setOnClickListener {
+            db.aprovarAcao(notificacaoAtual.acaoId)
             db.marcarNotificacaoComoLida(notificacaoAtual.id)
 
             lista[position] = notificacaoAtual.copy(lida = true)

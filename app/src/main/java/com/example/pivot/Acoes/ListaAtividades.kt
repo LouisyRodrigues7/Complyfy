@@ -59,11 +59,19 @@ class ListaAtividades : AppCompatActivity() {
         } else {
             databaseHelper.buscarAcoesEAtividadesDoUsuarioPorPilar(pilarId, idUsuario)
         }
+
+        val currentPosition = viewPager.currentItem
         viewPager.adapter = AcoesPagerAdapter(this, acoes, pilarNome, idUsuario, idAcao)
-        if (acoes.isNotEmpty()) {
+
+        if (acoes.isNotEmpty() && usuarioTipo == "Coordenador") {
             val ultimaPosicao = acoes.size - 1
             viewPager.setCurrentItem(ultimaPosicao, false)
             idAcao = acoes[ultimaPosicao].acao.id
+        } else {
+            viewPager.setCurrentItem(currentPosition.coerceAtMost(acoes.size - 1), false)
+            if (currentPosition < acoes.size) {
+                idAcao = acoes[currentPosition].acao.id
+            }
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {

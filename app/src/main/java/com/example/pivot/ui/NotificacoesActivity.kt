@@ -116,7 +116,7 @@ class NotificacoesActivity : AppCompatActivity() {
         val db = db.getDatabase()
         val cursor = db.rawQuery(
             """
-        SELECT id, mensagem, data, lida, atividade_id, tipo_notificacao 
+        SELECT id, mensagem, data, lida, atividade_id, acao_id, tipo_notificacao 
         FROM Notificacao 
         WHERE usuario_id = ?
         ORDER BY data DESC
@@ -137,6 +137,11 @@ class NotificacoesActivity : AppCompatActivity() {
                     cursor.getInt(atividadeIdIndex)
                 } else null
 
+                val acaoIdIndex = cursor.getColumnIndex("acao_id")
+                val acaoId = if (acaoIdIndex >= 0 && !cursor.isNull(acaoIdIndex)) {
+                    cursor.getInt(acaoIdIndex)
+                } else null
+
                 val tipoString = cursor.getString(cursor.getColumnIndexOrThrow("tipo_notificacao"))
                 val tipo = try {
                     TipoNotificacao.valueOf(tipoString)
@@ -144,7 +149,7 @@ class NotificacoesActivity : AppCompatActivity() {
                     TipoNotificacao.GERAL
                 }
 
-                lista.add(Notificacao(id, mensagem, data, lida, atividadeId, tipo))
+                lista.add(Notificacao(id, mensagem, data, lida, atividadeId, acaoId, tipo))
             } while (cursor.moveToNext())
         }
 

@@ -18,14 +18,14 @@ import java.io.FileOutputStream
  * e oferece métodos para consulta estruturada dos pilares, ações e atividades para montar relatórios.
  */
 class RelatorioDatabaseHelper(private val context: Context) :
-    SQLiteOpenHelper(context, "novobanco_.db", null, 1) {
+    SQLiteOpenHelper(context, "bancov2.db", null, 1) {
 
 
     /**
      * Caminho absoluto do arquivo do banco de dados na pasta interna do app.
      */
     private val dbPath: String
-        get() = context.getDatabasePath("novobanco_.db").path
+        get() = context.getDatabasePath("bancov2.db").path
 
     /**
      * Retorna o banco aberto para leitura e escrita, copiando o arquivo do assets caso necessário.

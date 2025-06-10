@@ -37,7 +37,7 @@ import android.database.Cursor
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     companion object {
-        private const val DB_NAME = "novobanco_.db"
+        private const val DB_NAME = "bancov2.db"
         private const val DB_VERSION = 1
     }
 
@@ -754,7 +754,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         val lista = mutableListOf<AcaoComAtividades>()
         val db = this.readableDatabase
 
-        val queryAcao = "SELECT * FROM Acao WHERE pilar_id = ?"
+        val queryAcao = "SELECT * FROM Acao WHERE pilar_id = ? AND aprovado = 1"
         val cursorAcao = db.rawQuery(queryAcao, arrayOf(pilarId.toString()))
 
         while (cursorAcao.moveToNext()) {
@@ -762,7 +762,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
             val nomeAcao = cursorAcao.getString(cursorAcao.getColumnIndexOrThrow("nome"))
             val pilarId = cursorAcao.getInt(cursorAcao.getColumnIndexOrThrow("pilar_id"))
 
-            val queryAtividades = "SELECT id, nome , status, aprovado, acao_id FROM Atividade WHERE acao_id = ?"
+            val queryAtividades = "SELECT id, nome , status, aprovado, acao_id FROM Atividade WHERE acao_id = ? AND aprovado = 1"
             val cursorAtividades = db.rawQuery(queryAtividades, arrayOf(acaoId.toString()))
 
             val atividades = mutableListOf<Atividade>()
@@ -994,7 +994,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
      * DTO representando uma ação estratégica com ID, nome e vínculo com o pilar.
      */
     data class AcaoDTO(
-        val id: Int, val nome: String, val pilar_id: Int
+        val id: Int, val nome: String, val pilar_id: Int, val criadoPorId: Int
     )
 
 
@@ -1004,7 +1004,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
      * @param id ID da ação.
      * @return Objeto `AcaoDTO` contendo os dados da ação ou `null` se não encontrada.
      */
-    fun buscarAcaoPorId(id: Int): AcaoDTO? {
+    fun buscarAcaoPorId(id: Int?): AcaoDTO? {
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM Acao WHERE id = ?", arrayOf(id.toString()))
 
@@ -1014,7 +1014,8 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
             val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
             val nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
             val pilarId = cursor.getInt(cursor.getColumnIndexOrThrow("pilar_id"))
-            acao = AcaoDTO(id, nome, pilarId)
+            val criadoPor = cursor.getInt(cursor.getColumnIndexOrThrow("criado_por"))
+            acao = AcaoDTO(id, nome, pilarId,  criadoPor)
         }
 
         cursor.close()
@@ -1128,7 +1129,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         SELECT DISTINCT a.id, a.nome, a.pilar_id
         FROM Acao a
         JOIN Atividade at ON a.id = at.acao_id
-        WHERE a.pilar_id = ? AND at.responsavel_id = ?
+        WHERE a.pilar_id = ? AND at.responsavel_id = ? AND a.aprovado = 1
     """.trimIndent()
 
         val cursorAcoes = db.rawQuery(acoesQuery, arrayOf(pilarId.toString(), usuarioId.toString()))
@@ -1145,7 +1146,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
                 val atividadesQuery = """
                 SELECT id, nome, status, aprovado
                 FROM Atividade
-                WHERE acao_id = ? AND responsavel_id = ?
+                WHERE acao_id = ? AND responsavel_id = ? AND aprovado = 1
             """.trimIndent()
 
                 val cursorAtividades =
@@ -1156,7 +1157,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
                         val atividadeId = cursorAtividades.getInt(0)
                         val atividadeNome = cursorAtividades.getString(1)
                         val status = cursorAtividades.getString(cursorAtividades.getColumnIndexOrThrow("status"))
-                        val aprovado = cursorAtividades.getInt(cursorAtividades.getColumnIndexOrThrow("aprovado")) == 1
+                        val aprovado = true
 
                         atividades.add(Atividade(atividadeId, atividadeNome, status, aprovado))
                     } while (cursorAtividades.moveToNext())
@@ -1399,6 +1400,37 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return atividade
     }
 
+
+    /**
+     * DTO para representar aprovação de uma atividade.
+     */
+    data class AcaoDTObyId(
+        val id: Int, val aprovado: Boolean
+    )
+
+    /**
+     * Verifica se uma ação foi aprovada.
+     *
+     * @param id ID da ação.
+     * @return Objeto `AcaoDTObyId` ou `null` se não encontrada.
+     */
+    fun buscarAcaoAprovada(id: Int?): AcaoDTObyId? {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM Acao WHERE id = ?", arrayOf(id.toString()))
+
+        var acao: AcaoDTObyId? = null
+
+        if (cursor.moveToFirst()) {
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+            val aprovado = cursor.getInt(cursor.getColumnIndexOrThrow("aprovado")) == 1
+            acao = AcaoDTObyId(id, aprovado)
+        }
+
+        cursor.close()
+        db.close()
+        return acao
+    }
+
     /**
      * Insere uma nova atividade no banco de dados, com possibilidade de notificar o responsável.
      *
@@ -1633,7 +1665,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
      * @param atividadeId Id da atividade relacionada à notificação (pode ser null).
      * @param tipoNotificacao Tipo da notificação, utilizado para categorizar a notificação.
      */
-    fun criarNotificacaoParaCoordenador(mensagem: String, atividadeId: Int? = null, tipoNotificacao: TipoNotificacao) {
+    fun criarNotificacaoParaCoordenador(mensagem: String, atividadeId: Int? = null, acaoId: Int? = null, tipoNotificacao: TipoNotificacao) {
         val db = writableDatabase
         val dataAtual = System.currentTimeMillis().toString()
 
@@ -1648,6 +1680,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
                     put("data", dataAtual)
                     put("lida", 0)
                     if (atividadeId != null) put("atividade_id", atividadeId)
+                    if (acaoId != null) put("acao_id", acaoId)
                     put("tipo_notificacao", tipoNotificacao.toString())
                 }
                 db.insert("Notificacao", null, values)
@@ -1670,6 +1703,19 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
             put("aprovado", 1)
         }
         db.update("Atividade", values, "id = ?", arrayOf(id.toString()))
+    }
+
+    /**
+     * Marca uma acao como aprovada no banco de dados.
+     *
+     * @param id Identificador da atividade a ser aprovada.
+     */
+    fun aprovarAcao(id: Int?) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("aprovado", 1)
+        }
+        db.update("Acao", values, "id = ?", arrayOf(id.toString()))
     }
 
     /**
@@ -1736,18 +1782,18 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
      * @param criadoPor Id do usuário que criou a ação.
      * @return `true` se a inserção foi bem-sucedida, `false` caso contrário.
      */
-    fun inserirAcao(pilarId: Int, nome: String, descricao: String, criadoPor: Int): Boolean {
+    fun inserirAcao(pilarId: Int, nome: String, descricao: String, criadoPor: Int, aprovado: Boolean): Long {
         val db = writableDatabase
         val values = ContentValues().apply {
             put("pilar_id", pilarId)
             put("nome", nome)
             put("descricao", descricao)
             put("criado_por", criadoPor)
-            put("aprovado", 0)
+            put("aprovado", aprovado)
         }
         val id = db.insert("Acao", null, values)
         db.close()
-        return id != -1L
+        return id
     }
 
     /**

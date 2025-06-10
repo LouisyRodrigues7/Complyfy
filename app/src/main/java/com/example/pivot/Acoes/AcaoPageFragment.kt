@@ -3,7 +3,6 @@ package com.example.pivot.Acoes
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,9 +22,6 @@ import com.example.pivot.editarAtividade.EditarAtividadeActivity
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import android.app.Dialog
-import android.widget.CompoundButton
-
 
 
 /**
@@ -245,6 +241,7 @@ class AcaoPageFragment : Fragment() {
             db.criarNotificacaoParaCoordenador(
                 "Atividade (${atividade?.nome}) aguardando conclusão!!",
                 atividadeId,
+                null,
                 TipoNotificacao.CONCLUSAO_STATUS
             )
             dialog.dismiss()
