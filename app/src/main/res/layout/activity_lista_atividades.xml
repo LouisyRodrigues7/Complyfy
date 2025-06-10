@@ -9,6 +9,7 @@
     android:background="@color/white"
     tools:context="com.example.pivot.Acoes.ListaAtividades">
 
+    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -22,16 +23,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <ImageView
-        android:id="@+id/btnAjuda"
-        android:layout_width="34dp"
-        android:layout_height="34dp"
-        android:layout_marginTop="60dp"
-        android:layout_marginEnd="72dp"
-        android:contentDescription="Ajuda"
-        android:src="@drawable/ic_help_outline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <!-- REMOVIDO: botão de ajuda do topo -->
 
     <TextView
         android:id="@+id/atividadesTitle"
@@ -48,7 +40,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/animationSwipe"
         android:layout_width="180dp"
@@ -62,7 +53,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
@@ -83,6 +73,19 @@
         app:backgroundTint="@color/laranja"
         app:layout_constraintBottom_toTopOf="@id/rodape_com_botoes"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/btnAjuda"
+        android:layout_width="47dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="15dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Ajuda"
+        android:src="@drawable/ic_help_outline"
+        app:layout_constraintBottom_toTopOf="@id/rodape_com_botoes"
+        app:layout_constraintStart_toStartOf="parent"
+        app:tint="@android:color/darker_gray" />
 
     <!-- Rodapé com botões -->
     <LinearLayout
