@@ -130,6 +130,7 @@ class CriarAtividadeActivity : AppCompatActivity() {
                 dbHelper.criarNotificacaoParaCoordenador(
                     "Nova atividade ($nome) aguardando aprovação!!",
                     atividadeId.toInt(),
+                    null,
                     TipoNotificacao.APROVACAO_ATIVIDADE
                 )
                 Toast.makeText(this, "Atividade aguardando aprovação!", Toast.LENGTH_SHORT).show()
