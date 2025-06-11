@@ -9,6 +9,29 @@
     android:background="@color/white"
     tools:context="com.example.pivot.Acoes.ListaAtividades">
 
+    <!-- Ponto fictício para explicar edição de ações -->
+    <View
+        android:id="@+id/targetEditarAcao"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        android:layout_marginTop="80dp"
+        app:layout_constraintTop_toBottomOf="@id/atividadesTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="invisible" />
+
+    <!-- Ponto fictício para explicar edição de atividades -->
+    <View
+        android:id="@+id/targetEditarAtividade"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        android:layout_marginTop="140dp"
+        app:layout_constraintTop_toBottomOf="@id/atividadesTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="invisible" />
+
+
     <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -22,8 +45,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
-
-    <!-- REMOVIDO: botão de ajuda do topo -->
 
     <TextView
         android:id="@+id/atividadesTitle"

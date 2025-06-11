@@ -83,7 +83,10 @@ class ListaAtividades : AppCompatActivity() {
         val btnNotificacoes = findViewById<ImageView>(R.id.btnNotificacoes)
         val btnAcoes = findViewById<ImageView>(R.id.btnAcoes)
         val fab = findViewById<FloatingActionButton>(R.id.fabAdicionar)
-        fab.setColorFilter(ContextCompat.getColor(this, android.R.color.white), android.graphics.PorterDuff.Mode.SRC_IN)
+        fab.setColorFilter(
+            ContextCompat.getColor(this, android.R.color.white),
+            android.graphics.PorterDuff.Mode.SRC_IN
+        )
 
         pilarId = intent.getIntExtra("PILAR_ID", -1)
         pilarNumero = intent.getIntExtra("PILAR_NUMERO", -1)
@@ -150,7 +153,8 @@ class ListaAtividades : AppCompatActivity() {
 
         fabAdicionar.setOnClickListener {
             if (idUsuario == -1) {
-                Toast.makeText(this, "Erro ao obter o contexto do usuário", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Erro ao obter o contexto do usuário", Toast.LENGTH_SHORT)
+                    .show()
                 return@setOnClickListener
             }
 
@@ -210,33 +214,58 @@ class ListaAtividades : AppCompatActivity() {
         val btnAjuda = findViewById<ImageView>(R.id.btnAjuda)
 
         btnAjuda.setOnClickListener {
+            val fabAdicionar = findViewById<FloatingActionButton>(R.id.fabAdicionar)
+            val targetEditarAcao = findViewById<View>(R.id.targetEditarAcao)
+            val targetEditarAtividade = findViewById<View>(R.id.targetEditarAtividade)
+
             val sequence = TapTargetSequence(this)
                 .targets(
-                    TapTarget.forView(fabAdicionar, "Adicionar", "Clique aqui para criar uma nova ação nesse pilar ou se quiser adicionar uma nova Atividade dentro da ação na tela, caso queira adicionar atividade em outra ação é só navegar até a tela dela e clicar aqui novamente.")
+                    TapTarget.forView(
+                        fabAdicionar,
+                        "Adicionar",
+                        "Clique aqui para criar uma nova ação neste pilar ou adicionar uma nova atividade à ação atual. Para adicionar em outra ação, navegue até ela e clique aqui novamente."
+                    )
                         .cancelable(true)
                         .drawShadow(true)
-                        .id(5)
+                        .id(1),
+
+                    TapTarget.forView(
+                        targetEditarAcao,
+                        "Editar/Excluir Ação",
+                        "Para editar ou excluir uma Ação, clique no ícone de editar localizado na tarja escura no topo da caixa da ação."
+                    )
+                        .cancelable(true)
+                        .drawShadow(true)
+                        .id(2),
+
+                    TapTarget.forView(
+                        targetEditarAtividade,
+                        "Editar/Excluir Atividade",
+                        "Para editar ou excluir uma Atividade, basta clicar diretamente nela dentro da caixa da ação."
+                    )
+                        .cancelable(true)
+                        .drawShadow(true)
+                        .id(3)
                 )
                 .listener(object : TapTargetSequence.Listener {
                     override fun onSequenceFinish() {
-                        Toast.makeText(this@ListaAtividades, "Tour finalizado!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@ListaAtividades, "Tour finalizado!", Toast.LENGTH_SHORT)
+                            .show()
                     }
 
                     override fun onSequenceStep(lastTarget: TapTarget, targetClicked: Boolean) {}
 
                     override fun onSequenceCanceled(lastTarget: TapTarget) {
-                        Toast.makeText(this@ListaAtividades, "Tour cancelado.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@ListaAtividades, "Tour cancelado.", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 })
 
             sequence.start()
         }
-
-
-        carregarDados()
     }
 
-    /**
+        /**
      * Recebe o resultado de outras Activities (ex: criação de ação) e atualiza a lista
      * para refletir novas ações criadas.
      */
