@@ -684,6 +684,42 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         db.close()
     }
 
+    fun getResumoDeAtividadesPorAcao(acaoId: Int): Map<String, Int> {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("""
+        SELECT 
+            COUNT(*) AS total,
+            COALESCE(SUM(CASE WHEN LOWER(TRIM(status)) = 'finalizada' THEN 1 ELSE 0 END), 0) AS concluidas,
+            COALESCE(SUM(CASE 
+                WHEN data_conclusao IS NOT NULL 
+                     AND date(data_conclusao) < date('now')
+                     AND LOWER(TRIM(status)) != 'finalizada'
+                THEN 1 ELSE 0 END), 0) AS atrasadas
+        FROM Atividade
+        WHERE acao_id = ?
+    """.trimIndent(), arrayOf(acaoId.toString()))
+
+        var total = 0
+        var concluidas = 0
+        var atrasadas = 0
+        var andamento = 0
+
+        if (cursor.moveToFirst()) {
+            total = cursor.getInt(0)
+            concluidas = cursor.getInt(1)
+            atrasadas = cursor.getInt(2)
+            andamento = total - concluidas - atrasadas
+        }
+
+        cursor.close()
+        return mapOf(
+            "Finalizadas" to concluidas,
+            "Em andamento" to andamento,
+            "Em atraso" to atrasadas
+        )
+    }
+
+
 
     /**
      * Cadastra um novo pilar no banco de dados e dispara notificações aos usuários.

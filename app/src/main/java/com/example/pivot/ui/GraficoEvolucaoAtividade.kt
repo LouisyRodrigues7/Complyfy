@@ -113,24 +113,31 @@ class GraficoEvolucaoAtividade : AppCompatActivity() {
         }
     }
 
+
     /**
      * Exibe um gráfico de pizza com o total de atividades concluídas e em andamento
      * de uma determinada ação.
      * @param acaoId ID da ação estratégica
      */
     private fun mostrarGraficoAtividadesDaAcao(acaoId: Int) {
-        val atividades = db.buscarAtividadesPorAcaoParaSelecao(acaoId)
+        val resumo = db.getResumoDeAtividadesPorAcao(acaoId)
 
-        val emAndamento = atividades.count { it.status != "Finalizada" }
-        val concluidas = atividades.count { it.status == "Finalizada" }
+        val emAndamento = resumo["Em andamento"] ?: 0
+        val concluidas = resumo["Finalizadas"] ?: 0
+        val emAtraso = resumo["Em atraso"] ?: 0
 
         val entries = listOf(
             PieEntry(emAndamento.toFloat(), "Em andamento"),
-            PieEntry(concluidas.toFloat(), "Concluídas")
+            PieEntry(concluidas.toFloat(), "Concluídas"),
+            PieEntry(emAtraso.toFloat(), "Em atraso")
         )
 
         val dataSet = PieDataSet(entries, "").apply {
-            colors = listOf(Color.parseColor("#2196F3"), Color.parseColor("#4CAF50"))
+            colors = listOf(
+                Color.parseColor("#2196F3"), // azul - andamento
+                Color.parseColor("#4CAF50"), // verde - concluídas
+                Color.parseColor("#F44336")  // vermelho - em atraso
+            )
             valueTextSize = 14f
             valueTextColor = Color.BLACK
         }
@@ -146,6 +153,7 @@ class GraficoEvolucaoAtividade : AppCompatActivity() {
             invalidate()
         }
     }
+
 
     /**
      * Exibe um gráfico de pizza com o status de uma única atividade.

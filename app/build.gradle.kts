@@ -50,6 +50,7 @@ dependencies {
     implementation ("com.getkeepsafe.taptargetview:taptargetview:1.13.3")
     implementation ("com.airbnb.android:lottie:6.4.0")
     implementation ("com.getkeepsafe.taptargetview:taptargetview:1.13.3")
+    implementation ("com.jakewharton.threetenabp:threetenabp:1.4.4")
 
 
     testImplementation("junit:junit:4.13.2")
