@@ -423,17 +423,20 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         val lista = mutableListOf<AcaoComProgresso>()
 
         val query = """
-    SELECT a.nome,
-           COUNT(ata.id) AS total,
-           COALESCE(SUM(CASE WHEN LOWER(TRIM(ata.status)) = 'finalizada' THEN 1 ELSE 0 END), 0) AS concluidas,
-           COALESCE(SUM(CASE WHEN LOWER(TRIM(ata.status)) = 'em andamento' THEN 1 ELSE 0 END), 0) AS andamento,
-           COALESCE(SUM(CASE WHEN LOWER(TRIM(ata.status)) = 'em atraso' THEN 1 ELSE 0 END), 0) AS atrasadas
-    FROM acao a
-    LEFT JOIN Atividade ata ON a.id = ata.acao_id
-    WHERE a.pilar_id = ?
-    GROUP BY a.nome
-""".trimIndent()
-
+        SELECT a.nome,
+               COUNT(ata.id) AS total,
+               COALESCE(SUM(CASE WHEN LOWER(TRIM(ata.status)) = 'finalizada' THEN 1 ELSE 0 END), 0) AS concluidas,
+               COALESCE(SUM(CASE WHEN LOWER(TRIM(ata.status)) = 'em andamento' THEN 1 ELSE 0 END), 0) AS andamento,
+               COALESCE(SUM(CASE 
+                   WHEN ata.data_conclusao IS NOT NULL 
+                        AND date(ata.data_conclusao) < date('now')
+                        AND LOWER(TRIM(ata.status)) != 'finalizada'
+                   THEN 1 ELSE 0 END), 0) AS atrasadas
+        FROM acao a
+        LEFT JOIN Atividade ata ON a.id = ata.acao_id
+        WHERE a.pilar_id = ?
+        GROUP BY a.nome
+    """.trimIndent()
 
         val cursor = db.rawQuery(query, arrayOf(pilarId.toString()))
 
@@ -462,6 +465,8 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
 
         return lista
     }
+
+
 
 
     /**
