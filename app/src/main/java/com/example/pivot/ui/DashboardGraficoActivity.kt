@@ -23,6 +23,7 @@ import com.example.pivot.data.DatabaseHelper
 import com.example.pivot.NotificacoesActivity
 import com.example.pivot.R
 import android.widget.ScrollView
+import com.github.mikephil.charting.animation.Easing
 
 /**
  * Tela de gráficos que exibe visualizações do progresso dos pilares ou das ações,
@@ -217,6 +218,7 @@ class DashboardGraficoActivity : AppCompatActivity() {
                 yEntrySpace = 5f
             }
 
+            animateY(1500, Easing.EaseInOutQuad)
             invalidate()
         }
     }
@@ -282,8 +284,11 @@ class DashboardGraficoActivity : AppCompatActivity() {
             description.isEnabled = false
             setTouchEnabled(true)
             setFitBars(true)
+
+            animateY(1500, Easing.EaseInOutBack)
             invalidate()
         }
+
 
         // Atualiza a legenda
         legendaContainer.removeAllViews()

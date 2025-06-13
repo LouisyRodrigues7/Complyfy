@@ -152,6 +152,19 @@ class GraficoEvolucaoAtividade : AppCompatActivity() {
             legend.isEnabled = true
             invalidate()
         }
+
+        pieChart.apply {
+            data = PieData(dataSet)
+            centerText = "Atividades da Ação"
+            setCenterTextSize(18f)
+            setEntryLabelColor(Color.DKGRAY)
+            setEntryLabelTextSize(14f)
+            description.isEnabled = false
+            legend.isEnabled = true
+            animateY(1000) // <<< AQUI: animação vertical em 1 segundo
+            invalidate()
+        }
+
     }
 
 
@@ -185,6 +198,18 @@ class GraficoEvolucaoAtividade : AppCompatActivity() {
                 legend.isEnabled = false
                 invalidate()
             }
+            pieChart.apply {
+                data = PieData(dataSet)
+                centerText = "Status da Atividade"
+                setCenterTextSize(18f)
+                setEntryLabelColor(Color.DKGRAY)
+                description.isEnabled = false
+                legend.isEnabled = false
+                animateY(1000) // <<< AQUI
+                invalidate()
+            }
+
+
 
             tvResponsavel.apply {
                 val nomeResponsavel = it.responsavelId?.let { id -> db.getNomeDoResponsavel(id) } ?: "Não informado"
